@@ -7,33 +7,9 @@
     <meta name="theme-color" content="#165DFF">
     
     <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, orderBy, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
-          authDomain: "controle---estoque.firebaseapp.com",
-          databaseURL: "https://controle---estoque-default-rtdb.firebaseio.com",
-          projectId: "controle---estoque",
-          storageBucket: "controle---estoque.firebasestorage.app",
-          messagingSenderId: "10157072339",
-          appId: "1:10157072339:web:37a7f7732e4a9224c2d926"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        window.auth = getAuth(app);
-        window.db = getFirestore(app);
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.signOut = signOut;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.query = query;
-        window.orderBy = orderBy;
-        window.onSnapshot = onSnapshot;
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     
     <style>
         :root {
@@ -61,549 +37,183 @@
             --grupo-hexa-fundo: #F0FFF9;
             --grupo-hexa-borda: #00B48C;
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, #F2F5FA 0%, #E8EEFA 100%);
-            color: var(--texto);
-            min-height: 100vh;
-            padding: 16px 12px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: linear-gradient(135deg, #F2F5FA 0%, #E8EEFA 100%); color: var(--texto); min-height: 100vh; padding: 16px 12px; }
 
         /* 🚪 TELA DE LOGIN */
         .tela-login {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            padding: 20px;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; padding: 20px;
         }
         .caixa-login {
-            background: var(--branco);
-            padding: 32px 24px;
-            border-radius: 20px;
+            background: var(--branco); padding: 32px 24px; border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
+            width: 100%; max-width: 360px; text-align: center;
         }
-        .caixa-login h1 {
-            color: var(--primaria);
-            font-size: 22px;
-            margin-bottom: 6px;
-        }
-        .caixa-login p {
-            color: var(--texto-secundario);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
+        .caixa-login h1 { color: var(--primaria); font-size: 22px; margin-bottom: 6px; }
+        .caixa-login p { color: var(--texto-secundario); font-size: 14px; margin-bottom: 24px; }
         .caixa-login input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--borda-clara);
-            border-radius: 10px;
-            font-size: 15px;
-            margin-bottom: 14px;
+            width: 100%; padding: 14px 16px; border: 2px solid var(--borda-clara);
+            border-radius: 10px; font-size: 15px; margin-bottom: 14px;
         }
-        .caixa-login input:focus {
-            outline: none;
-            border-color: var(--primaria);
-        }
+        .caixa-login input:focus { outline: none; border-color: var(--primaria); }
         .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--primaria), var(--primaria-escura));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
+            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primaria), var(--primaria-escura));
+            color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer;
             margin-top: 8px;
         }
-        .erro-login {
-            color: var(--erro);
-            font-size: 13px;
-            margin-top: 12px;
-            display: none;
-        }
-        .carregando {
-            color: var(--primaria);
-            font-size: 14px;
-            margin-top: 12px;
-            display: none;
-        }
+        .erro-login { color: var(--erro); font-size: 13px; margin-top: 12px; display: none; }
+        .carregando { color: var(--primaria); font-size: 14px; margin-top: 12px; display: none; }
 
         .cabecalho-topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
         }
         .btn-sair {
-            background: var(--erro-claro);
-            color: var(--erro);
-            border: 1px solid #FFCCC7;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+            background: var(--erro-claro); color: var(--erro); border: 1px solid #FFCCC7;
+            padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
         }
-        .usuario-info {
-            font-size: 13px;
-            color: var(--primaria);
-            font-weight: 500;
-        }
+        .usuario-info { font-size: 13px; color: var(--primaria); font-weight: 500; }
         
         .modal-senha {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9998;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); display: none;
+            align-items: center; justify-content: center; z-index: 9998; padding: 20px;
         }
-        .modal-senha.visivel {
-            display: flex;
-        }
+        .modal-senha.visivel { display: flex; }
         .caixa-modal {
-            background: var(--branco);
-            padding: 28px 24px;
-            border-radius: 16px;
+            background: var(--branco); padding: 28px 24px; border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 340px;
-            text-align: center;
+            width: 100%; max-width: 340px; text-align: center;
         }
-        .caixa-modal h3 {
-            color: var(--erro);
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-        .caixa-modal p {
-            color: var(--texto-secundario);
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
+        .caixa-modal h3 { color: var(--erro); font-size: 18px; margin-bottom: 8px; }
+        .caixa-modal p { color: var(--texto-secundario); font-size: 14px; margin-bottom: 16px; }
         .caixa-modal input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid var(--borda-clara);
-            border-radius: 10px;
-            font-size: 16px;
-            text-align: center;
-            letter-spacing: 6px;
-            margin-bottom: 14px;
+            width: 100%; padding: 12px 14px; border: 2px solid var(--borda-clara);
+            border-radius: 10px; font-size: 16px; text-align: center;
+            letter-spacing: 6px; margin-bottom: 14px;
         }
-        .caixa-modal input:focus {
-            outline: none;
-            border-color: var(--erro);
-        }
-        .botoes-modal {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
+        .caixa-modal input:focus { outline: none; border-color: var(--erro); }
+        .botoes-modal { display: flex; gap: 10px; margin-top: 8px; }
         .botoes-modal button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
+            flex: 1; padding: 10px; border-radius: 10px; font-size: 14px;
+            font-weight: 600; cursor: pointer; border: none;
         }
-        .btn-cancelar {
-            background: var(--borda-clara);
-            color: var(--texto);
-        }
-        .btn-confirmar {
-            background: var(--erro);
-            color: white;
-        }
-        .erro-modal {
-            color: var(--erro);
-            font-size: 12px;
-            margin-top: 8px;
-            display: none;
-        }
-        .erro-modal.visivel {
-            display: block;
-        }
-        .pesquisa-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            max-width: 280px;
-        }
+        .btn-cancelar { background: var(--borda-clara); color: var(--texto); }
+        .btn-confirmar { background: var(--erro); color: white; }
+        .erro-modal { color: var(--erro); font-size: 12px; margin-top: 8px; display: none; }
+        .erro-modal.visivel { display: block; }
+        .pesquisa-container { display: flex; align-items: center; gap: 8px; flex: 1; max-width: 280px; }
         .pesquisa-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1.5px solid var(--borda-clara);
-            border-radius: 8px;
-            font-size: 13px;
-            background: var(--branco);
-            transition: all 0.2s ease;
+            flex: 1; padding: 8px 12px; border: 1.5px solid var(--borda-clara);
+            border-radius: 8px; font-size: 13px; background: var(--branco);
         }
-        .pesquisa-input:focus {
-            outline: none;
-            border-color: var(--primaria);
-            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.08);
-        }
+        .pesquisa-input:focus { outline: none; border-color: var(--primaria); }
         .btn-limpar-pesquisa {
-            padding: 8px 10px;
-            background: var(--borda-clara);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            color: var(--texto-secundario);
-            transition: all 0.2s;
+            padding: 8px 10px; background: var(--borda-clara); border: none;
+            border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--texto-secundario);
         }
-        .btn-limpar-pesquisa:hover {
-            background: #D0D3D9;
-        }
-        .resultado-pesquisa {
-            font-size: 12px;
-            color: var(--primaria);
-            margin-top: 6px;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .conteudo-principal {
-            display: none;
-        }
+        .resultado-pesquisa { font-size: 12px; color: var(--primaria); margin-top: 6px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .conteudo-principal { display: none; }
         header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding: 24px 20px;
-            background: var(--branco);
-            border-radius: 16px;
-            box-shadow: var(--sombra);
+            text-align: center; margin-bottom: 24px; padding: 24px 20px;
+            background: var(--branco); border-radius: 16px; box-shadow: var(--sombra);
             border: 1px solid var(--primaria-clara);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
         }
-        header h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primaria);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: -0.3px;
-        }
-        header p {
-            color: var(--texto-secundario);
-            font-size: 14px;
-        }
-        .status-salvamento {
-            font-size: 12px;
-            color: var(--sucesso);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: 8px;
-            transition: opacity 0.3s;
-        }
-        .status-salvamento.salvando {
-            color: var(--aviso);
-        }
+        header h1 { font-size: 24px; font-weight: 800; color: var(--primaria); margin-bottom: 6px; }
+        header p { color: var(--texto-secundario); font-size: 14px; }
         .card {
-            background: var(--branco);
-            border-radius: 16px;
-            box-shadow: var(--sombra-leve);
-            padding: 22px;
-            margin-bottom: 20px;
-            border: 1px solid var(--borda-clara);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .card:hover {
-            box-shadow: var(--sombra);
+            background: var(--branco); border-radius: 16px; box-shadow: var(--sombra-leve);
+            padding: 22px; margin-bottom: 20px; border: 1px solid var(--borda-clara);
         }
         .card-titulo {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--texto);
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primaria-clara);
-            flex-wrap: wrap;
-            gap: 12px;
+            font-size: 17px; font-weight: 700; color: var(--texto); margin-bottom: 18px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding-bottom: 10px; border-bottom: 2px solid var(--primaria-clara);
+            flex-wrap: wrap; gap: 12px;
         }
-        .grupo-modelos {
-            margin-bottom: 16px;
-        }
-        .grupo-titulo {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .grupo-retangular .grupo-titulo {
-            color: var(--primaria);
-        }
-        .grupo-redondo .grupo-titulo {
-            color: var(--grupo-redondo-borda);
-        }
-        .grupo-hexagonal .grupo-titulo {
-            color: var(--grupo-hexa-borda);
-        }
-        .modelos-lista {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+        .grupo-modelos { margin-bottom: 16px; }
+        .grupo-titulo { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .grupo-retangular .grupo-titulo { color: var(--primaria); }
+        .grupo-redondo .grupo-titulo { color: var(--grupo-redondo-borda); }
+        .grupo-hexagonal .grupo-titulo { color: var(--grupo-hexa-borda); }
+        .modelos-lista { display: flex; flex-wrap: wrap; gap: 8px; }
         .modelo-tag {
-            padding: 7px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
             border: 1px solid transparent;
         }
-        .modelo-tag:hover {
-            transform: translateY(-1px);
-        }
-        .grupo-retangular .modelo-tag {
-            background: var(--primaria-clara);
-            color: var(--primaria-escura);
-        }
-        .grupo-retangular .modelo-tag:hover {
-            border-color: var(--primaria);
-        }
-        .grupo-redondo .modelo-tag {
-            background: var(--grupo-redondo-fundo);
-            color: #9E4A00;
-        }
-        .grupo-redondo .modelo-tag:hover {
-            border-color: var(--grupo-redondo-borda);
-        }
-        .grupo-hexagonal .modelo-tag {
-            background: var(--grupo-hexa-fundo);
-            color: #007760;
-        }
-        .grupo-hexagonal .modelo-tag:hover {
-            border-color: var(--grupo-hexa-borda);
-        }
+        .modelo-tag:hover { transform: translateY(-1px); }
+        .grupo-retangular .modelo-tag { background: var(--primaria-clara); color: var(--primaria-escura); }
+        .grupo-retangular .modelo-tag:hover { border-color: var(--primaria); }
+        .grupo-redondo .modelo-tag { background: var(--grupo-redondo-fundo); color: #9E4A00; }
+        .grupo-redondo .modelo-tag:hover { border-color: var(--grupo-redondo-borda); }
+        .grupo-hexagonal .modelo-tag { background: var(--grupo-hexa-fundo); color: #007760; }
+        .grupo-hexagonal .modelo-tag:hover { border-color: var(--grupo-hexa-borda); }
         .modelo-tag.destaque-m-livre {
-            background: var(--destaque-fundo);
-            color: #008021;
+            background: var(--destaque-fundo); color: #008021;
             border-color: var(--destaque-borda);
-            box-shadow: 0 0 0 1px var(--destaque-borda);
         }
-        .grupo-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px 20px;
-        }
-        .campo {
-            position: relative;
-        }
-        .campo label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--texto-secundario);
-            margin-bottom: 6px;
-        }
+        .grupo-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px 20px; }
+        .campo { position: relative; }
+        .campo label { display: block; font-size: 13px; font-weight: 600; color: var(--texto-secundario); margin-bottom: 6px; }
         input, select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid var(--borda);
-            border-radius: 10px;
-            font-size: 14px;
-            background: var(--branco);
-            transition: all 0.2s ease;
+            width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda);
+            border-radius: 10px; font-size: 14px; background: var(--branco);
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primaria);
-            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
-        }
-        .aviso-minimo {
-            font-size: 12px;
-            color: var(--aviso);
-            margin-top: 4px;
-            display: none;
-            font-weight: 500;
-        }
-        .aviso-minimo.visivel {
-            display: block;
-        }
+        input:focus, select:focus { outline: none; border-color: var(--primaria); }
+        .aviso-minimo { font-size: 12px; color: var(--aviso); margin-top: 4px; display: none; }
+        .aviso-minimo.visivel { display: block; }
         .sugestoes {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--branco);
-            border: 1.5px solid var(--primaria);
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
-            box-shadow: 0 8px 20px rgba(22, 93, 255, 0.15);
+            position: absolute; top: 100%; left: 0; right: 0; background: var(--branco);
+            border: 1.5px solid var(--primaria); border-top: none;
+            border-radius: 0 0 10px 10px; max-height: 200px; overflow-y: auto;
+            z-index: 50; display: none;
         }
-        .sugestoes.visivel {
-            display: block;
-        }
-        .sugestao-item {
-            padding: 10px 14px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.15s ease;
-        }
-        .sugestao-item:hover {
-            background: var(--primaria-clara);
-        }
+        .sugestoes.visivel { display: block; }
+        .sugestao-item { padding: 10px 14px; cursor: pointer; font-size: 14px; }
+        .sugestao-item:hover { background: var(--primaria-clara); }
         .btn {
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 10px 18px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+            border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
+            cursor: pointer; padding: 10px 18px; display: inline-flex;
+            align-items: center; gap: 8px;
         }
         .btn-principal {
             background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(22, 93, 255, 0.25);
-        }
-        .btn-principal:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(22, 93, 255, 0.35);
         }
         .btn-sucesso {
             background: linear-gradient(135deg, var(--sucesso) 0%, #009a23 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(0, 180, 42, 0.25);
         }
-        .btn-sucesso:hover {
-            transform: translateY(-1px);
-        }
-        .btn-secundario {
-            background: var(--primaria-clara);
-            color: var(--primaria-escura);
-            border: 1px solid #B8D8FF;
-        }
-        .btn-secundario:hover {
-            background: #D4E8FF;
-        }
-        .btn-perigo {
-            background: var(--erro-claro);
-            color: var(--erro);
-            border: 1px solid #FFCCC7;
-        }
-        .btn-perigo:hover {
-            background: #FFD9D9;
-        }
-        .tabela-wrapper {
-            overflow-x: auto;
-            border: 1px solid var(--borda-clara);
-            border-radius: 12px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            background: var(--branco);
-        }
-        table th, table td {
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid var(--borda-clara);
-        }
-        table th {
-            background: linear-gradient(to bottom, #F7F9FC, #EFF3F9);
-            font-weight: 700;
-            color: var(--texto);
-            font-size: 12.5px;
-        }
-        table tr:hover td {
-            background: #F7F9FC;
-        }
-        table tr:last-child td {
-            border-bottom: none;
-        }
+        .btn-perigo { background: var(--erro-claro); color: var(--erro); border: 1px solid #FFCCC7; }
+        .tabela-wrapper { overflow-x: auto; border: 1px solid var(--borda-clara); border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--branco); }
+        table th, table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--borda-clara); }
+        table th { background: #F7F9FC; font-weight: 700; color: var(--texto); }
         .rodape-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid var(--borda-clara);
-            flex-wrap: wrap;
-            gap: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--borda-clara);
+            flex-wrap: wrap; gap: 12px;
         }
-        .total-geral {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--sucesso);
-        }
+        .total-geral { font-size: 16px; font-weight: 800; color: var(--sucesso); }
         .mensagem {
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-top: 12px;
-            font-size: 13px;
-            display: none;
-            font-weight: 500;
+            padding: 12px 16px; border-radius: 10px; margin-top: 12px;
+            font-size: 13px; display: none; font-weight: 500;
         }
         .mensagem.sucesso { background: var(--sucesso-claro); color: #008021; display: block; border: 1px solid #B3FFB9; }
         .mensagem.aviso { background: var(--aviso-claro); color: #9E5E00; display: block; border: 1px solid #FFE2A8; }
         .mensagem.erro { background: var(--erro-claro); color: #C53030; display: block; border: 1px solid #FFCCC7; }
         #subtotalCalculado {
-            padding: 12px 16px !important;
-            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFE6 100%) !important;
-            border-radius: 10px !important;
-            font-weight: 700;
-            color: #008021;
-            font-size: 15px;
-            border: 1px solid #B3FFB9;
+            padding: 12px 16px !important; background: #F0FFF4; border-radius: 10px !important;
+            font-weight: 700; color: #008021; font-size: 15px; border: 1px solid #B3FFB9;
         }
         @media (max-width: 600px) {
             .grupo-form { grid-template-columns: 1fr; }
             .rodape-card { flex-direction: column; align-items: stretch; }
-            .rodape-card > div:last-child { justify-content: center; display: flex; flex-wrap: wrap; }
-            .card-titulo { flex-direction: column; align-items: flex-start; }
-            .pesquisa-container { max-width: 100%; width: 100%; }
         }
     </style>
 </head>
@@ -622,7 +232,7 @@
     </div>
 </div>
 
-<!-- ⚠️ MODAL DE SENHA PARA APAGAR TUDO -->
+<!-- ⚠️ MODAL DE SENHA PARA APAGAR -->
 <div class="modal-senha" id="modalSenhaApagar">
     <div class="caixa-modal">
         <h3>⚠️ Atenção!</h3>
@@ -632,7 +242,7 @@
             <button class="btn-cancelar" onclick="fecharModalApagar()">❌ Cancelar</button>
             <button class="btn-confirmar" onclick="verificarSenhaApagar()">✅ Confirmar</button>
         </div>
-        <div class="erro-modal" id="erroModalApagar">❌ Senha incorreta. Operação cancelada.</div>
+        <div class="erro-modal" id="erroModalApagar">❌ Senha incorreta.</div>
     </div>
 </div>
 
@@ -652,25 +262,17 @@
         <section class="card">
             <div class="card-titulo">
                 <span>📋 Modelos de Estribo</span>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <span class="status-salvamento" id="statusSalvamento">✅ Modelos prontos</span>
-                    <button class="btn btn-secundario" style="padding: 6px 12px; font-size: 12px;" onclick="alternarModoEdicao()" id="btnModoEdicao">✏️ Gerenciar</button>
-                </div>
+                <button class="btn btn-principal" style="padding: 6px 12px; font-size: 12px;" onclick="alternarModoEdicao()" id="btnModoEdicao">✏️ Gerenciar</button>
             </div>
 
-            <!-- GRUPO RETANGULARES -->
             <div class="grupo-modelos grupo-retangular">
                 <div class="grupo-titulo">📐 Retangulares</div>
                 <div class="modelos-lista" id="listaRetangulares"></div>
             </div>
-
-            <!-- GRUPO REDONDOS -->
             <div class="grupo-modelos grupo-redondo">
                 <div class="grupo-titulo">⭕ Redondos</div>
                 <div class="modelos-lista" id="listaRedondos"></div>
             </div>
-
-            <!-- GRUPO HEXAGONAIS -->
             <div class="grupo-modelos grupo-hexagonal">
                 <div class="grupo-titulo">🔷 Hexagonais</div>
                 <div class="modelos-lista" id="listaHexagonais"></div>
@@ -692,11 +294,11 @@
                 </div>
                 <div class="campo">
                     <label>📐 Estribo (Modelo)</label>
-                    <input type="text" id="estribo" placeholder="Clique num modelo acima..." oninput="filtrarSugestoes()" onfocus="mostrarSugestoes()">
+                    <input type="text" id="estribo" placeholder="Clique num modelo acima..." oninput="filtrarSugestoes()">
                     <div class="sugestoes" id="sugestoesEstribo"></div>
                 </div>
                 <div class="campo">
-                    <label>🔩 Bitola (Material)</label>
+                    <label>🔩 Bitola (mm)</label>
                     <select id="material">
                         <option value="">Selecione...</option>
                         <option value="3.8">Ø 3,8 mm</option>
@@ -724,12 +326,12 @@
                     <input type="number" id="totalPacotes" placeholder="0" min="1" oninput="calcularSubtotal()">
                 </div>
                 <div class="campo">
-                    <label>✅ Subtotal Calculado</label>
+                    <label>✅ Subtotal</label>
                     <div id="subtotalCalculado">0 peças</div>
                 </div>
                 <div class="campo">
                     <label>👤 Responsável</label>
-                    <input type="text" id="responsavel" placeholder="Nome do operador">
+                    <input type="text" id="responsavel" placeholder="Nome">
                 </div>
             </div>
             <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
@@ -743,11 +345,9 @@
             <div class="card-titulo">
                 <span>📊 Produções Registradas</span>
                 <div class="pesquisa-container">
-                    <input type="text" class="pesquisa-input" id="pesquisaResponsavel" placeholder="🔍 Pesquisar responsável..." oninput="filtrarPorResponsavel()">
-                    <button class="btn-limpar-pesquisa" onclick="limparPesquisa()" title="Limpar">✕</button>
+                    <input type="text" class="pesquisa-input" id="pesquisaResponsavel" placeholder="🔍 Pesquisar..." oninput="filtrarPorResponsavel()">
                 </div>
             </div>
-            <div id="infoPesquisa" class="resultado-pesquisa" style="display: none;"></div>
             <div class="tabela-wrapper">
                 <table>
                     <thead>
@@ -760,7 +360,6 @@
                             <th>Pacotes</th>
                             <th>Total Peças</th>
                             <th>Responsável</th>
-                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="corpoTabela"></tbody>
@@ -768,32 +367,47 @@
             </div>
             <div class="rodape-card">
                 <div class="total-geral" id="totalGeral">Total de Peças: 0</div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="btn btn-perigo" onclick="abrirModalApagar()">🗑️ Apagar Tudo</button>
-                </div>
+                <button class="btn btn-perigo" onclick="abrirModalApagar()">🗑️ Apagar Tudo</button>
             </div>
         </section>
     </div>
 </div>
 
-<script type="module">
+<script>
+// =====================================================
+// 🔧 SUAS CHAVES DO FIREBASE — JÁ ESTÃO AQUI!
+// =====================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
+  authDomain: "controle---estoque.firebaseapp.com",
+  databaseURL: "https://controle---estoque-default-rtdb.firebaseio.com",
+  projectId: "controle---estoque",
+  storageBucket: "controle---estoque.firebasestorage.app",
+  messagingSenderId: "10157072339",
+  appId: "1:10157072339:web:37a7f7732e4a9224c2d926"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 const SENHA_APAGAR = '710150';
 let filtroAtual = '';
 let listaProducoes = [];
 let unsubscribe = null;
 
-// 📋 MODELOS — TAL COMO ESTAVA NO SEU CÓDIGO ORIGINAL
+// 📋 MODELOS — EXATAMENTE COMO VOCÊ TINHA
 const RETANGULARES = ["7x14", "7x17", "7x27", "9x15", "9x20", "9x25", "12x20", "12x25", "15x15", "15x20", "15x25"];
 const REDONDOS = ["Red 15", "Red 20", "Red 25", "Red 30"];
 const HEXAGONAIS = ["Hexa 15", "Hexa 20", "Hexa 25", "Hexa 30"];
 const MODELOS_PADRAO = [...RETANGULARES, ...REDONDOS, ...HEXAGONAIS];
 const MODELOS_DESTAQUE_MLIVRE = ["7x14", "7x17", "7x27", "9x15", "9x20", "15x15"];
 
-let modelos = [...MODELOS_PADRAO]; // Modelos ficam salvos localmente
+let modelos = [...MODELOS_PADRAO];
 let modoEdicao = false;
 
-// 🔐 LOGIN — Verificar se usuário já está conectado
-window.onAuthStateChanged(window.auth, (usuario) => {
+// 🔐 LOGIN
+auth.onAuthStateChanged(usuario => {
     if (usuario) {
         mostrarConteudo(usuario);
         carregarDados();
@@ -802,20 +416,20 @@ window.onAuthStateChanged(window.auth, (usuario) => {
     }
 });
 
-window.mostrarLogin = function() {
+function mostrarLogin() {
     document.getElementById('telaLogin').style.display = 'flex';
     document.getElementById('conteudoPrincipal').style.display = 'none';
-};
+}
 
-window.mostrarConteudo = function(usuario) {
+function mostrarConteudo(usuario) {
     document.getElementById('telaLogin').style.display = 'none';
     document.getElementById('conteudoPrincipal').style.display = 'block';
     document.getElementById('usuarioLogado').textContent = '✅ Conectado: ' + usuario.email;
     document.getElementById('data').value = new Date().toISOString().split('T')[0];
     renderizarModelos();
-};
+}
 
-window.fazerLogin = async function() {
+async function fazerLogin() {
     const email = document.getElementById('campoEmail').value;
     const senha = document.getElementById('campoSenha').value;
     const erroEl = document.getElementById('erroLogin');
@@ -825,85 +439,63 @@ window.fazerLogin = async function() {
     carregando.style.display = 'block';
     
     try {
-        await window.signInWithEmailAndPassword(window.auth, email, senha);
+        await auth.signInWithEmailAndPassword(email, senha);
     } catch (erro) {
         carregando.style.display = 'none';
         erroEl.style.display = 'block';
         document.getElementById('campoSenha').value = '';
     }
-};
+}
 
-window.fazerLogout = async function() {
+async function fazerLogout() {
     if (confirm('Tem certeza que deseja sair?')) {
         if (unsubscribe) unsubscribe();
-        await window.signOut(window.auth);
+        await auth.signOut();
     }
-};
+}
 
-// ⚠️ MODAL DE SENHA PARA APAGAR
-window.abrirModalApagar = function() {
+// ⚠️ MODAL DE SENHA
+function abrirModalApagar() {
     document.getElementById('modalSenhaApagar').classList.add('visivel');
     document.getElementById('senhaApagar').value = '';
     document.getElementById('erroModalApagar').classList.remove('visivel');
-};
+}
 
-window.fecharModalApagar = function() {
+function fecharModalApagar() {
     document.getElementById('modalSenhaApagar').classList.remove('visivel');
-    document.getElementById('senhaApagar').value = '';
-    document.getElementById('erroModalApagar').classList.remove('visivel');
-};
+}
 
-window.verificarSenhaApagar = async function() {
-    const senhaDigitada = document.getElementById('senhaApagar').value;
-    const erroModal = document.getElementById('erroModalApagar');
-    
-    if (senhaDigitada === SENHA_APAGAR) {
+function verificarSenhaApagar() {
+    const senha = document.getElementById('senhaApagar').value;
+    if (senha === SENHA_APAGAR) {
         fecharModalApagar();
-        if (confirm('⚠️ Tem certeza absoluta? Isso apagará TODOS os dados e não tem volta!')) {
-            // Apagar da nuvem — não é simples, avisar usuário
-            exibirMensagem('mensagem', 'ℹ️ Para apagar todos os dados, entre em contato ou apague um por um na tabela', 'aviso');
-        }
+        alert('✅ Senha correta. Para apagar registros, exclua um por um na tabela.');
     } else {
-        erroModal.classList.add('visivel');
-        document.getElementById('senhaApagar').value = '';
+        document.getElementById('erroModalApagar').classList.add('visivel');
     }
-};
-
-// 🔍 PESQUISA
-window.filtrarPorResponsavel = function() {
-    filtroAtual = document.getElementById('pesquisaResponsavel').value.trim().toLowerCase();
-    renderizarTabela();
-};
-
-window.limparPesquisa = function() {
-    document.getElementById('pesquisaResponsavel').value = '';
-    filtroAtual = '';
-    renderizarTabela();
-};
+}
 
 // 📐 FUNÇÕES AUXILIARES
 function extrairNumeros(t) {
     if (!t) return [0, 0];
     const match = t.match(/(\d+)x(\d+)/);
     if (match) return [parseInt(match[1]) || 0, parseInt(match[2]) || 0];
-    const num = t.match(/\d+/);
-    return num ? [parseInt(num[0]) || 0, 0] : [0, 0];
+    return [0, 0];
 }
 
-function ordenarModelos(l) {
-    return l.slice().sort((a, b) => {
+function ordenarModelos(lista) {
+    return lista.slice().sort((a, b) => {
         const [a1, a2] = extrairNumeros(a);
         const [b1, b2] = extrairNumeros(b);
         if (a1 !== b1) return a1 - b1;
-        if (a2 !== b2) return a2 - b2;
-        return a.localeCompare(b);
+        return a2 - b2;
     });
 }
 
 function formatarData(d) {
     if (!d) return '-';
-    const [a, m, di] = d.split('-');
-    return `${di}/${m}/${a}`;
+    const [ano, mes, dia] = d.split('-');
+    return `${dia}/${mes}/${ano}`;
 }
 
 function formatarNumero(n) {
@@ -912,41 +504,39 @@ function formatarNumero(n) {
 
 function exibirMensagem(id, texto, tipo = 'sucesso') {
     const el = document.getElementById(id);
-    if (!el) return;
     el.className = `mensagem ${tipo}`;
     el.textContent = texto;
     setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
 // 📐 MODELOS
-window.alternarModoEdicao = function() {
+function alternarModoEdicao() {
     modoEdicao = !modoEdicao;
     document.getElementById('btnModoEdicao').textContent = modoEdicao ? '✓ Concluir' : '✏️ Gerenciar';
     renderizarModelos();
-};
+}
 
-window.adicionarModelo = function() {
+function adicionarModelo() {
     const inp = document.getElementById('novoModelo');
     const v = inp.value.trim();
     if (!v) return;
-    if (modelos.includes(v)) return exibirMensagem('msgModelo', '⚠️ Modelo já cadastrado', 'aviso');
+    if (modelos.includes(v)) return exibirMensagem('msgModelo', '⚠️ Já existe', 'aviso');
     modelos.push(v);
     modelos = ordenarModelos(modelos);
     renderizarModelos();
     inp.value = '';
     exibirMensagem('msgModelo', '✅ Adicionado!', 'sucesso');
-};
+}
 
-window.removerModelo = function(m) {
-    if (confirm(`Excluir modelo "${m}"?`)) {
+function removerModelo(m) {
+    if (confirm(`Excluir "${m}"?`)) {
         modelos = modelos.filter(x => x !== m);
         renderizarModelos();
     }
-};
+}
 
 function renderizarTag(modelo, containerId) {
     const container = document.getElementById(containerId);
-    if (!container) return;
     const t = document.getElementById('tipo').value;
     const isMlivre = t === 'MLIVRE' && MODELOS_DESTAQUE_MLIVRE.includes(modelo);
     
@@ -955,7 +545,7 @@ function renderizarTag(modelo, containerId) {
     tag.innerHTML = `<span>${modelo}</span>`;
     
     if (modoEdicao) {
-        tag.innerHTML += ` <button onclick="removerModelo('${modelo}')" style="background:none;border:none;color:var(--erro);cursor:pointer;font-size:14px;padding:0 4px;">✖</button>`;
+        tag.innerHTML += ` <button onclick="removerModelo('${modelo}')" style="background:none;border:none;color:var(--erro);cursor:pointer;">✖</button>`;
     } else {
         tag.onclick = () => { document.getElementById('estribo').value = modelo; };
     }
@@ -969,15 +559,13 @@ function renderizarModelos() {
     
     ordenarModelos(modelos.filter(m => RETANGULARES.includes(m)))
         .forEach(m => renderizarTag(m, 'listaRetangulares'));
-    
     ordenarModelos(modelos.filter(m => REDONDOS.includes(m)))
         .forEach(m => renderizarTag(m, 'listaRedondos'));
-    
     ordenarModelos(modelos.filter(m => HEXAGONAIS.includes(m)))
         .forEach(m => renderizarTag(m, 'listaHexagonais'));
 }
 
-window.atualizarTipoRegras = function() {
+function atualizarTipoRegras() {
     const t = document.getElementById('tipo').value;
     const q = document.getElementById('qtdPacote');
     const av = document.getElementById('avisoMinimo');
@@ -992,17 +580,16 @@ window.atualizarTipoRegras = function() {
     }
     calcularSubtotal();
     renderizarModelos();
-};
+}
 
-window.calcularSubtotal = function() {
+function calcularSubtotal() {
     const q = parseInt(document.getElementById('qtdPacote').value) || 0;
     const p = parseInt(document.getElementById('totalPacotes').value) || 0;
     document.getElementById('subtotalCalculado').textContent = `${formatarNumero(q * p)} peças`;
-};
+}
 
-window.mostrarSugestoes = function() {
+function mostrarSugestoes() {
     const div = document.getElementById('sugestoesEstribo');
-    if (!div) return;
     div.innerHTML = '';
     ordenarModelos(modelos).forEach(m => {
         const item = document.createElement('div');
@@ -1012,12 +599,11 @@ window.mostrarSugestoes = function() {
         div.appendChild(item);
     });
     div.classList.add('visivel');
-};
+}
 
-window.filtrarSugestoes = function() {
+function filtrarSugestoes() {
     const v = document.getElementById('estribo').value.toLowerCase();
     const div = document.getElementById('sugestoesEstribo');
-    if (!div) return;
     div.innerHTML = '';
     ordenarModelos(modelos).filter(m => m.toLowerCase().includes(v)).forEach(m => {
         const item = document.createElement('div');
@@ -1027,19 +613,18 @@ window.filtrarSugestoes = function() {
         div.appendChild(item);
     });
     div.classList.add('visivel');
-};
+}
 
 document.addEventListener('click', e => {
-    const campoEstribo = document.querySelector('.campo');
-    if (campoEstribo && !campoEstribo.contains(e.target)) {
-        const div = document.getElementById('sugestoesEstribo');
-        if (div) div.classList.remove('visivel');
+    const campo = document.querySelector('.campo');
+    if (campo && !campo.contains(e.target)) {
+        document.getElementById('sugestoesEstribo').classList.remove('visivel');
     }
 });
 
-// ☁️ FIREBASE — Salvar e Carregar Produções
-window.adicionarRegistro = async function() {
-    const usuario = window.auth.currentUser;
+// ☁️ SALVAR E CARREGAR DADOS NO FIREBASE
+async function adicionarRegistro() {
+    const usuario = auth.currentUser;
     if (!usuario) return;
     
     const dados = {
@@ -1055,20 +640,20 @@ window.adicionarRegistro = async function() {
     };
     
     if (!dados.data || !dados.estribo || !dados.material || !dados.tipo || !dados.qtdPacote || !dados.totalPacotes || !dados.responsavel) {
-        return exibirMensagem('mensagem', '⚠️ Preencha todos os campos obrigatórios', 'aviso');
+        return exibirMensagem('mensagem', '⚠️ Preencha todos os campos', 'aviso');
     }
     if (dados.tipo === 'MLIVRE' && dados.qtdPacote < 100) {
-        return exibirMensagem('mensagem', '⚠️ Mínimo de 100 peças por pacote para M. LIVRE', 'aviso');
+        return exibirMensagem('mensagem', '⚠️ Mínimo 100 p/ M. LIVRE', 'aviso');
     }
     
     try {
-        await window.addDoc(window.collection(window.db, 'producoes'), dados);
-        exibirMensagem('mensagem', '✅ Produção salva na nuvem com sucesso! ☁️', 'sucesso');
+        await db.collection('producoes').add(dados);
+        exibirMensagem('mensagem', '✅ Salvo na nuvem! ☁️', 'sucesso');
         limparCampos();
     } catch (erro) {
-        exibirMensagem('mensagem', '❌ Erro ao salvar: ' + erro.message, 'erro');
+        exibirMensagem('mensagem', '❌ Erro: ' + erro.message, 'erro');
     }
-};
+}
 
 function limparCampos() {
     document.getElementById('estribo').value = '';
@@ -1080,35 +665,76 @@ function limparCampos() {
     calcularSubtotal();
 }
 
-window.carregarDados = function() {
-    const q = window.query(window.collection(window.db, 'producoes'), window.orderBy('data', 'desc'));
-    unsubscribe = window.onSnapshot(q, (snapshot) => {
+function carregarDados() {
+    const q = db.collection('producoes').orderBy('data', 'desc');
+    unsubscribe = q.onSnapshot(snapshot => {
         listaProducoes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderizarTabela();
     });
-};
+}
 
-window.excluirRegistro = function(id) {
-    alert('ℹ️ Para excluir, apague diretamente no Firebase Console ou entre em contato');
-};
+function filtrarPorResponsavel() {
+    filtroAtual = document.getElementById('pesquisaResponsavel').value.trim().toLowerCase();
+    renderizarTabela();
+}
 
-window.renderizarTabela = function() {
+function renderizarTabela() {
     const tb = document.getElementById('corpoTabela');
-    const infoPesquisa = document.getElementById('infoPesquisa');
-    if (!tb) return;
     tb.innerHTML = '';
     
-    let registrosFiltrados = listaProducoes;
+    let dadosFiltrados = listaProducoes;
     if (filtroAtual) {
-        registrosFiltrados = listaProducoes.filter(r => 
+        dadosFiltrados = listaProducoes.filter(r => 
             (r.responsavel || '').toLowerCase().includes(filtroAtual)
         );
-        infoPesquisa.style.display = 'block';
-        infoPesquisa.textContent = `🔍 Mostrando resultados para: "${filtroAtual}" — ${registrosFiltrados.length} registro(s) encontrado(s)`;
-    } else {
-        infoPesquisa.style.display = 'none';
     }
     
-    if (!registrosFiltrados.length) {
-        tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#86909C;padding:32px;font-size:14px;">📭 Nenhum registro encontrado</td></tr>';
-        document.getElementById('totalGeral').textContent = filtro
+    if (!dadosFiltrados.length) {
+        tb.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#86909C;padding:32px;">📭 Nenhum registro</td></tr>';
+        document.getElementById('totalGeral').textContent = 'Total de Peças: 0';
+        return;
+    }
+    
+    let total = 0;
+    dadosFiltrados.forEach(r => {
+        total += r.totalPecas || 0;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${formatarData(r.data)}</strong></td>
+            <td style="font-weight:700;color:var(--primaria);">${r.estribo}</td>
+            <td>Ø ${r.material} mm</td>
+            <td><strong>${r.tipo}</strong></td>
+            <td>${formatarNumero(r.qtdPacote)}</td>
+            <td>${formatarNumero(r.totalPacotes)}</td>
+            <td style="font-weight:700;color:var(--sucesso);">${formatarNumero(r.totalPecas)}</td>
+            <td>${r.responsavel}</td>
+        `;
+        tb.appendChild(tr);
+    });
+    
+    document.getElementById('totalGeral').textContent = `Total de Peças: ${formatarNumero(total)}`;
+}
+
+function exportarExcel() {
+    if (!listaProducoes.length) return alert('Sem dados!');
+    let csv = '\uFEFF"Data";"Modelo";"Bitola";"Tipo";"Pç/Pct";"Pacotes";"Total";"Responsável"\n';
+    listaProducoes.forEach(r => {
+        csv += `"${formatarData(r.data)}";"${r.estribo}";"${r.material} mm";"${r.tipo}";"${r.qtdPacote}";"${r.totalPacotes}";"${r.totalPecas}";"${r.responsavel}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Arames_Brasil_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+}
+
+// Permitir login com Enter
+document.addEventListener('keypress', e => {
+    if (e.key === 'Enter' && document.getElementById('telaLogin').style.display !== 'none') {
+        fazerLogin();
+    }
+});
+</script>
+
+</body>
+</html>
