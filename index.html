@@ -5,6 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🇧🇷 Arames Brasil | Controle de Produção</title>
     <meta name="theme-color" content="#009C3B">
+    
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, orderBy, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
+          authDomain: "controle---estoque.firebaseapp.com",
+          databaseURL: "https://controle---estoque-default-rtdb.firebaseio.com",
+          projectId: "controle---estoque",
+          storageBucket: "controle---estoque.firebasestorage.app",
+          messagingSenderId: "10157072339",
+          appId: "1:10157072339:web:37a7f7732e4a9224c2d926"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        window.auth = getAuth(app);
+        window.db = getFirestore(app);
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.onSnapshot = onSnapshot;
+    </script>
+    
     <style>
         :root {
             --verde-brasil: #009C3B;
@@ -34,138 +64,117 @@
             min-height: 100vh;
             padding: 16px 12px;
         }
-        .modal-senha {
+        
+        /* --- TELA DE LOGIN --- */
+        .tela-login {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 39, 118, 0.6);
-            display: none;
+            background: linear-gradient(135deg, var(--verde-brasil) 0%, var(--azul-brasil) 100%);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9998;
+            z-index: 9999;
             padding: 20px;
         }
-        .modal-senha.visivel {
-            display: flex;
-        }
-        .caixa-modal {
+        .caixa-login {
             background: var(--branco);
-            padding: 28px 24px;
-            border-radius: 16px;
-            border: 3px solid var(--amarelo-brasil);
-            box-shadow: var(--sombra-destaque);
+            padding: 32px 24px;
+            border-radius: 20px;
+            border: 4px solid var(--amarelo-brasil);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 340px;
+            max-width: 380px;
             text-align: center;
         }
-        .caixa-modal h3 {
-            color: var(--azul-brasil);
-            font-size: 18px;
-            margin-bottom: 8px;
+        .caixa-login h1 {
+            color: var(--verde-brasil);
+            font-size: 24px;
+            margin-bottom: 6px;
         }
-        .caixa-modal p {
+        .caixa-login p {
             color: var(--texto-claro);
             font-size: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
         }
-        .caixa-modal input {
+        .caixa-login input {
             width: 100%;
-            padding: 12px 14px;
-            border: 2px solid var(--verde-brasil);
+            padding: 14px 16px;
+            border: 2px solid var(--cinza-borda);
+            border-radius: 10px;
+            font-size: 15px;
+            margin-bottom: 14px;
+            transition: all 0.2s;
+        }
+        .caixa-login input:focus {
+            outline: none;
+            border-color: var(--verde-brasil);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--verde-brasil), var(--verde-escuro));
+            color: white;
+            border: none;
             border-radius: 10px;
             font-size: 16px;
-            text-align: center;
-            letter-spacing: 6px;
-            margin-bottom: 14px;
-        }
-        .caixa-modal input:focus {
-            outline: none;
-            border-color: var(--amarelo-brasil);
-        }
-        .botoes-modal {
-            display: flex;
-            gap: 10px;
+            font-weight: 700;
+            cursor: pointer;
             margin-top: 8px;
+            transition: transform 0.2s;
         }
-        .botoes-modal button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 10px;
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+        .erro-login {
+            color: #D32F2F;
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+        .carregando {
+            color: var(--azul-brasil);
+            font-size: 14px;
+            margin-top: 12px;
+            display: none;
+        }
+        
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .conteudo-principal {
+            display: none;
+        }
+        .cabecalho-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-sair {
+            background: var(--amarelo-claro);
+            color: var(--azul-brasil);
+            border: 2px solid var(--amarelo-brasil);
+            padding: 8px 16px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            border: none;
         }
-        .btn-cancelar {
-            background: var(--amarelo-claro);
-            color: var(--azul-brasil);
-            border: 1px solid var(--amarelo-brasil);
-        }
-        .btn-confirmar {
-            background: var(--verde-brasil);
-            color: white;
-        }
-        .erro-modal {
-            color: #D32F2F;
-            font-size: 12px;
-            margin-top: 8px;
-            display: none;
-        }
-        .erro-modal.visivel {
-            display: block;
-        }
-        .pesquisa-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            max-width: 280px;
-        }
-        .pesquisa-input {
-            flex: 1;
-            padding: 8px 12px;
-            border: 2px solid var(--cinza-borda);
-            border-radius: 8px;
-            font-size: 13px;
-            background: var(--branco);
-            transition: all 0.2s ease;
-        }
-        .pesquisa-input:focus {
-            outline: none;
-            border-color: var(--verde-brasil);
-            box-shadow: 0 0 0 3px rgba(0, 156, 59, 0.1);
-        }
-        .btn-limpar-pesquisa {
-            padding: 8px 10px;
-            background: var(--amarelo-claro);
-            border: 1px solid var(--amarelo-brasil);
-            border-radius: 8px;
-            cursor: pointer;
+        .usuario-info {
             font-size: 13px;
             color: var(--azul-brasil);
-            transition: all 0.2s;
-        }
-        .btn-limpar-pesquisa:hover {
-            background: var(--amarelo-brasil);
-        }
-        .resultado-pesquisa {
-            font-size: 12px;
-            color: var(--verde-escuro);
-            margin-top: 6px;
             font-weight: 500;
         }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        
         header {
             text-align: center;
             margin-bottom: 24px;
             padding: 28px 20px;
             background: linear-gradient(135deg, var(--verde-brasil) 0%, var(--verde-escuro) 100%);
-            border-radius: 2px;
+            border-radius: 12px;
             border: 4px solid var(--amarelo-brasil);
             box-shadow: var(--sombra-destaque);
         }
@@ -177,29 +186,15 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
         header p {
             color: var(--branco);
             font-size: 15px;
             margin-top: 6px;
         }
-        .status-salvamento {
-            font-size: 12px;
-            color: var(--verde-escuro);
-            background: var(--verde-claro);
-            padding: 4px 10px;
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: 8px;
-            transition: opacity 0.3s;
-        }
-        .status-salvamento.salvando {
-            color: #B58900;
-            background: var(--amarelo-claro);
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
         }
         .card {
             background: var(--branco);
@@ -208,118 +203,19 @@
             box-shadow: var(--sombra-suave);
             padding: 22px;
             margin-bottom: 20px;
-            transition: transform 0.2s ease;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--sombra-destaque);
         }
         .card-titulo {
             font-size: 18px;
             font-weight: 800;
             color: var(--azul-brasil);
             margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             padding-bottom: 12px;
             border-bottom: 3px solid var(--amarelo-brasil);
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .grupo-modelos {
-            margin-bottom: 2px;
-            padding: 12px;
-            border-radius: 12px;
-        }
-        .grupo-retangular {
-            background: var(--azul-claro);
-            border-left: 4px solid var(--azul-brasil);
-        }
-        .grupo-redondo {
-            background: var(--amarelo-claro);
-            border-left: 4px solid var(--amarelo-brasil);
-        }
-        .grupo-hexagonal {
-            background: var(--verde-claro);
-            border-left: 4px solid var(--verde-brasil);
-        }
-        .grupo-titulo {
-            font-size: 15px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .grupo-retangular .grupo-titulo {
-            color: var(--azul-brasil);
-        }
-        .grupo-redondo .grupo-titulo {
-            color: #B58900;
-        }
-        .grupo-hexagonal .grupo-titulo {
-            color: var(--verde-escuro);
-        }
-        .modelos-lista {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .modelo-tag {
-            padding: 8px 16px;
-            border-radius: 24px;
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            border: 2px solid transparent;
-        }
-        .modelo-tag:hover {
-            transform: translateY(-2px);
-        }
-        .grupo-retangular .modelo-tag {
-            background: var(--branco);
-            color: var(--azul-brasil);
-            border-color: var(--azul-brasil);
-        }
-        .grupo-retangular .modelo-tag:hover {
-            background: var(--azul-brasil);
-            color: var(--branco);
-        }
-        .grupo-redondo .modelo-tag {
-            background: var(--branco);
-            color: #B58900;
-            border-color: var(--amarelo-brasil);
-        }
-        .grupo-redondo .modelo-tag:hover {
-            background: var(--amarelo-brasil);
-            color: var(--azul-brasil);
-        }
-        .grupo-hexagonal .modelo-tag {
-            background: var(--branco);
-            color: var(--verde-escuro);
-            border-color: var(--verde-brasil);
-        }
-        .grupo-hexagonal .modelo-tag:hover {
-            background: var(--verde-brasil);
-            color: var(--branco);
-        }
-        .modelo-tag.destaque-m-livre {
-            background: linear-gradient(135deg, var(--verde-brasil), var(--verde-escuro));
-            color: white;
-            border-color: var(--verde-escuro);
         }
         .grupo-form {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 16px 20px;
-        }
-        .campo {
-            position: relative;
         }
         .campo label {
             display: block;
@@ -335,49 +231,10 @@
             border-radius: 10px;
             font-size: 14px;
             background: var(--branco);
-            transition: all 0.2s ease;
         }
         input:focus, select:focus {
             outline: none;
             border-color: var(--verde-brasil);
-            box-shadow: 0 0 0 3px rgba(0, 156, 59, 0.1);
-        }
-        .aviso-minimo {
-            font-size: 12px;
-            color: #B58900;
-            margin-top: 4px;
-            display: none;
-            font-weight: 600;
-        }
-        .aviso-minimo.visivel {
-            display: block;
-        }
-        .sugestoes {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--branco);
-            border: 2px solid var(--verde-brasil);
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 50;
-            display: none;
-            box-shadow: 0 8px 20px rgba(0, 156, 59, 0.15);
-        }
-        .sugestoes.visivel {
-            display: block;
-        }
-        .sugestao-item {
-            padding: 11px 14px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.15s ease;
-        }
-        .sugestao-item:hover {
-            background: var(--verde-claro);
         }
         .btn {
             border: none;
@@ -394,37 +251,10 @@
         .btn-principal {
             background: linear-gradient(135deg, var(--verde-brasil) 0%, var(--verde-escuro) 100%);
             color: white;
-            box-shadow: 0 3px 10px rgba(0, 156, 59, 0.25);
-        }
-        .btn-principal:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 156, 59, 0.35);
         }
         .btn-sucesso {
             background: linear-gradient(135deg, var(--amarelo-brasil) 0%, var(--amarelo-escuro) 100%);
             color: var(--azul-brasil);
-            box-shadow: 0 3px 10px rgba(255, 223, 0, 0.25);
-        }
-        .btn-sucesso:hover {
-            transform: translateY(-2px);
-        }
-        .btn-secundario {
-            background: var(--azul-claro);
-            color: var(--azul-brasil);
-            border: 2px solid var(--azul-brasil);
-        }
-        .btn-secundario:hover {
-            background: var(--azul-brasil);
-            color: white;
-        }
-        .btn-perigo {
-            background: #FFEBEE;
-            color: #C62828;
-            border: 2px solid #EF9A9A;
-        }
-        .btn-perigo:hover {
-            background: #C62828;
-            color: white;
         }
         .tabela-wrapper {
             overflow-x: auto;
@@ -446,14 +276,7 @@
             background: linear-gradient(to bottom, var(--verde-claro), #D8F3E2);
             font-weight: 800;
             color: var(--azul-brasil);
-            font-size: 12.5px;
             border-bottom: 2px solid var(--verde-brasil);
-        }
-        table tr:hover td {
-            background: var(--verde-claro);
-        }
-        table tr:last-child td {
-            border-bottom: none;
         }
         .rodape-card {
             display: flex;
@@ -479,97 +302,41 @@
             font-weight: 600;
         }
         .mensagem.sucesso { background: var(--verde-claro); color: var(--verde-escuro); display: block; border: 2px solid var(--verde-brasil); }
-        .mensagem.aviso { background: var(--amarelo-claro); color: #B58900; display: block; border: 2px solid var(--amarelo-brasil); }
         .mensagem.erro { background: #FFEBEE; color: #C62828; display: block; border: 2px solid #EF9A9A; }
-        #subtotalCalculado {
-            padding: 12px 16px !important;
-            background: linear-gradient(135deg, var(--amarelo-claro) 0%, #FFF5B8 100%) !important;
-            border-radius: 10px !important;
-            font-weight: 800;
-            color: var(--azul-brasil);
-            font-size: 16px;
-            border: 2px solid var(--amarelo-brasil);
-        }
+        
         @media (max-width: 600px) {
-            .grupo-form {
-                grid-template-columns: 1fr;
-            }
-            .rodape-card {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .rodape-card > div:last-child {
-                justify-content: center;
-                display: flex;
-                flex-wrap: wrap;
-            }
-            .card-titulo {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .pesquisa-container {
-                max-width: 100%;
-                width: 100%;
-            }
-            header h1 {
-                font-size: 22px;
-            }
+            .grupo-form { grid-template-columns: 1fr; }
+            .rodape-card { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
 <body>
 
-<div class="modal-senha" id="modalSenhaApagar">
-    <div class="caixa-modal">
-        <h3>🇧🇷 Atenção!</h3>
-        <p>Digite a senha para apagar TODOS os dados. Esta ação não pode ser desfeita.</p>
-        <input type="password" id="senhaApagar" placeholder="••••••" maxlength="6">
-        <div class="botoes-modal">
-            <button class="btn-cancelar" onclick="fecharModalApagar()">❌ Cancelar</button>
-            <button class="btn-confirmar" onclick="verificarSenhaApagar()">✅ Confirmar</button>
-        </div>
-        <div class="erro-modal" id="erroModalApagar">❌ Senha incorreta. Operação cancelada.</div>
+<!-- 🚪 TELA DE LOGIN -->
+<div class="tela-login" id="telaLogin">
+    <div class="caixa-login">
+        <h1>🇧🇷 Arames Brasil</h1>
+        <p>Controle de Produção — Acesso Restrito</p>
+        <input type="email" id="campoEmail" placeholder="📧 Digite seu e-mail">
+        <input type="password" id="campoSenha" placeholder="🔑 Digite sua senha">
+        <button class="btn-login" onclick="fazerLogin()">🔓 Entrar</button>
+        <div class="carregando" id="carregando">⏳ Entrando...</div>
+        <div class="erro-login" id="erroLogin">❌ E-mail ou senha incorretos</div>
     </div>
 </div>
 
+<!-- 📋 CONTEÚDO PRINCIPAL -->
 <div class="conteudo-principal" id="conteudoPrincipal">
     <div class="container">
+        <div class="cabecalho-topo">
+            <span class="usuario-info" id="usuarioLogado"></span>
+            <button class="btn-sair" onclick="fazerLogout()">🚪 Sair</button>
+        </div>
+        
         <header>
             <h1>🇧🇷 Arames Brasil</h1>
             <p>Controle de Produção & Estoque de Estribos</p>
         </header>
-
-        <section class="card">
-            <div class="card-titulo">
-                <span>📋 Modelos de Estribo</span>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                    <span class="status-salvamento" id="statusSalvamento">✅ Salvo automaticamente</span>
-                    <button class="btn btn-secundario" style="padding: 6px 12px; font-size: 12px;" onclick="alternarModoEdicao()" id="btnModoEdicao">✏️ Gerenciar</button>
-                </div>
-            </div>
-
-            <div class="grupo-modelos grupo-retangular">
-                <div class="grupo-titulo">📐 Retangulares</div>
-                <div class="modelos-lista" id="listaRetangulares"></div>
-            </div>
-
-            <div class="grupo-modelos grupo-redondo">
-                <div class="grupo-titulo">⭕ Redondos</div>
-                <div class="modelos-lista" id="listaRedondos"></div>
-            </div>
-
-            <div class="grupo-modelos grupo-hexagonal">
-                <div class="grupo-titulo">🔷 Hexagonais</div>
-                <div class="modelos-lista" id="listaHexagonais"></div>
-            </div>
-
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
-                <input type="text" id="novoModelo" placeholder="Novo modelo..." style="flex:1;min-width:180px;">
-                <button class="btn btn-principal" onclick="adicionarModelo()">➕ Adicionar</button>
-                <button class="btn btn-sucesso" onclick="salvarManual()">💾 Salvar Agora</button>
-            </div>
-            <div id="msgModelo" class="mensagem"></div>
-        </section>
 
         <section class="card">
             <div class="card-titulo">➕ Nova Produção</div>
@@ -579,12 +346,11 @@
                     <input type="date" id="data">
                 </div>
                 <div class="campo">
-                    <label>📐 Estribo (Modelo)</label>
-                    <input type="text" id="estribo" placeholder="Digite..." oninput="filtrarSugestoes()" onfocus="mostrarSugestoes()">
-                    <div class="sugestoes" id="sugestoesEstribo"></div>
+                    <label>📐 Modelo de Estribo</label>
+                    <input type="text" id="estribo" placeholder="Ex: 7x14">
                 </div>
                 <div class="campo">
-                    <label>🔩 Bitola (Material)</label>
+                    <label>🔩 Bitola (mm)</label>
                     <select id="material">
                         <option value="">Selecione...</option>
                         <option value="3.8">Ø 3,8 mm</option>
@@ -595,7 +361,7 @@
                 </div>
                 <div class="campo">
                     <label>📦 Tipo</label>
-                    <select id="tipo" onchange="atualizarTipoRegras()">
+                    <select id="tipo">
                         <option value="">Selecione...</option>
                         <option value="AMARRADO">AMARRADO</option>
                         <option value="MLIVRE">M. LIVRE</option>
@@ -603,39 +369,27 @@
                     </select>
                 </div>
                 <div class="campo">
-                    <label>Peças / Pacote</label>
-                    <input type="number" id="qtdPacote" placeholder="0" min="1" oninput="calcularSubtotal()">
-                    <div class="aviso-minimo" id="avisoMinimo">⚠️ Mín. 100 p/ M. LIVRE</div>
+                    <label>Peças por Pacote</label>
+                    <input type="number" id="qtdPacote" placeholder="0" min="1">
                 </div>
                 <div class="campo">
                     <label>Total de Pacotes</label>
-                    <input type="number" id="totalPacotes" placeholder="0" min="1" oninput="calcularSubtotal()">
-                </div>
-                <div class="campo">
-                    <label>✅ Subtotal Calculado</label>
-                    <div id="subtotalCalculado">0 peças</div>
+                    <input type="number" id="totalPacotes" placeholder="0" min="1">
                 </div>
                 <div class="campo">
                     <label>👤 Responsável</label>
-                    <input type="text" id="responsavel" placeholder="Nome do operador">
+                    <input type="text" id="responsavel" placeholder="Seu nome">
                 </div>
             </div>
             <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="btn btn-principal" onclick="adicionarRegistro()">💾 Salvar Produção</button>
-                <button class="btn btn-sucesso" onclick="salvarManual()">💾 Salvar Tudo Agora</button>
+                <button class="btn btn-principal" onclick="adicionarProducao()">💾 Salvar Produção</button>
+                <button class="btn btn-sucesso" onclick="exportarExcel()">📊 Baixar Excel</button>
             </div>
             <div id="mensagem" class="mensagem"></div>
         </section>
 
         <section class="card">
-            <div class="card-titulo">
-                <span>📊 Produções Registradas</span>
-                <div class="pesquisa-container">
-                    <input type="text" class="pesquisa-input" id="pesquisaResponsavel" placeholder="🔍 Pesquisar responsável..." oninput="filtrarPorResponsavel()">
-                    <button class="btn-limpar-pesquisa" onclick="limparPesquisa()" title="Limpar">✕</button>
-                </div>
-            </div>
-            <div id="infoPesquisa" class="resultado-pesquisa" style="display: none;"></div>
+            <div class="card-titulo">📊 Produções Registradas</div>
             <div class="tabela-wrapper">
                 <table>
                     <thead>
@@ -648,7 +402,6 @@
                             <th>Pacotes</th>
                             <th>Total Peças</th>
                             <th>Responsável</th>
-                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="corpoTabela"></tbody>
@@ -656,419 +409,168 @@
             </div>
             <div class="rodape-card">
                 <div class="total-geral" id="totalGeral">🇧🇷 Total de Peças: 0</div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="btn btn-sucesso" onclick="exportarExcel()">📊 Excel</button>
-                    <button class="btn btn-principal" onclick="fazerBackup()">💾 Backup</button>
-                    <button class="btn btn-secundario" onclick="document.getElementById('arquivoRestaurar').click()">📂 Restaurar</button>
-                    <input type="file" id="arquivoRestaurar" style="display: none;" accept=".json" onchange="restaurarBackup(event)">
-                    <button class="btn btn-perigo" onclick="abrirModalApagar()">🗑️ Apagar Tudo</button>
-                </div>
             </div>
         </section>
     </div>
 </div>
 
-<script>
-const SENHA_APAGAR = '710150';
-let filtroAtual = '';
+<script type="module">
+    let listaProducoes = [];
+    let unsubscribe = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('conteudoPrincipal').style.display = 'block';
-    inicializarSistema();
-});
-
-function abrirModalApagar() {
-    document.getElementById('modalSenhaApagar').classList.add('visivel');
-    document.getElementById('senhaApagar').value = '';
-    document.getElementById('erroModalApagar').classList.remove('visivel');
-}
-
-function fecharModalApagar() {
-    document.getElementById('modalSenhaApagar').classList.remove('visivel');
-    document.getElementById('senhaApagar').value = '';
-    document.getElementById('erroModalApagar').classList.remove('visivel');
-}
-
-function verificarSenhaApagar() {
-    const senhaDigitada = document.getElementById('senhaApagar').value;
-    const erroModal = document.getElementById('erroModalApagar');
-    
-    if (senhaDigitada === SENHA_APAGAR) {
-        fecharModalApagar();
-        if (confirm('🇧🇷 Tem certeza absoluta? Isso apagará TODOS os dados e não tem volta!')) {
-            registros = [];
-            salvarDados();
-            renderizarTabela();
-            alert('✅ Todos os dados foram apagados.');
+    // Verificar se usuário já está logado
+    window.onAuthStateChanged(window.auth, (usuario) => {
+        if (usuario) {
+            mostrarConteudo(usuario);
+            carregarDados();
+        } else {
+            mostrarLogin();
         }
-    } else {
-        erroModal.classList.add('visivel');
-        document.getElementById('senhaApagar').value = '';
-    }
-}
-
-function filtrarPorResponsavel() {
-    filtroAtual = document.getElementById('pesquisaResponsavel').value.trim().toLowerCase();
-    renderizarTabela();
-}
-
-function limparPesquisa() {
-    document.getElementById('pesquisaResponsavel').value = '';
-    filtroAtual = '';
-    renderizarTabela();
-}
-
-const CHAVE_DADOS = 'producao_estribo_dados';
-const CHAVE_MODELOS = 'producao_estribo_modelos';
-
-const RETANGULARES = ["7x14", "7x17", "7x27", "9x15", "9x20", "9x25", "12x20", "12x25", "15x15", "15x20", "15x25"];
-const REDONDOS = ["Red 15", "Red 20", "Red 25", "Red 30"];
-const HEXAGONAIS = ["Hexa 15", "Hexa 20", "Hexa 25", "Hexa 30"];
-
-const MODELOS_PADRAO = [...RETANGULARES, ...REDONDOS, ...HEXAGONAIS];
-const MODELOS_DESTAQUE_MLIVRE = ["7x14", "7x17", "7x27", "9x15", "9x20", "15x15"];
-
-let modelos, registros, modoEdicao, temporizadorSalvamento;
-
-function inicializarSistema() {
-    const modelosSalvos = localStorage.getItem(CHAVE_MODELOS);
-    if (!modelosSalvos || JSON.parse(modelosSalvos).length === 0) {
-        modelos = [...MODELOS_PADRAO];
-        localStorage.setItem(CHAVE_MODELOS, JSON.stringify(modelos));
-    } else {
-        modelos = JSON.parse(modelosSalvos);
-        MODELOS_PADRAO.forEach(m => {
-            if (!modelos.includes(m)) modelos.push(m);
-        });
-        localStorage.setItem(CHAVE_MODELOS, JSON.stringify(modelos));
-    }
-    registros = JSON.parse(localStorage.getItem(CHAVE_DADOS) || '[]');
-    modoEdicao = false;
-    temporizadorSalvamento = null;
-    
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
-    renderizarModelos();
-    renderizarTabela();
-}
-
-function mostrarStatusSalvamento(salvando = false) {
-    const status = document.getElementById('statusSalvamento');
-    if (!status) return;
-    if (salvando) {
-        status.textContent = '⏳ Salvando...';
-        status.classList.add('salvando');
-    } else {
-        status.textContent = '✅ Salvo automaticamente';
-        status.classList.remove('salvando');
-    }
-}
-
-function salvarDados() {
-    mostrarStatusSalvamento(true);
-    localStorage.setItem(CHAVE_MODELOS, JSON.stringify(modelos));
-    localStorage.setItem(CHAVE_DADOS, JSON.stringify(registros));
-    setTimeout(() => mostrarStatusSalvamento(false), 500);
-}
-
-function salvarAutomatico() {
-    if (temporizadorSalvamento) clearTimeout(temporizadorSalvamento);
-    temporizadorSalvamento = setTimeout(() => salvarDados(), 800);
-}
-
-function salvarManual() {
-    salvarDados();
-    exibirMensagem('mensagem', '✅ Salvo com sucesso! 🇧🇷', 'sucesso');
-}
-
-function extrairNumeros(t) {
-    if (!t) return [0, 0];
-    const match = t.match(/(\d+)x(\d+)/);
-    if (match) {
-        return [parseInt(match[1]) || 0, parseInt(match[2]) || 0];
-    }
-    const num = t.match(/\d+/);
-    return num ? [parseInt(num[0]) || 0, 0] : [0, 0];
-}
-
-function ordenarModelos(l) {
-    return l.slice().sort((a, b) => {
-        const [a1, a2] = extrairNumeros(a);
-        const [b1, b2] = extrairNumeros(b);
-        if (a1 !== b1) return a1 - b1;
-        if (a2 !== b2) return a2 - b2;
-        return a.localeCompare(b);
     });
-}
 
-function formatarData(d) {
-    if (!d) return '-';
-    const [a, m, di] = d.split('-');
-    return `${di}/${m}/${a}`;
-}
-
-function formatarNumero(n) {
-    return Number(n || 0).toLocaleString('pt-BR');
-}
-
-function exibirMensagem(id, texto, tipo = 'sucesso') {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.className = `mensagem ${tipo}`;
-    el.innerHTML = texto;
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
-}
-
-function atualizarTipoRegras() {
-    const t = document.getElementById('tipo').value;
-    const q = document.getElementById('qtdPacote');
-    const av = document.getElementById('avisoMinimo');
-    if (t === 'MLIVRE') {
-        document.getElementById('material').value = '4.2';
-        q.min = 100;
-        av.classList.add('visivel');
-        if (!q.value || parseInt(q.value) < 100) q.value = 100;
-    } else {
-        q.min = 1;
-        av.classList.remove('visivel');
-    }
-    calcularSubtotal();
-    renderizarModelos();
-}
-
-function calcularSubtotal() {
-    const q = parseInt(document.getElementById('qtdPacote').value) || 0;
-    const p = parseInt(document.getElementById('totalPacotes').value) || 0;
-    document.getElementById('subtotalCalculado').textContent = `${formatarNumero(q * p)} peças`;
-}
-
-function renderizarTag(modelo, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    const t = document.getElementById('tipo').value;
-    const isMlivre = t === 'MLIVRE' && MODELOS_DESTAQUE_MLIVRE.includes(modelo);
-    
-    const tag = document.createElement('div');
-    tag.className = `modelo-tag ${isMlivre ? 'destaque-m-livre' : ''}`;
-    tag.innerHTML = `<span>${modelo}</span>`;
-    
-    if (modoEdicao) {
-        tag.innerHTML += ` <button onclick="removerModelo('${modelo}')" style="background:none;border:none;color:#C62828;cursor:pointer;font-size:14px;padding:0 4px;">✖</button>`;
-    } else {
-        tag.onclick = () => { document.getElementById('estribo').value = modelo; };
-    }
-    container.appendChild(tag);
-}
-
-function renderizarModelos() {
-    document.getElementById('listaRetangulares').innerHTML = '';
-    document.getElementById('listaRedondos').innerHTML = '';
-    document.getElementById('listaHexagonais').innerHTML = '';
-    
-    ordenarModelos(modelos.filter(m => RETANGULARES.includes(m)))
-        .forEach(m => renderizarTag(m, 'listaRetangulares'));
-    
-    ordenarModelos(modelos.filter(m => REDONDOS.includes(m)))
-        .forEach(m => renderizarTag(m, 'listaRedondos'));
-    
-    ordenarModelos(modelos.filter(m => HEXAGONAIS.includes(m)))
-        .forEach(m => renderizarTag(m, 'listaHexagonais'));
-}
-
-function alternarModoEdicao() {
-    modoEdicao = !modoEdicao;
-    document.getElementById('btnModoEdicao').textContent = modoEdicao ? '✓ Concluir' : '✏️ Gerenciar';
-    renderizarModelos();
-}
-
-function adicionarModelo() {
-    const inp = document.getElementById('novoModelo');
-    const v = inp.value.trim();
-    if (!v) return;
-    if (modelos.includes(v)) return exibirMensagem('msgModelo', '⚠️ Modelo já cadastrado', 'aviso');
-    modelos.push(v);
-    modelos = ordenarModelos(modelos);
-    salvarAutomatico();
-    renderizarModelos();
-    inp.value = '';
-    exibirMensagem('msgModelo', '✅ Adicionado e salvo! 🇧🇷', 'sucesso');
-}
-
-function removerModelo(m) {
-    if (confirm(`Excluir modelo "${m}"?`)) {
-        modelos = modelos.filter(x => x !== m);
-        salvarAutomatico();
-        renderizarModelos();
-    }
-}
-
-function mostrarSugestoes() {
-    const div = document.getElementById('sugestoesEstribo');
-    if (!div) return;
-    div.innerHTML = '';
-    ordenarModelos(modelos).forEach(m => {
-        const item = document.createElement('div');
-        item.className = 'sugestao-item';
-        item.textContent = m;
-        item.onclick = () => { document.getElementById('estribo').value = m; div.classList.remove('visivel'); };
-        div.appendChild(item);
-    });
-    div.classList.add('visivel');
-}
-
-function filtrarSugestoes() {
-    const v = document.getElementById('estribo').value.toLowerCase();
-    const div = document.getElementById('sugestoesEstribo');
-    if (!div) return;
-    div.innerHTML = '';
-    ordenarModelos(modelos).filter(m => m.toLowerCase().includes(v)).forEach(m => {
-        const item = document.createElement('div');
-        item.className = 'sugestao-item';
-        item.textContent = m;
-        item.onclick = () => { document.getElementById('estribo').value = m; div.classList.remove('visivel'); };
-        div.appendChild(item);
-    });
-    div.classList.add('visivel');
-}
-
-document.addEventListener('click', e => {
-    const campoEstribo = document.querySelector('.campo:has(#estribo)');
-    if (campoEstribo && !campoEstribo.contains(e.target)) {
-        const div = document.getElementById('sugestoesEstribo');
-        if (div) div.classList.remove('visivel');
-    }
-});
-
-function adicionarRegistro() {
-    const dados = {
-        id: Date.now(),
-        data: document.getElementById('data').value,
-        responsavel: document.getElementById('responsavel').value.trim(),
-        estribo: document.getElementById('estribo').value.trim(),
-        material: document.getElementById('material').value,
-        tipo: document.getElementById('tipo').value,
-        qtdPacote: parseInt(document.getElementById('qtdPacote').value) || 0,
-        totalPacotes: parseInt(document.getElementById('totalPacotes').value) || 0,
+    window.mostrarLogin = function() {
+        document.getElementById('telaLogin').style.display = 'flex';
+        document.getElementById('conteudoPrincipal').style.display = 'none';
     };
-    dados.totalPecas = dados.qtdPacote * dados.totalPacotes;
-    if (!dados.data || !dados.responsavel || !dados.estribo || !dados.material || !dados.tipo || !dados.qtdPacote || !dados.totalPacotes) {
-        return exibirMensagem('mensagem', '⚠️ Preencha todos os campos obrigatórios', 'aviso');
-    }
-    if (dados.tipo === 'MLIVRE' && dados.qtdPacote < 100) {
-        return exibirMensagem('mensagem', '⚠️ Mínimo de 100 peças por pacote para M. LIVRE', 'aviso');
-    }
-    registros.unshift(dados);
-    salvarDados();
-    renderizarTabela();
-    exibirMensagem('mensagem', '✅ Produção salva com sucesso! 🇧🇷', 'sucesso');
-    document.getElementById('responsavel').value = '';
-    document.getElementById('estribo').value = '';
-    document.getElementById('material').value = '';
-    document.getElementById('tipo').value = '';
-    document.getElementById('qtdPacote').value = '';
-    document.getElementById('totalPacotes').value = '';
-    calcularSubtotal();
-}
 
-function excluirRegistro(id) {
-    if (confirm('Excluir este apontamento?')) {
-        registros = registros.filter(r => r.id !== id);
-        salvarAutomatico();
-        renderizarTabela();
-    }
-}
+    window.mostrarConteudo = function(usuario) {
+        document.getElementById('telaLogin').style.display = 'none';
+        document.getElementById('conteudoPrincipal').style.display = 'block';
+        document.getElementById('usuarioLogado').textContent = '✅ Conectado: ' + usuario.email;
+        document.getElementById('data').value = new Date().toISOString().split('T')[0];
+    };
 
-function renderizarTabela() {
-    const tb = document.getElementById('corpoTabela');
-    const infoPesquisa = document.getElementById('infoPesquisa');
-    if (!tb) return;
-    tb.innerHTML = '';
-    
-    let registrosFiltrados = registros;
-    if (filtroAtual) {
-        registrosFiltrados = registros.filter(r => 
-            r.responsavel.toLowerCase().includes(filtroAtual)
-        );
-        infoPesquisa.style.display = 'block';
-        infoPesquisa.textContent = `🔍 Mostrando resultados para: "${filtroAtual}" — ${registrosFiltrados.length} registro(s) encontrado(s)`;
-    } else {
-        infoPesquisa.style.display = 'none';
-    }
-    
-    if (!registrosFiltrados.length) {
-        tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#666;padding:32px;font-size:14px;">📭 Nenhum registro encontrado</td></tr>';
-        document.getElementById('totalGeral').textContent = filtroAtual ? `🇧🇷 Total da busca: 0 peças` : '🇧🇷 Total de Peças: 0';
-        return;
-    }
-    
-    let total = 0;
-    registrosFiltrados.forEach(r => {
-        total += r.totalPecas;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>${formatarData(r.data)}</strong></td>
-            <td style="font-weight:800;color:#002776;">${r.estribo}</td>
-            <td>Ø ${r.material} mm</td>
-            <td><strong>${r.tipo}</strong></td>
-            <td style="text-align:right;">${formatarNumero(r.qtdPacote)}</td>
-            <td style="text-align:right;">${formatarNumero(r.totalPacotes)}</td>
-            <td style="text-align:right;font-weight:800;color:#007A2F;">${formatarNumero(r.totalPecas)}</td>
-            <td>${r.responsavel}</td>
-            <td style="text-align:center;">
-                <button onclick="excluirRegistro(${r.id})" style="background:none;border:none;cursor:pointer;color:#C62828;font-size:16px;" title="Excluir">🗑️</button>
-            </td>
-        `;
-        tb.appendChild(tr);
-    });
-    
-    document.getElementById('totalGeral').textContent = 
-        filtroAtual ? `🇧🇷 Total da busca: ${formatarNumero(total)} peças` : `🇧🇷 Total de Peças: ${formatarNumero(total)}`;
-}
-
-function exportarExcel() {
-    if (!registros.length) return alert('Sem dados para exportar');
-    let csv = '\uFEFF"Data";"Modelo";"Material";"Tipo";"Peças/Pacote";"Pacotes";"Total";"Responsável"\n';
-    
-    let dadosExportar = filtroAtual 
-        ? registros.filter(r => r.responsavel.toLowerCase().includes(filtroAtual))
-        : registros;
-    
-    dadosExportar.forEach(r => {
-        csv += `"${formatarData(r.data)}";"${r.estribo}";"${r.material} mm";"${r.tipo}";"${r.qtdPacote}";"${r.totalPacotes}";"${r.totalPecas}";"${r.responsavel}"\n`;
-    });
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `Arames_Brasil_Producao_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-}
-
-function fazerBackup() {
-    const blob = new Blob([JSON.stringify({ modelos, registros }, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `Backup_Arames_Brasil_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-}
-
-function restaurarBackup(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = evt => {
+    window.fazerLogin = async function() {
+        const email = document.getElementById('campoEmail').value;
+        const senha = document.getElementById('campoSenha').value;
+        const erroEl = document.getElementById('erroLogin');
+        const carregando = document.getElementById('carregando');
+        
+        erroEl.style.display = 'none';
+        carregando.style.display = 'block';
+        
         try {
-            const d = JSON.parse(evt.target.result);
-            if (d.modelos && d.registros) {
-                modelos = d.modelos;
-                registros = d.registros;
-                salvarDados();
-                renderizarModelos();
-                renderizarTabela();
-                alert('✅ Backup restaurado com sucesso! 🇧🇷');
-            }
-        } catch { alert('❌ Arquivo inválido'); }
+            await window.signInWithEmailAndPassword(window.auth, email, senha);
+        } catch (erro) {
+            carregando.style.display = 'none';
+            erroEl.style.display = 'block';
+            document.getElementById('campoSenha').value = '';
+        }
     };
-    reader.readAsText(file);
-}
+
+    window.fazerLogout = async function() {
+        if (confirm('Tem certeza que deseja sair?')) {
+            if (unsubscribe) unsubscribe();
+            await window.signOut(window.auth);
+        }
+    };
+
+    window.adicionarProducao = async function() {
+        const usuario = window.auth.currentUser;
+        if (!usuario) return;
+        
+        const dados = {
+            data: document.getElementById('data').value,
+            estribo: document.getElementById('estribo').value.trim(),
+            material: document.getElementById('material').value,
+            tipo: document.getElementById('tipo').value,
+            qtdPacote: parseInt(document.getElementById('qtdPacote').value) || 0,
+            totalPacotes: parseInt(document.getElementById('totalPacotes').value) || 0,
+            responsavel: document.getElementById('responsavel').value.trim(),
+            totalPecas: (parseInt(document.getElementById('qtdPacote').value) || 0) * (parseInt(document.getElementById('totalPacotes').value) || 0),
+            uid: usuario.uid
+        };
+        
+        if (!dados.data || !dados.estribo || !dados.material || !dados.tipo || !dados.qtdPacote || !dados.totalPacotes || !dados.responsavel) {
+            return exibirMensagem('⚠️ Preencha todos os campos!', 'erro');
+        }
+        
+        try {
+            await window.addDoc(window.collection(window.db, 'producoes'), dados);
+            exibirMensagem('✅ Produção salva com sucesso! 🇧🇷', 'sucesso');
+            limparCampos();
+        } catch (erro) {
+            exibirMensagem('❌ Erro ao salvar: ' + erro.message, 'erro');
+        }
+    };
+
+    window.carregarDados = function() {
+        const q = window.query(window.collection(window.db, 'producoes'), window.orderBy('data', 'desc'));
+        unsubscribe = window.onSnapshot(q, (snapshot) => {
+            listaProducoes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            atualizarTabela();
+        });
+    };
+
+    window.atualizarTabela = function() {
+        const tb = document.getElementById('corpoTabela');
+        tb.innerHTML = '';
+        
+        if (!listaProducoes.length) {
+            tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:#666;">📭 Nenhuma produção registrada</td></tr>';
+            document.getElementById('totalGeral').textContent = '🇧🇷 Total de Peças: 0';
+            return;
+        }
+        
+        let totalGeral = 0;
+        listaProducoes.forEach(p => {
+            totalGeral += p.totalPecas || 0;
+            const dataFormatada = p.data ? p.data.split('-').reverse().join('/') : '-';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${dataFormatada}</strong></td>
+                <td>${p.estribo}</td>
+                <td>Ø ${p.material} mm</td>
+                <td>${p.tipo}</td>
+                <td>${p.qtdPacote}</td>
+                <td>${p.totalPacotes}</td>
+                <td><strong style="color: #007A2F;">${p.totalPecas.toLocaleString('pt-BR')}</strong></td>
+                <td>${p.responsavel}</td>
+            `;
+            tb.appendChild(tr);
+        });
+        
+        document.getElementById('totalGeral').textContent = `🇧🇷 Total de Peças: ${totalGeral.toLocaleString('pt-BR')}`;
+    };
+
+    window.exportarExcel = function() {
+        if (!listaProducoes.length) return alert('Sem dados para exportar!');
+        
+        let csv = '\uFEFF"Data";"Modelo";"Bitola";"Tipo";"Peças/Pacote";"Pacotes";"Total Peças";"Responsável"\n';
+        listaProducoes.forEach(p => {
+            const dataFormatada = p.data ? p.data.split('-').reverse().join('/') : '-';
+            csv += `"${dataFormatada}";"${p.estribo}";"${p.material} mm";"${p.tipo}";"${p.qtdPacote}";"${p.totalPacotes}";"${p.totalPecas}";"${p.responsavel}"\n`;
+        });
+        
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `Arames_Brasil_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+    };
+
+    function limparCampos() {
+        document.getElementById('estribo').value = '';
+        document.getElementById('material').value = '';
+        document.getElementById('tipo').value = '';
+        document.getElementById('qtdPacote').value = '';
+        document.getElementById('totalPacotes').value = '';
+        document.getElementById('responsavel').value = '';
+    }
+
+    function exibirMensagem(texto, tipo) {
+        const el = document.getElementById('mensagem');
+        el.className = `mensagem ${tipo}`;
+        el.textContent = texto;
+        setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    // Permitir login com Enter
+    document.addEventListener('keypress', e => {
+        if (e.key === 'Enter' && document.getElementById('telaLogin').style.display !== 'none') {
+            window.fazerLogin();
+        }
+    });
 </script>
 
 </body>
