@@ -39,6 +39,205 @@
             min-height: 100vh;
             padding: 16px 12px;
         }
+        /* ===== TELA DE LOGIN ===== */
+        .tela-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        .caixa-login {
+            background: var(--branco);
+            padding: 36px 28px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+        .caixa-login h2 {
+            color: var(--primaria);
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        .caixa-login p {
+            color: var(--texto-secundario);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .caixa-login input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--borda-clara);
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 16px;
+        }
+        .caixa-login input:focus {
+            outline: none;
+            border-color: var(--primaria);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+        .erro-senha {
+            color: var(--erro);
+            font-size: 13px;
+            margin-top: 12px;
+            display: none;
+        }
+        .erro-senha.visivel {
+            display: block;
+        }
+        .conteudo-principal {
+            display: none;
+        }
+        .conteudo-principal.visivel {
+            display: block;
+        }
+        /* ===== MODAL CONFIRMAR SENHA ===== */
+        .modal-senha {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            padding: 20px;
+        }
+        .modal-senha.visivel {
+            display: flex;
+        }
+        .caixa-modal {
+            background: var(--branco);
+            padding: 28px 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+        .caixa-modal h3 {
+            color: var(--erro);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .caixa-modal p {
+            color: var(--texto-secundario);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .caixa-modal input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--borda-clara);
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 6px;
+            margin-bottom: 14px;
+        }
+        .caixa-modal input:focus {
+            outline: none;
+            border-color: var(--erro);
+        }
+        .botoes-modal {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .botoes-modal button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-cancelar {
+            background: var(--borda-clara);
+            color: var(--texto);
+        }
+        .btn-confirmar {
+            background: var(--erro);
+            color: white;
+        }
+        .erro-modal {
+            color: var(--erro);
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+        .erro-modal.visivel {
+            display: block;
+        }
+        /* ===== BARRA DE PESQUISA ===== */
+        .pesquisa-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            max-width: 280px;
+        }
+        .pesquisa-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1.5px solid var(--borda-clara);
+            border-radius: 8px;
+            font-size: 13px;
+            background: var(--branco);
+            transition: all 0.2s ease;
+        }
+        .pesquisa-input:focus {
+            outline: none;
+            border-color: var(--primaria);
+            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.08);
+        }
+        .btn-limpar-pesquisa {
+            padding: 8px 10px;
+            background: var(--borda-clara);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--texto-secundario);
+            transition: all 0.2s;
+        }
+        .btn-limpar-pesquisa:hover {
+            background: #D0D3D9;
+        }
+        .resultado-pesquisa {
+            font-size: 12px;
+            color: var(--primaria);
+            margin-top: 6px;
+        }
+        /* ===== RESTO DO ESTILO ===== */
         .container {
             max-width: 1100px;
             margin: 0 auto;
@@ -104,7 +303,7 @@
             padding-bottom: 10px;
             border-bottom: 2px solid var(--primaria-clara);
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 12px;
         }
         .grupo-form {
             display: grid;
@@ -328,10 +527,46 @@
                 display: flex;
                 flex-wrap: wrap;
             }
+            .card-titulo {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .pesquisa-container {
+                max-width: 100%;
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
+
+<!-- 🔒 TELA DE LOGIN -->
+<div class="tela-login" id="telaLogin">
+    <div class="caixa-login">
+        <h2>🏢 Arames Brasil</h2>
+        <p>Digite a senha para acessar</p>
+        <input type="password" id="campoSenha" placeholder="••••••" maxlength="6">
+        <button class="btn-login" onclick="verificarSenha()">🔓 Entrar</button>
+        <div class="erro-senha" id="erroSenha">❌ Senha incorreta. Tente novamente.</div>
+    </div>
+</div>
+
+<!-- ⚠️ MODAL CONFIRMAR SENHA PARA APAGAR -->
+<div class="modal-senha" id="modalSenhaApagar">
+    <div class="caixa-modal">
+        <h3>⚠️ Atenção!</h3>
+        <p>Digite a senha para apagar TODOS os dados. Esta ação não pode ser desfeita.</p>
+        <input type="password" id="senhaApagar" placeholder="••••••" maxlength="6">
+        <div class="botoes-modal">
+            <button class="btn-cancelar" onclick="fecharModalApagar()">❌ Cancelar</button>
+            <button class="btn-confirmar" onclick="verificarSenhaApagar()">✅ Confirmar</button>
+        </div>
+        <div class="erro-modal" id="erroModalApagar">❌ Senha incorreta. Operação cancelada.</div>
+    </div>
+</div>
+
+<!-- 📄 CONTEÚDO PRINCIPAL -->
+<div class="conteudo-principal" id="conteudoPrincipal">
     <div class="container">
         <header>
             <h1>🏢 Arames Brasil</h1>
@@ -414,8 +649,12 @@
         <section class="card">
             <div class="card-titulo">
                 <span>📊 Produções Registradas</span>
-                <span class="status-salvamento" id="statusTabela">✅ Salvo</span>
+                <div class="pesquisa-container">
+                    <input type="text" class="pesquisa-input" id="pesquisaResponsavel" placeholder="🔍 Pesquisar responsável..." oninput="filtrarPorResponsavel()">
+                    <button class="btn-limpar-pesquisa" onclick="limparPesquisa()" title="Limpar">✕</button>
+                </div>
             </div>
+            <div id="infoPesquisa" class="resultado-pesquisa" style="display: none;"></div>
             <div class="tabela-wrapper">
                 <table>
                     <thead>
@@ -441,24 +680,114 @@
                     <button class="btn btn-principal" onclick="fazerBackup()">💾 Backup</button>
                     <button class="btn btn-secundario" onclick="document.getElementById('arquivoRestaurar').click()">📂 Restaurar</button>
                     <input type="file" id="arquivoRestaurar" style="display: none;" accept=".json" onchange="restaurarBackup(event)">
-                    <button class="btn btn-perigo" onclick="limparTudo()">🗑️ Apagar Tudo</button>
+                    <button class="btn btn-perigo" onclick="abrirModalApagar()">🗑️ Apagar Tudo</button>
                 </div>
             </div>
         </section>
     </div>
+</div>
+
 <script>
+// 🔐 SENHAS — Altere aqui se precisar
+const SENHA_ACESSO = '710150';
+const SENHA_APAGAR = '710150';
+let filtroAtual = ''; // Guarda o texto da pesquisa
+
+// ===== FUNÇÃO DE VERIFICAÇÃO DE SENHA DE ACESSO =====
+function verificarSenha() {
+    const senhaDigitada = document.getElementById('campoSenha').value;
+    const telaLogin = document.getElementById('telaLogin');
+    const conteudoPrincipal = document.getElementById('conteudoPrincipal');
+    const erroSenha = document.getElementById('erroSenha');
+    
+    if (senhaDigitada === SENHA_ACESSO) {
+        telaLogin.style.display = 'none';
+        conteudoPrincipal.classList.add('visivel');
+        erroSenha.classList.remove('visivel');
+        inicializarSistema();
+    } else {
+        erroSenha.classList.add('visivel');
+        document.getElementById('campoSenha').value = '';
+    }
+}
+
+// ===== FUNÇÕES DO MODAL DE APAGAR =====
+function abrirModalApagar() {
+    document.getElementById('modalSenhaApagar').classList.add('visivel');
+    document.getElementById('senhaApagar').value = '';
+    document.getElementById('erroModalApagar').classList.remove('visivel');
+}
+
+function fecharModalApagar() {
+    document.getElementById('modalSenhaApagar').classList.remove('visivel');
+    document.getElementById('senhaApagar').value = '';
+    document.getElementById('erroModalApagar').classList.remove('visivel');
+}
+
+function verificarSenhaApagar() {
+    const senhaDigitada = document.getElementById('senhaApagar').value;
+    const erroModal = document.getElementById('erroModalApagar');
+    
+    if (senhaDigitada === SENHA_APAGAR) {
+        fecharModalApagar();
+        if (confirm('⚠️ Tem certeza absoluta? Isso apagará TODOS os dados e não tem volta!')) {
+            registros = [];
+            salvarDados();
+            renderizarTabela();
+            alert('✅ Todos os dados foram apagados.');
+        }
+    } else {
+        erroModal.classList.add('visivel');
+        document.getElementById('senhaApagar').value = '';
+    }
+}
+
+// ===== FUNÇÕES DE PESQUISA =====
+function filtrarPorResponsavel() {
+    filtroAtual = document.getElementById('pesquisaResponsavel').value.trim().toLowerCase();
+    renderizarTabela();
+}
+
+function limparPesquisa() {
+    document.getElementById('pesquisaResponsavel').value = '';
+    filtroAtual = '';
+    renderizarTabela();
+}
+
+// Permitir Enter no campo senha de acesso
+document.getElementById('campoSenha').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') verificarSenha();
+});
+
+// Permitir Enter no campo senha de apagar
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && document.getElementById('modalSenhaApagar').classList.contains('visivel')) {
+        verificarSenhaApagar();
+    }
+});
+
+// ===== RESTO DO SISTEMA =====
 const CHAVE_DADOS = 'producao_estribo_dados';
 const CHAVE_MODELOS = 'producao_estribo_modelos';
 const MODELOS_DESTAQUE_MLIVRE = ['7x14', '7x17', '7x27', '9x15', '9x20', '15x15'];
-let modelos = JSON.parse(localStorage.getItem(CHAVE_MODELOS) || '["7x14", "7x17", "7x27", "9x15", "9x20", "15x15"]');
-let registros = JSON.parse(localStorage.getItem(CHAVE_DADOS) || '[]');
-let modoEdicao = false;
-let temporizadorSalvamento = null;
+let modelos, registros, modoEdicao, temporizadorSalvamento;
+
+function inicializarSistema() {
+    modelos = JSON.parse(localStorage.getItem(CHAVE_MODELOS) || '["7x14", "7x17", "7x27", "9x15", "9x20", "15x15"]');
+    registros = JSON.parse(localStorage.getItem(CHAVE_DADOS) || '[]');
+    modoEdicao = false;
+    temporizadorSalvamento = null;
+    
+    document.getElementById('data').value = new Date().toISOString().split('T')[0];
+    renderizarModelos();
+    renderizarTabela();
+}
 
 // ===== SALVAMENTO AUTOMÁTICO =====
 function mostrarStatusSalvamento(salvando = false) {
     const status1 = document.getElementById('statusSalvamento');
     const status2 = document.getElementById('statusTabela');
+    if (!status1 || !status2) return;
     if (salvando) {
         status1.textContent = '⏳ Salvando...';
         status1.classList.add('salvando');
@@ -488,7 +817,6 @@ function salvarManual() {
     salvarDados();
     exibirMensagem('mensagem', '✅ Salvo com sucesso!', 'sucesso');
 }
-// =================================
 
 function extrairNumeros(t) {
     if (!t) return [0, 0];
@@ -512,6 +840,7 @@ function formatarNumero(n) {
 }
 function exibirMensagem(id, texto, tipo = 'sucesso') {
     const el = document.getElementById(id);
+    if (!el) return;
     el.className = `mensagem ${tipo}`;
     el.innerHTML = texto;
     setTimeout(() => { el.style.display = 'none'; }, 4000);
@@ -539,6 +868,7 @@ function calcularSubtotal() {
 }
 function renderizarModelos() {
     const lista = document.getElementById('listaModelos');
+    if (!lista) return;
     lista.innerHTML = '';
     const t = document.getElementById('tipo').value;
     ordenarModelos(modelos).forEach(m => {
@@ -566,7 +896,7 @@ function adicionarModelo() {
     if (modelos.includes(v)) return exibirMensagem('msgModelo', '⚠️ Modelo já cadastrado', 'aviso');
     modelos.push(v);
     modelos = ordenarModelos(modelos);
-    salvarAutomatico(); // Salva automaticamente
+    salvarAutomatico();
     renderizarModelos();
     inp.value = '';
     exibirMensagem('msgModelo', '✅ Adicionado e salvo!', 'sucesso');
@@ -574,12 +904,13 @@ function adicionarModelo() {
 function removerModelo(m) {
     if (confirm(`Excluir modelo "${m}"?`)) {
         modelos = modelos.filter(x => x !== m);
-        salvarAutomatico(); // Salva automaticamente
+        salvarAutomatico();
         renderizarModelos();
     }
 }
 function mostrarSugestoes() {
     const div = document.getElementById('sugestoesEstribo');
+    if (!div) return;
     div.innerHTML = '';
     ordenarModelos(modelos).forEach(m => {
         const item = document.createElement('div');
@@ -593,6 +924,7 @@ function mostrarSugestoes() {
 function filtrarSugestoes() {
     const v = document.getElementById('estribo').value.toLowerCase();
     const div = document.getElementById('sugestoesEstribo');
+    if (!div) return;
     div.innerHTML = '';
     ordenarModelos(modelos).filter(m => m.toLowerCase().includes(v)).forEach(m => {
         const item = document.createElement('div');
@@ -604,8 +936,10 @@ function filtrarSugestoes() {
     div.classList.add('visivel');
 }
 document.addEventListener('click', e => {
-    if (!document.querySelector('.campo:has(#estribo)')?.contains(e.target)) {
-        document.getElementById('sugestoesEstribo').classList.remove('visivel');
+    const campoEstribo = document.querySelector('.campo:has(#estribo)');
+    if (campoEstribo && !campoEstribo.contains(e.target)) {
+        const div = document.getElementById('sugestoesEstribo');
+        if (div) div.classList.remove('visivel');
     }
 });
 function adicionarRegistro() {
@@ -627,7 +961,7 @@ function adicionarRegistro() {
         return exibirMensagem('mensagem', '⚠️ Mínimo de 100 peças por pacote para M. LIVRE', 'aviso');
     }
     registros.unshift(dados);
-    salvarDados(); // Salva imediatamente
+    salvarDados();
     renderizarTabela();
     exibirMensagem('mensagem', '✅ Produção salva com sucesso!', 'sucesso');
     document.getElementById('responsavel').value = '';
@@ -641,20 +975,36 @@ function adicionarRegistro() {
 function excluirRegistro(id) {
     if (confirm('Excluir este apontamento?')) {
         registros = registros.filter(r => r.id !== id);
-        salvarAutomatico(); // Salva automaticamente
+        salvarAutomatico();
         renderizarTabela();
     }
 }
 function renderizarTabela() {
     const tb = document.getElementById('corpoTabela');
+    const infoPesquisa = document.getElementById('infoPesquisa');
+    if (!tb) return;
     tb.innerHTML = '';
-    if (!registros.length) {
-        tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#86909C;padding:32px;font-size:14px;">📭 Nenhuma produção registrada ainda</td></tr>';
-        document.getElementById('totalGeral').textContent = 'Total de Peças: 0';
+    
+    // Aplica o filtro de pesquisa
+    let registrosFiltrados = registros;
+    if (filtroAtual) {
+        registrosFiltrados = registros.filter(r => 
+            r.responsavel.toLowerCase().includes(filtroAtual)
+        );
+        infoPesquisa.style.display = 'block';
+        infoPesquisa.textContent = `🔍 Mostrando resultados para: "${filtroAtual}" — ${registrosFiltrados.length} registro(s) encontrado(s)`;
+    } else {
+        infoPesquisa.style.display = 'none';
+    }
+    
+    if (!registrosFiltrados.length) {
+        tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#86909C;padding:32px;font-size:14px;">📭 Nenhum registro encontrado</td></tr>';
+        document.getElementById('totalGeral').textContent = filtroAtual ? `Total da busca: 0 peças` : 'Total de Peças: 0';
         return;
     }
+    
     let total = 0;
-    registros.forEach(r => {
+    registrosFiltrados.forEach(r => {
         total += r.totalPecas;
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -672,12 +1022,20 @@ function renderizarTabela() {
         `;
         tb.appendChild(tr);
     });
-    document.getElementById('totalGeral').textContent = `Total de Peças: ${formatarNumero(total)}`;
+    
+    document.getElementById('totalGeral').textContent = 
+        filtroAtual ? `Total da busca: ${formatarNumero(total)} peças` : `Total de Peças: ${formatarNumero(total)}`;
 }
 function exportarExcel() {
     if (!registros.length) return alert('Sem dados para exportar');
     let csv = '\uFEFF"Data";"Modelo";"Material";"Tipo";"Peças/Pacote";"Pacotes";"Total";"Responsável"\n';
-    registros.forEach(r => {
+    
+    // Exporta apenas os filtrados se houver pesquisa
+    let dadosExportar = filtroAtual 
+        ? registros.filter(r => r.responsavel.toLowerCase().includes(filtroAtual))
+        : registros;
+    
+    dadosExportar.forEach(r => {
         csv += `"${formatarData(r.data)}";"${r.estribo}";"${r.material} mm";"${r.tipo}";"${r.qtdPacote}";"${r.totalPacotes}";"${r.totalPecas}";"${r.responsavel}"\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -710,18 +1068,12 @@ function restaurarBackup(e) {
     };
     reader.readAsText(file);
 }
+
+// Função de apagar agora protegida por senha
 function limparTudo() {
-    if (confirm('⚠️ Tem certeza que deseja apagar TUDO? Os dados serão apagados do celular.')) {
-        registros = [];
-        salvarDados();
-        renderizarTabela();
-    }
+    abrirModalApagar();
 }
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('data').value = new Date().toISOString().split('T')[0];
-    renderizarModelos();
-    renderizarTabela();
-});
 </script>
+
 </body>
 </html>
