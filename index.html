@@ -3,127 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arames Brasil | Controle de Produção</title>
-    <meta name="theme-color" content="#165DFF">
+    <title>🇧🇷 Arames Brasil | Controle de Produção</title>
+    <meta name="theme-color" content="#009C3B">
     <style>
         :root {
-            --primaria: #165DFF;
-            --primaria-escura: #0E42D2;
-            --primaria-clara: #E8F3FF;
-            --sucesso: #00B42A;
-            --sucesso-claro: #E8FFEA;
-            --aviso: #FF7D00;
-            --aviso-claro: #FFF7E8;
-            --erro: #F53F3F;
-            --erro-claro: #FFECEC;
-            --texto: #1D2129;
-            --texto-secundario: #666F83;
-            --borda: #D0D3D9;
-            --borda-clara: #E5E6EB;
-            --fundo: #F2F5FA;
+            --verde-brasil: #009C3B;
+            --verde-escuro: #007A2F;
+            --verde-claro: #E6F9ED;
+            --amarelo-brasil: #FFDF00;
+            --amarelo-escuro: #E6C600;
+            --amarelo-claro: #FFFBE6;
+            --azul-brasil: #002776;
+            --azul-claro: #E6EBF7;
             --branco: #FFFFFF;
-            --sombra: 0 4px 16px rgba(22, 93, 255, 0.08);
-            --sombra-leve: 0 2px 6px rgba(0, 0, 0, 0.03);
-            --destaque-fundo: #E6FFE6;
-            --destaque-borda: #00B42A;
+            --texto: #1A1A1A;
+            --texto-claro: #555555;
+            --cinza-borda: #D9D9D9;
+            --sombra-suave: 0 2px 8px rgba(0, 156, 59, 0.08);
+            --sombra-destaque: 0 4px 16px rgba(0, 156, 59, 0.15);
         }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #F2F5FA 0%, #E8EEFA 100%);
+            background: linear-gradient(180deg, var(--verde-claro) 0%, var(--branco) 100%);
             color: var(--texto);
             min-height: 100vh;
             padding: 16px 12px;
         }
-        /* ===== TELA DE LOGIN ===== */
-        .tela-login {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #165DFF 0%, #0E42D2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            padding: 20px;
-        }
-        .caixa-login {
-            background: var(--branco);
-            padding: 36px 28px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-        }
-        .caixa-login h2 {
-            color: var(--primaria);
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-        .caixa-login p {
-            color: var(--texto-secundario);
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .caixa-login input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--borda-clara);
-            border-radius: 12px;
-            font-size: 18px;
-            text-align: center;
-            letter-spacing: 8px;
-            margin-bottom: 16px;
-        }
-        .caixa-login input:focus {
-            outline: none;
-            border-color: var(--primaria);
-        }
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .btn-login:hover {
-            transform: translateY(-2px);
-        }
-        .erro-senha {
-            color: var(--erro);
-            font-size: 13px;
-            margin-top: 12px;
-            display: none;
-        }
-        .erro-senha.visivel {
-            display: block;
-        }
-        .conteudo-principal {
-            display: none;
-        }
-        .conteudo-principal.visivel {
-            display: block;
-        }
-        /* ===== MODAL CONFIRMAR SENHA ===== */
         .modal-senha {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 39, 118, 0.6);
             display: none;
             align-items: center;
             justify-content: center;
@@ -137,25 +54,26 @@
             background: var(--branco);
             padding: 28px 24px;
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            border: 3px solid var(--amarelo-brasil);
+            box-shadow: var(--sombra-destaque);
             width: 100%;
             max-width: 340px;
             text-align: center;
         }
         .caixa-modal h3 {
-            color: var(--erro);
+            color: var(--azul-brasil);
             font-size: 18px;
             margin-bottom: 8px;
         }
         .caixa-modal p {
-            color: var(--texto-secundario);
+            color: var(--texto-claro);
             font-size: 14px;
             margin-bottom: 16px;
         }
         .caixa-modal input {
             width: 100%;
             padding: 12px 14px;
-            border: 2px solid var(--borda-clara);
+            border: 2px solid var(--verde-brasil);
             border-radius: 10px;
             font-size: 16px;
             text-align: center;
@@ -164,7 +82,7 @@
         }
         .caixa-modal input:focus {
             outline: none;
-            border-color: var(--erro);
+            border-color: var(--amarelo-brasil);
         }
         .botoes-modal {
             display: flex;
@@ -181,15 +99,16 @@
             border: none;
         }
         .btn-cancelar {
-            background: var(--borda-clara);
-            color: var(--texto);
+            background: var(--amarelo-claro);
+            color: var(--azul-brasil);
+            border: 1px solid var(--amarelo-brasil);
         }
         .btn-confirmar {
-            background: var(--erro);
+            background: var(--verde-brasil);
             color: white;
         }
         .erro-modal {
-            color: var(--erro);
+            color: #D32F2F;
             font-size: 12px;
             margin-top: 8px;
             display: none;
@@ -197,7 +116,6 @@
         .erro-modal.visivel {
             display: block;
         }
-        /* ===== BARRA DE PESQUISA ===== */
         .pesquisa-container {
             display: flex;
             align-items: center;
@@ -208,7 +126,7 @@
         .pesquisa-input {
             flex: 1;
             padding: 8px 12px;
-            border: 1.5px solid var(--borda-clara);
+            border: 2px solid var(--cinza-borda);
             border-radius: 8px;
             font-size: 13px;
             background: var(--branco);
@@ -216,28 +134,28 @@
         }
         .pesquisa-input:focus {
             outline: none;
-            border-color: var(--primaria);
-            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.08);
+            border-color: var(--verde-brasil);
+            box-shadow: 0 0 0 3px rgba(0, 156, 59, 0.1);
         }
         .btn-limpar-pesquisa {
             padding: 8px 10px;
-            background: var(--borda-clara);
-            border: none;
+            background: var(--amarelo-claro);
+            border: 1px solid var(--amarelo-brasil);
             border-radius: 8px;
             cursor: pointer;
             font-size: 13px;
-            color: var(--texto-secundario);
+            color: var(--azul-brasil);
             transition: all 0.2s;
         }
         .btn-limpar-pesquisa:hover {
-            background: #D0D3D9;
+            background: var(--amarelo-brasil);
         }
         .resultado-pesquisa {
             font-size: 12px;
-            color: var(--primaria);
+            color: var(--verde-escuro);
             margin-top: 6px;
+            font-weight: 500;
         }
-        /* ===== RESTO DO ESTILO ===== */
         .container {
             max-width: 1100px;
             margin: 0 auto;
@@ -245,32 +163,34 @@
         header {
             text-align: center;
             margin-bottom: 24px;
-            padding: 24px 20px;
-            background: var(--branco);
-            border-radius: 16px;
-            box-shadow: var(--sombra);
-            border: 1px solid var(--primaria-clara);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            padding: 28px 20px;
+            background: linear-gradient(135deg, var(--verde-brasil) 0%, var(--verde-escuro) 100%);
+            border-radius: 2px;
+            border: 4px solid var(--amarelo-brasil);
+            box-shadow: var(--sombra-destaque);
         }
         header h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primaria);
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--amarelo-brasil);
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            letter-spacing: -0.3px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
         header p {
-            color: var(--texto-secundario);
-            font-size: 14px;
+            color: var(--branco);
+            font-size: 15px;
+            margin-top: 6px;
         }
         .status-salvamento {
             font-size: 12px;
-            color: var(--sucesso);
+            color: var(--verde-escuro);
+            background: var(--verde-claro);
+            padding: 4px 10px;
+            border-radius: 12px;
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -278,32 +198,120 @@
             transition: opacity 0.3s;
         }
         .status-salvamento.salvando {
-            color: var(--aviso);
+            color: #B58900;
+            background: var(--amarelo-claro);
         }
         .card {
             background: var(--branco);
             border-radius: 16px;
-            box-shadow: var(--sombra-leve);
+            border-left: 5px solid var(--verde-brasil);
+            box-shadow: var(--sombra-suave);
             padding: 22px;
             margin-bottom: 20px;
-            border: 1px solid var(--borda-clara);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease;
         }
         .card:hover {
-            box-shadow: var(--sombra);
+            transform: translateY(-2px);
+            box-shadow: var(--sombra-destaque);
         }
         .card-titulo {
-            font-size: 17px;
-            font-weight: 700;
-            color: var(--texto);
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--azul-brasil);
             margin-bottom: 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--primaria-clara);
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--amarelo-brasil);
             flex-wrap: wrap;
             gap: 12px;
+        }
+        .grupo-modelos {
+            margin-bottom: 2px;
+            padding: 12px;
+            border-radius: 12px;
+        }
+        .grupo-retangular {
+            background: var(--azul-claro);
+            border-left: 4px solid var(--azul-brasil);
+        }
+        .grupo-redondo {
+            background: var(--amarelo-claro);
+            border-left: 4px solid var(--amarelo-brasil);
+        }
+        .grupo-hexagonal {
+            background: var(--verde-claro);
+            border-left: 4px solid var(--verde-brasil);
+        }
+        .grupo-titulo {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .grupo-retangular .grupo-titulo {
+            color: var(--azul-brasil);
+        }
+        .grupo-redondo .grupo-titulo {
+            color: #B58900;
+        }
+        .grupo-hexagonal .grupo-titulo {
+            color: var(--verde-escuro);
+        }
+        .modelos-lista {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .modelo-tag {
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+        }
+        .modelo-tag:hover {
+            transform: translateY(-2px);
+        }
+        .grupo-retangular .modelo-tag {
+            background: var(--branco);
+            color: var(--azul-brasil);
+            border-color: var(--azul-brasil);
+        }
+        .grupo-retangular .modelo-tag:hover {
+            background: var(--azul-brasil);
+            color: var(--branco);
+        }
+        .grupo-redondo .modelo-tag {
+            background: var(--branco);
+            color: #B58900;
+            border-color: var(--amarelo-brasil);
+        }
+        .grupo-redondo .modelo-tag:hover {
+            background: var(--amarelo-brasil);
+            color: var(--azul-brasil);
+        }
+        .grupo-hexagonal .modelo-tag {
+            background: var(--branco);
+            color: var(--verde-escuro);
+            border-color: var(--verde-brasil);
+        }
+        .grupo-hexagonal .modelo-tag:hover {
+            background: var(--verde-brasil);
+            color: var(--branco);
+        }
+        .modelo-tag.destaque-m-livre {
+            background: linear-gradient(135deg, var(--verde-brasil), var(--verde-escuro));
+            color: white;
+            border-color: var(--verde-escuro);
         }
         .grupo-form {
             display: grid;
@@ -316,14 +324,14 @@
         .campo label {
             display: block;
             font-size: 13px;
-            font-weight: 600;
-            color: var(--texto-secundario);
+            font-weight: 700;
+            color: var(--azul-brasil);
             margin-bottom: 6px;
         }
         input, select {
             width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid var(--borda);
+            padding: 11px 14px;
+            border: 2px solid var(--cinza-borda);
             border-radius: 10px;
             font-size: 14px;
             background: var(--branco);
@@ -331,15 +339,15 @@
         }
         input:focus, select:focus {
             outline: none;
-            border-color: var(--primaria);
-            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.1);
+            border-color: var(--verde-brasil);
+            box-shadow: 0 0 0 3px rgba(0, 156, 59, 0.1);
         }
         .aviso-minimo {
             font-size: 12px;
-            color: var(--aviso);
+            color: #B58900;
             margin-top: 4px;
             display: none;
-            font-weight: 500;
+            font-weight: 600;
         }
         .aviso-minimo.visivel {
             display: block;
@@ -350,110 +358,77 @@
             left: 0;
             right: 0;
             background: var(--branco);
-            border: 1.5px solid var(--primaria);
+            border: 2px solid var(--verde-brasil);
             border-top: none;
             border-radius: 0 0 10px 10px;
             max-height: 200px;
             overflow-y: auto;
             z-index: 50;
             display: none;
-            box-shadow: 0 8px 20px rgba(22, 93, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 156, 59, 0.15);
         }
         .sugestoes.visivel {
             display: block;
         }
         .sugestao-item {
-            padding: 10px 14px;
+            padding: 11px 14px;
             cursor: pointer;
             font-size: 14px;
             transition: background 0.15s ease;
         }
         .sugestao-item:hover {
-            background: var(--primaria-clara);
-        }
-        .sugestao-item.destaque {
-            background: var(--destaque-fundo);
-            color: #008021;
-            font-weight: 600;
+            background: var(--verde-claro);
         }
         .btn {
             border: none;
             border-radius: 10px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            padding: 10px 18px;
+            padding: 11px 18px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             transition: all 0.2s ease;
         }
         .btn-principal {
-            background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%);
+            background: linear-gradient(135deg, var(--verde-brasil) 0%, var(--verde-escuro) 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(22, 93, 255, 0.25);
+            box-shadow: 0 3px 10px rgba(0, 156, 59, 0.25);
         }
         .btn-principal:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(22, 93, 255, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 156, 59, 0.35);
         }
         .btn-sucesso {
-            background: linear-gradient(135deg, var(--sucesso) 0%, #009a23 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(0, 180, 42, 0.25);
+            background: linear-gradient(135deg, var(--amarelo-brasil) 0%, var(--amarelo-escuro) 100%);
+            color: var(--azul-brasil);
+            box-shadow: 0 3px 10px rgba(255, 223, 0, 0.25);
         }
         .btn-sucesso:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
         .btn-secundario {
-            background: var(--primaria-clara);
-            color: var(--primaria-escura);
-            border: 1px solid #B8D8FF;
+            background: var(--azul-claro);
+            color: var(--azul-brasil);
+            border: 2px solid var(--azul-brasil);
         }
         .btn-secundario:hover {
-            background: #D4E8FF;
+            background: var(--azul-brasil);
+            color: white;
         }
         .btn-perigo {
-            background: var(--erro-claro);
-            color: var(--erro);
-            border: 1px solid #FFCCC7;
+            background: #FFEBEE;
+            color: #C62828;
+            border: 2px solid #EF9A9A;
         }
         .btn-perigo:hover {
-            background: #FFD9D9;
-        }
-        .modelos-lista {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-        .modelo-tag {
-            background: var(--primaria-clara);
-            color: var(--primaria-escura);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .modelo-tag:hover {
-            border-color: var(--primaria);
-            transform: translateY(-1px);
-        }
-        .modelo-tag.destaque-m-livre {
-            background: var(--destaque-fundo);
-            color: #008021;
-            border-color: var(--destaque-borda);
-            box-shadow: 0 0 0 1px var(--destaque-borda);
+            background: #C62828;
+            color: white;
         }
         .tabela-wrapper {
             overflow-x: auto;
-            border: 1px solid var(--borda-clara);
+            border: 2px solid var(--amarelo-brasil);
             border-radius: 12px;
         }
         table {
@@ -465,16 +440,17 @@
         table th, table td {
             padding: 12px 14px;
             text-align: left;
-            border-bottom: 1px solid var(--borda-clara);
+            border-bottom: 1px solid var(--cinza-borda);
         }
         table th {
-            background: linear-gradient(to bottom, #F7F9FC, #EFF3F9);
-            font-weight: 700;
-            color: var(--texto);
+            background: linear-gradient(to bottom, var(--verde-claro), #D8F3E2);
+            font-weight: 800;
+            color: var(--azul-brasil);
             font-size: 12.5px;
+            border-bottom: 2px solid var(--verde-brasil);
         }
         table tr:hover td {
-            background: #F7F9FC;
+            background: var(--verde-claro);
         }
         table tr:last-child td {
             border-bottom: none;
@@ -485,14 +461,14 @@
             align-items: center;
             margin-top: 20px;
             padding-top: 16px;
-            border-top: 1px solid var(--borda-clara);
+            border-top: 3px solid var(--amarelo-brasil);
             flex-wrap: wrap;
             gap: 12px;
         }
         .total-geral {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--sucesso);
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--verde-escuro);
         }
         .mensagem {
             padding: 12px 16px;
@@ -500,19 +476,19 @@
             margin-top: 12px;
             font-size: 13px;
             display: none;
-            font-weight: 500;
+            font-weight: 600;
         }
-        .mensagem.sucesso { background: var(--sucesso-claro); color: #008021; display: block; border: 1px solid #B3FFB9; }
-        .mensagem.aviso { background: var(--aviso-claro); color: #9E5E00; display: block; border: 1px solid #FFE2A8; }
-        .mensagem.erro { background: var(--erro-claro); color: #C53030; display: block; border: 1px solid #FFCCC7; }
+        .mensagem.sucesso { background: var(--verde-claro); color: var(--verde-escuro); display: block; border: 2px solid var(--verde-brasil); }
+        .mensagem.aviso { background: var(--amarelo-claro); color: #B58900; display: block; border: 2px solid var(--amarelo-brasil); }
+        .mensagem.erro { background: #FFEBEE; color: #C62828; display: block; border: 2px solid #EF9A9A; }
         #subtotalCalculado {
             padding: 12px 16px !important;
-            background: linear-gradient(135deg, #F0FFF4 0%, #E6FFE6 100%) !important;
+            background: linear-gradient(135deg, var(--amarelo-claro) 0%, #FFF5B8 100%) !important;
             border-radius: 10px !important;
-            font-weight: 700;
-            color: #008021;
-            font-size: 15px;
-            border: 1px solid #B3FFB9;
+            font-weight: 800;
+            color: var(--azul-brasil);
+            font-size: 16px;
+            border: 2px solid var(--amarelo-brasil);
         }
         @media (max-width: 600px) {
             .grupo-form {
@@ -535,26 +511,17 @@
                 max-width: 100%;
                 width: 100%;
             }
+            header h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- 🔒 TELA DE LOGIN -->
-<div class="tela-login" id="telaLogin">
-    <div class="caixa-login">
-        <h2>🏢 Arames Brasil</h2>
-        <p>Digite a senha para acessar</p>
-        <input type="password" id="campoSenha" placeholder="••••••" maxlength="6">
-        <button class="btn-login" onclick="verificarSenha()">🔓 Entrar</button>
-        <div class="erro-senha" id="erroSenha">❌ Senha incorreta. Tente novamente.</div>
-    </div>
-</div>
-
-<!-- ⚠️ MODAL CONFIRMAR SENHA PARA APAGAR -->
 <div class="modal-senha" id="modalSenhaApagar">
     <div class="caixa-modal">
-        <h3>⚠️ Atenção!</h3>
+        <h3>🇧🇷 Atenção!</h3>
         <p>Digite a senha para apagar TODOS os dados. Esta ação não pode ser desfeita.</p>
         <input type="password" id="senhaApagar" placeholder="••••••" maxlength="6">
         <div class="botoes-modal">
@@ -565,14 +532,13 @@
     </div>
 </div>
 
-<!-- 📄 CONTEÚDO PRINCIPAL -->
 <div class="conteudo-principal" id="conteudoPrincipal">
     <div class="container">
         <header>
-            <h1>🏢 Arames Brasil</h1>
+            <h1>🇧🇷 Arames Brasil</h1>
             <p>Controle de Produção & Estoque de Estribos</p>
         </header>
-        <!-- Modelos -->
+
         <section class="card">
             <div class="card-titulo">
                 <span>📋 Modelos de Estribo</span>
@@ -581,15 +547,30 @@
                     <button class="btn btn-secundario" style="padding: 6px 12px; font-size: 12px;" onclick="alternarModoEdicao()" id="btnModoEdicao">✏️ Gerenciar</button>
                 </div>
             </div>
-            <div class="modelos-lista" id="listaModelos"></div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <input type="text" id="novoModelo" placeholder="Novo modelo (ex: 10x20)...">
+
+            <div class="grupo-modelos grupo-retangular">
+                <div class="grupo-titulo">📐 Retangulares</div>
+                <div class="modelos-lista" id="listaRetangulares"></div>
+            </div>
+
+            <div class="grupo-modelos grupo-redondo">
+                <div class="grupo-titulo">⭕ Redondos</div>
+                <div class="modelos-lista" id="listaRedondos"></div>
+            </div>
+
+            <div class="grupo-modelos grupo-hexagonal">
+                <div class="grupo-titulo">🔷 Hexagonais</div>
+                <div class="modelos-lista" id="listaHexagonais"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px;">
+                <input type="text" id="novoModelo" placeholder="Novo modelo..." style="flex:1;min-width:180px;">
                 <button class="btn btn-principal" onclick="adicionarModelo()">➕ Adicionar</button>
                 <button class="btn btn-sucesso" onclick="salvarManual()">💾 Salvar Agora</button>
             </div>
             <div id="msgModelo" class="mensagem"></div>
         </section>
-        <!-- Apontamento -->
+
         <section class="card">
             <div class="card-titulo">➕ Nova Produção</div>
             <div class="grupo-form">
@@ -645,7 +626,7 @@
             </div>
             <div id="mensagem" class="mensagem"></div>
         </section>
-        <!-- Tabela -->
+
         <section class="card">
             <div class="card-titulo">
                 <span>📊 Produções Registradas</span>
@@ -674,7 +655,7 @@
                 </table>
             </div>
             <div class="rodape-card">
-                <div class="total-geral" id="totalGeral">Total de Peças: 0</div>
+                <div class="total-geral" id="totalGeral">🇧🇷 Total de Peças: 0</div>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="btn btn-sucesso" onclick="exportarExcel()">📊 Excel</button>
                     <button class="btn btn-principal" onclick="fazerBackup()">💾 Backup</button>
@@ -688,30 +669,14 @@
 </div>
 
 <script>
-// 🔐 SENHAS — Altere aqui se precisar
-const SENHA_ACESSO = '710150';
 const SENHA_APAGAR = '710150';
-let filtroAtual = ''; // Guarda o texto da pesquisa
+let filtroAtual = '';
 
-// ===== FUNÇÃO DE VERIFICAÇÃO DE SENHA DE ACESSO =====
-function verificarSenha() {
-    const senhaDigitada = document.getElementById('campoSenha').value;
-    const telaLogin = document.getElementById('telaLogin');
-    const conteudoPrincipal = document.getElementById('conteudoPrincipal');
-    const erroSenha = document.getElementById('erroSenha');
-    
-    if (senhaDigitada === SENHA_ACESSO) {
-        telaLogin.style.display = 'none';
-        conteudoPrincipal.classList.add('visivel');
-        erroSenha.classList.remove('visivel');
-        inicializarSistema();
-    } else {
-        erroSenha.classList.add('visivel');
-        document.getElementById('campoSenha').value = '';
-    }
-}
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('conteudoPrincipal').style.display = 'block';
+    inicializarSistema();
+});
 
-// ===== FUNÇÕES DO MODAL DE APAGAR =====
 function abrirModalApagar() {
     document.getElementById('modalSenhaApagar').classList.add('visivel');
     document.getElementById('senhaApagar').value = '';
@@ -730,7 +695,7 @@ function verificarSenhaApagar() {
     
     if (senhaDigitada === SENHA_APAGAR) {
         fecharModalApagar();
-        if (confirm('⚠️ Tem certeza absoluta? Isso apagará TODOS os dados e não tem volta!')) {
+        if (confirm('🇧🇷 Tem certeza absoluta? Isso apagará TODOS os dados e não tem volta!')) {
             registros = [];
             salvarDados();
             renderizarTabela();
@@ -742,7 +707,6 @@ function verificarSenhaApagar() {
     }
 }
 
-// ===== FUNÇÕES DE PESQUISA =====
 function filtrarPorResponsavel() {
     filtroAtual = document.getElementById('pesquisaResponsavel').value.trim().toLowerCase();
     renderizarTabela();
@@ -754,26 +718,30 @@ function limparPesquisa() {
     renderizarTabela();
 }
 
-// Permitir Enter no campo senha de acesso
-document.getElementById('campoSenha').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') verificarSenha();
-});
-
-// Permitir Enter no campo senha de apagar
-document.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && document.getElementById('modalSenhaApagar').classList.contains('visivel')) {
-        verificarSenhaApagar();
-    }
-});
-
-// ===== RESTO DO SISTEMA =====
 const CHAVE_DADOS = 'producao_estribo_dados';
 const CHAVE_MODELOS = 'producao_estribo_modelos';
-const MODELOS_DESTAQUE_MLIVRE = ['7x14', '7x17', '7x27', '9x15', '9x20', '15x15'];
+
+const RETANGULARES = ["7x14", "7x17", "7x27", "9x15", "9x20", "9x25", "12x20", "12x25", "15x15", "15x20", "15x25"];
+const REDONDOS = ["Red 15", "Red 20", "Red 25", "Red 30"];
+const HEXAGONAIS = ["Hexa 15", "Hexa 20", "Hexa 25", "Hexa 30"];
+
+const MODELOS_PADRAO = [...RETANGULARES, ...REDONDOS, ...HEXAGONAIS];
+const MODELOS_DESTAQUE_MLIVRE = ["7x14", "7x17", "7x27", "9x15", "9x20", "15x15"];
+
 let modelos, registros, modoEdicao, temporizadorSalvamento;
 
 function inicializarSistema() {
-    modelos = JSON.parse(localStorage.getItem(CHAVE_MODELOS) || '["7x14", "7x17", "7x27", "9x15", "9x20", "15x15"]');
+    const modelosSalvos = localStorage.getItem(CHAVE_MODELOS);
+    if (!modelosSalvos || JSON.parse(modelosSalvos).length === 0) {
+        modelos = [...MODELOS_PADRAO];
+        localStorage.setItem(CHAVE_MODELOS, JSON.stringify(modelos));
+    } else {
+        modelos = JSON.parse(modelosSalvos);
+        MODELOS_PADRAO.forEach(m => {
+            if (!modelos.includes(m)) modelos.push(m);
+        });
+        localStorage.setItem(CHAVE_MODELOS, JSON.stringify(modelos));
+    }
     registros = JSON.parse(localStorage.getItem(CHAVE_DADOS) || '[]');
     modoEdicao = false;
     temporizadorSalvamento = null;
@@ -783,21 +751,15 @@ function inicializarSistema() {
     renderizarTabela();
 }
 
-// ===== SALVAMENTO AUTOMÁTICO =====
 function mostrarStatusSalvamento(salvando = false) {
-    const status1 = document.getElementById('statusSalvamento');
-    const status2 = document.getElementById('statusTabela');
-    if (!status1 || !status2) return;
+    const status = document.getElementById('statusSalvamento');
+    if (!status) return;
     if (salvando) {
-        status1.textContent = '⏳ Salvando...';
-        status1.classList.add('salvando');
-        status2.textContent = '⏳ Salvando...';
-        status2.classList.add('salvando');
+        status.textContent = '⏳ Salvando...';
+        status.classList.add('salvando');
     } else {
-        status1.textContent = '✅ Salvo automaticamente';
-        status1.classList.remove('salvando');
-        status2.textContent = '✅ Salvo';
-        status2.classList.remove('salvando');
+        status.textContent = '✅ Salvo automaticamente';
+        status.classList.remove('salvando');
     }
 }
 
@@ -815,29 +777,39 @@ function salvarAutomatico() {
 
 function salvarManual() {
     salvarDados();
-    exibirMensagem('mensagem', '✅ Salvo com sucesso!', 'sucesso');
+    exibirMensagem('mensagem', '✅ Salvo com sucesso! 🇧🇷', 'sucesso');
 }
 
 function extrairNumeros(t) {
     if (!t) return [0, 0];
-    const p = t.replace(/[^\dxX]/g, '').split(/[xX]/);
-    return [parseInt(p[0]) || 0, parseInt(p[1]) || 0];
+    const match = t.match(/(\d+)x(\d+)/);
+    if (match) {
+        return [parseInt(match[1]) || 0, parseInt(match[2]) || 0];
+    }
+    const num = t.match(/\d+/);
+    return num ? [parseInt(num[0]) || 0, 0] : [0, 0];
 }
+
 function ordenarModelos(l) {
     return l.slice().sort((a, b) => {
         const [a1, a2] = extrairNumeros(a);
         const [b1, b2] = extrairNumeros(b);
-        return a1 !== b1 ? a1 - b1 : a2 - b2;
+        if (a1 !== b1) return a1 - b1;
+        if (a2 !== b2) return a2 - b2;
+        return a.localeCompare(b);
     });
 }
+
 function formatarData(d) {
     if (!d) return '-';
     const [a, m, di] = d.split('-');
     return `${di}/${m}/${a}`;
 }
+
 function formatarNumero(n) {
     return Number(n || 0).toLocaleString('pt-BR');
 }
+
 function exibirMensagem(id, texto, tipo = 'sucesso') {
     const el = document.getElementById(id);
     if (!el) return;
@@ -845,6 +817,7 @@ function exibirMensagem(id, texto, tipo = 'sucesso') {
     el.innerHTML = texto;
     setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
+
 function atualizarTipoRegras() {
     const t = document.getElementById('tipo').value;
     const q = document.getElementById('qtdPacote');
@@ -861,34 +834,52 @@ function atualizarTipoRegras() {
     calcularSubtotal();
     renderizarModelos();
 }
+
 function calcularSubtotal() {
     const q = parseInt(document.getElementById('qtdPacote').value) || 0;
     const p = parseInt(document.getElementById('totalPacotes').value) || 0;
     document.getElementById('subtotalCalculado').textContent = `${formatarNumero(q * p)} peças`;
 }
-function renderizarModelos() {
-    const lista = document.getElementById('listaModelos');
-    if (!lista) return;
-    lista.innerHTML = '';
+
+function renderizarTag(modelo, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
     const t = document.getElementById('tipo').value;
-    ordenarModelos(modelos).forEach(m => {
-        const isMlivre = t === 'MLIVRE' && MODELOS_DESTAQUE_MLIVRE.includes(m);
-        const tag = document.createElement('div');
-        tag.className = `modelo-tag ${isMlivre ? 'destaque-m-livre' : ''}`;
-        tag.innerHTML = `<span>${m}</span>`;
-        if (modoEdicao) {
-            tag.innerHTML += ` <button onclick="removerModelo('${m}')" style="background:none;border:none;color:var(--erro);cursor:pointer;font-size:14px;padding:0 4px;">✖</button>`;
-        } else {
-            tag.onclick = () => { document.getElementById('estribo').value = m; };
-        }
-        lista.appendChild(tag);
-    });
+    const isMlivre = t === 'MLIVRE' && MODELOS_DESTAQUE_MLIVRE.includes(modelo);
+    
+    const tag = document.createElement('div');
+    tag.className = `modelo-tag ${isMlivre ? 'destaque-m-livre' : ''}`;
+    tag.innerHTML = `<span>${modelo}</span>`;
+    
+    if (modoEdicao) {
+        tag.innerHTML += ` <button onclick="removerModelo('${modelo}')" style="background:none;border:none;color:#C62828;cursor:pointer;font-size:14px;padding:0 4px;">✖</button>`;
+    } else {
+        tag.onclick = () => { document.getElementById('estribo').value = modelo; };
+    }
+    container.appendChild(tag);
 }
+
+function renderizarModelos() {
+    document.getElementById('listaRetangulares').innerHTML = '';
+    document.getElementById('listaRedondos').innerHTML = '';
+    document.getElementById('listaHexagonais').innerHTML = '';
+    
+    ordenarModelos(modelos.filter(m => RETANGULARES.includes(m)))
+        .forEach(m => renderizarTag(m, 'listaRetangulares'));
+    
+    ordenarModelos(modelos.filter(m => REDONDOS.includes(m)))
+        .forEach(m => renderizarTag(m, 'listaRedondos'));
+    
+    ordenarModelos(modelos.filter(m => HEXAGONAIS.includes(m)))
+        .forEach(m => renderizarTag(m, 'listaHexagonais'));
+}
+
 function alternarModoEdicao() {
     modoEdicao = !modoEdicao;
     document.getElementById('btnModoEdicao').textContent = modoEdicao ? '✓ Concluir' : '✏️ Gerenciar';
     renderizarModelos();
 }
+
 function adicionarModelo() {
     const inp = document.getElementById('novoModelo');
     const v = inp.value.trim();
@@ -899,8 +890,9 @@ function adicionarModelo() {
     salvarAutomatico();
     renderizarModelos();
     inp.value = '';
-    exibirMensagem('msgModelo', '✅ Adicionado e salvo!', 'sucesso');
+    exibirMensagem('msgModelo', '✅ Adicionado e salvo! 🇧🇷', 'sucesso');
 }
+
 function removerModelo(m) {
     if (confirm(`Excluir modelo "${m}"?`)) {
         modelos = modelos.filter(x => x !== m);
@@ -908,6 +900,7 @@ function removerModelo(m) {
         renderizarModelos();
     }
 }
+
 function mostrarSugestoes() {
     const div = document.getElementById('sugestoesEstribo');
     if (!div) return;
@@ -921,6 +914,7 @@ function mostrarSugestoes() {
     });
     div.classList.add('visivel');
 }
+
 function filtrarSugestoes() {
     const v = document.getElementById('estribo').value.toLowerCase();
     const div = document.getElementById('sugestoesEstribo');
@@ -935,6 +929,7 @@ function filtrarSugestoes() {
     });
     div.classList.add('visivel');
 }
+
 document.addEventListener('click', e => {
     const campoEstribo = document.querySelector('.campo:has(#estribo)');
     if (campoEstribo && !campoEstribo.contains(e.target)) {
@@ -942,6 +937,7 @@ document.addEventListener('click', e => {
         if (div) div.classList.remove('visivel');
     }
 });
+
 function adicionarRegistro() {
     const dados = {
         id: Date.now(),
@@ -963,7 +959,7 @@ function adicionarRegistro() {
     registros.unshift(dados);
     salvarDados();
     renderizarTabela();
-    exibirMensagem('mensagem', '✅ Produção salva com sucesso!', 'sucesso');
+    exibirMensagem('mensagem', '✅ Produção salva com sucesso! 🇧🇷', 'sucesso');
     document.getElementById('responsavel').value = '';
     document.getElementById('estribo').value = '';
     document.getElementById('material').value = '';
@@ -972,6 +968,7 @@ function adicionarRegistro() {
     document.getElementById('totalPacotes').value = '';
     calcularSubtotal();
 }
+
 function excluirRegistro(id) {
     if (confirm('Excluir este apontamento?')) {
         registros = registros.filter(r => r.id !== id);
@@ -979,13 +976,13 @@ function excluirRegistro(id) {
         renderizarTabela();
     }
 }
+
 function renderizarTabela() {
     const tb = document.getElementById('corpoTabela');
     const infoPesquisa = document.getElementById('infoPesquisa');
     if (!tb) return;
     tb.innerHTML = '';
     
-    // Aplica o filtro de pesquisa
     let registrosFiltrados = registros;
     if (filtroAtual) {
         registrosFiltrados = registros.filter(r => 
@@ -998,8 +995,8 @@ function renderizarTabela() {
     }
     
     if (!registrosFiltrados.length) {
-        tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#86909C;padding:32px;font-size:14px;">📭 Nenhum registro encontrado</td></tr>';
-        document.getElementById('totalGeral').textContent = filtroAtual ? `Total da busca: 0 peças` : 'Total de Peças: 0';
+        tb.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#666;padding:32px;font-size:14px;">📭 Nenhum registro encontrado</td></tr>';
+        document.getElementById('totalGeral').textContent = filtroAtual ? `🇧🇷 Total da busca: 0 peças` : '🇧🇷 Total de Peças: 0';
         return;
     }
     
@@ -1009,28 +1006,28 @@ function renderizarTabela() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><strong>${formatarData(r.data)}</strong></td>
-            <td style="font-weight:700;color:var(--primaria);">${r.estribo}</td>
+            <td style="font-weight:800;color:#002776;">${r.estribo}</td>
             <td>Ø ${r.material} mm</td>
             <td><strong>${r.tipo}</strong></td>
             <td style="text-align:right;">${formatarNumero(r.qtdPacote)}</td>
             <td style="text-align:right;">${formatarNumero(r.totalPacotes)}</td>
-            <td style="text-align:right;font-weight:700;color:var(--sucesso);">${formatarNumero(r.totalPecas)}</td>
+            <td style="text-align:right;font-weight:800;color:#007A2F;">${formatarNumero(r.totalPecas)}</td>
             <td>${r.responsavel}</td>
             <td style="text-align:center;">
-                <button onclick="excluirRegistro(${r.id})" style="background:none;border:none;cursor:pointer;color:var(--erro);font-size:16px;" title="Excluir">🗑️</button>
+                <button onclick="excluirRegistro(${r.id})" style="background:none;border:none;cursor:pointer;color:#C62828;font-size:16px;" title="Excluir">🗑️</button>
             </td>
         `;
         tb.appendChild(tr);
     });
     
     document.getElementById('totalGeral').textContent = 
-        filtroAtual ? `Total da busca: ${formatarNumero(total)} peças` : `Total de Peças: ${formatarNumero(total)}`;
+        filtroAtual ? `🇧🇷 Total da busca: ${formatarNumero(total)} peças` : `🇧🇷 Total de Peças: ${formatarNumero(total)}`;
 }
+
 function exportarExcel() {
     if (!registros.length) return alert('Sem dados para exportar');
     let csv = '\uFEFF"Data";"Modelo";"Material";"Tipo";"Peças/Pacote";"Pacotes";"Total";"Responsável"\n';
     
-    // Exporta apenas os filtrados se houver pesquisa
     let dadosExportar = filtroAtual 
         ? registros.filter(r => r.responsavel.toLowerCase().includes(filtroAtual))
         : registros;
@@ -1044,6 +1041,7 @@ function exportarExcel() {
     a.download = `Arames_Brasil_Producao_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
 }
+
 function fazerBackup() {
     const blob = new Blob([JSON.stringify({ modelos, registros }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
@@ -1051,6 +1049,7 @@ function fazerBackup() {
     a.download = `Backup_Arames_Brasil_${new Date().toISOString().split('T')[0]}.json`;
     a.click();
 }
+
 function restaurarBackup(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -1059,19 +1058,16 @@ function restaurarBackup(e) {
         try {
             const d = JSON.parse(evt.target.result);
             if (d.modelos && d.registros) {
-                modelos = d.modelos; registros = d.registros;
+                modelos = d.modelos;
+                registros = d.registros;
                 salvarDados();
-                renderizarModelos(); renderizarTabela();
-                alert('✅ Backup restaurado com sucesso!');
+                renderizarModelos();
+                renderizarTabela();
+                alert('✅ Backup restaurado com sucesso! 🇧🇷');
             }
         } catch { alert('❌ Arquivo inválido'); }
     };
     reader.readAsText(file);
-}
-
-// Função de apagar agora protegida por senha
-function limparTudo() {
-    abrirModalApagar();
 }
 </script>
 
