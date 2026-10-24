@@ -73,7 +73,7 @@
     .carregando { color: var(--primaria); font-size: 14px; margin-top: 12px; display: none; }
     .carregando.visivel { display: block; }
 
-    /* ===== MODAIS (senha + edição) ===== */
+    /* ===== MODAIS ===== */
     .modal-senha {
       position: fixed; inset: 0;
       background: rgba(0, 0, 0, 0.5); display: none;
@@ -104,14 +104,13 @@
     .erro-modal { color: var(--erro); font-size: 12px; margin-top: 8px; display: none; }
     .erro-modal.visivel { display: block; }
 
-    /* Modal de edição (mais largo) */
     #modalEdicao .caixa-modal { max-width: 520px; text-align: left; }
     #modalEdicao h3 { color: var(--primaria); text-align: center; margin-bottom: 16px; }
     #modalEdicao .grupo-form { margin-top: 8px; }
     #modalEdicao .campo input,
     #modalEdicao .campo select { letter-spacing: normal; text-align: left; padding: 10px 14px; font-size: 14px; }
 
-    /* ===== ESTRUTURA PRINCIPAL ===== */
+    /* ===== ESTRUTURA ===== */
     .conteudo-principal { display: none; }
     .container { max-width: 1100px; margin: 0 auto; }
     .cabecalho-topo {
@@ -178,7 +177,7 @@
       cursor: pointer; font-size: 14px; padding: 0 2px;
     }
 
-    /* ===== FORMULÁRIO ===== */
+    /* ===== FORM ===== */
     .grupo-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px 20px; }
     .campo { position: relative; }
     .campo label {
@@ -213,6 +212,44 @@
     .btn-perigo { background: var(--erro-claro); color: var(--erro); border: 1px solid #FFCCC7; }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+    /* ===== FILTROS ===== */
+    .filtros {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 16px;
+      padding: 14px;
+      background: #F7F9FC;
+      border-radius: 12px;
+      border: 1px solid var(--borda-clara);
+    }
+    .filtro-campo {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 140px;
+      flex: 1;
+    }
+    .filtro-campo label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--texto-secundario);
+    }
+    .filtro-campo input { padding: 8px 12px; font-size: 13px; }
+    .btn-limpar {
+      padding: 9px 16px;
+      background: var(--branco);
+      border: 1.5px solid var(--borda);
+      border-radius: 10px;
+      color: var(--texto-secundario);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-limpar:hover { background: var(--erro-claro); color: var(--erro); border-color: var(--erro); }
+
     /* ===== TABELA ===== */
     .tabela-wrapper { overflow-x: auto; border: 1px solid var(--borda-clara); border-radius: 12px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--branco); }
@@ -221,7 +258,6 @@
     table tbody tr:hover { background: #FAFBFD; }
     .tabela-vazia { text-align: center; color: #86909C; padding: 32px; }
 
-    /* Ações (editar / excluir) */
     .acoes-celula { display: flex; gap: 6px; justify-content: center; }
     .btn-acao {
       border: none; border-radius: 8px; padding: 7px 11px;
@@ -234,6 +270,68 @@
     .btn-editar:hover { background: var(--primaria); color: white; }
     .btn-excluir { background: var(--erro-claro); color: var(--erro); }
     .btn-excluir:hover { background: var(--erro); color: white; }
+
+    /* ===== PAGINAÇÃO ===== */
+    .paginacao {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #F7F9FC;
+      border-radius: 12px;
+      border: 1px solid var(--borda-clara);
+      font-size: 13px;
+    }
+    .paginacao:empty { display: none; }
+    .paginacao-info { color: var(--texto-secundario); }
+    .paginacao-controles {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-pagina {
+      padding: 7px 14px;
+      background: var(--branco);
+      border: 1.5px solid var(--borda);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--primaria);
+      transition: all 0.15s ease;
+    }
+    .btn-pagina:hover:not(:disabled) {
+      background: var(--primaria);
+      color: white;
+      border-color: var(--primaria);
+    }
+    .btn-pagina:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      color: var(--texto-secundario);
+    }
+    .pagina-atual {
+      font-weight: 700;
+      color: var(--texto);
+      min-width: 110px;
+      text-align: center;
+    }
+    .paginacao-tamanho label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--texto-secundario);
+    }
+    .paginacao-tamanho select {
+      padding: 6px 10px;
+      font-size: 13px;
+      width: auto;
+      min-width: 70px;
+    }
 
     .rodape-card {
       display: flex; justify-content: space-between; align-items: center;
@@ -255,18 +353,14 @@
       font-weight: 700; color: #008021; font-size: 15px; border: 1px solid #B3FFB9;
     }
 
-    .pesquisa-container { display: flex; align-items: center; gap: 8px; flex: 1; max-width: 280px; }
-    .pesquisa-input {
-      flex: 1; padding: 8px 12px; border: 1.5px solid var(--borda-clara);
-      border-radius: 8px; font-size: 13px; background: var(--branco);
-    }
-    .pesquisa-input:focus { outline: none; border-color: var(--primaria); }
-
     .linha-add-modelo { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
 
     @media (max-width: 600px) {
       .grupo-form { grid-template-columns: 1fr; }
       .rodape-card { flex-direction: column; align-items: stretch; }
+      .filtro-campo { min-width: 100%; }
+      .paginacao { flex-direction: column; align-items: stretch; }
+      .paginacao-controles { justify-content: center; }
     }
   </style>
 </head>
@@ -285,7 +379,7 @@
   </form>
 </div>
 
-<!-- ===== MODAL SENHA APAGAR TUDO ===== -->
+<!-- ===== MODAL SENHA ===== -->
 <div class="modal-senha" id="modalSenhaApagar">
   <div class="caixa-modal">
     <h3>⚠️ Atenção!</h3>
@@ -299,7 +393,7 @@
   </div>
 </div>
 
-<!-- ===== MODAL EDITAR REGISTRO ===== -->
+<!-- ===== MODAL EDIÇÃO ===== -->
 <div class="modal-senha" id="modalEdicao">
   <div class="caixa-modal">
     <h3>✏️ Editar Registro</h3>
@@ -374,7 +468,6 @@
         <span>📋 Modelos de Estribo</span>
         <button class="btn btn-principal" id="btnModoEdicao" style="padding: 6px 12px; font-size: 12px;">✏️ Gerenciar</button>
       </div>
-
       <div class="grupo-modelos grupo-retangular">
         <div class="grupo-titulo">📐 Retangulares</div>
         <div class="modelos-lista" id="listaRetangulares"></div>
@@ -391,7 +484,6 @@
         <div class="grupo-titulo">✨ Personalizados</div>
         <div class="modelos-lista" id="listaPersonalizados"></div>
       </div>
-
       <div class="linha-add-modelo">
         <input type="text" id="novoModelo" placeholder="Novo modelo..." style="flex:1; min-width:180px;">
         <button class="btn btn-principal" id="btnAdicionarModelo">➕ Adicionar</button>
@@ -449,7 +541,6 @@
           <input type="text" id="responsavel" placeholder="Nome">
         </div>
       </div>
-
       <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
         <button class="btn btn-principal" id="btnSalvar">💾 Salvar Produção</button>
         <button class="btn btn-sucesso" id="btnExportar">📊 Baixar Excel</button>
@@ -461,10 +552,25 @@
     <section class="card">
       <div class="card-titulo">
         <span>📊 Produções Registradas</span>
-        <div class="pesquisa-container">
-          <input type="text" class="pesquisa-input" id="pesquisaResponsavel" placeholder="🔍 Pesquisar...">
-        </div>
       </div>
+
+      <!-- FILTROS -->
+      <div class="filtros">
+        <div class="filtro-campo">
+          <label>🔍 Pesquisar responsável</label>
+          <input type="text" id="pesquisaResponsavel" placeholder="Nome do responsável...">
+        </div>
+        <div class="filtro-campo">
+          <label>📅 Data inicial</label>
+          <input type="date" id="filtroDataInicio">
+        </div>
+        <div class="filtro-campo">
+          <label>📅 Data final</label>
+          <input type="date" id="filtroDataFim">
+        </div>
+        <button class="btn-limpar" id="btnLimparFiltros">🧹 Limpar filtros</button>
+      </div>
+
       <div class="tabela-wrapper">
         <table>
           <thead>
@@ -483,6 +589,10 @@
           <tbody id="corpoTabela"></tbody>
         </table>
       </div>
+
+      <!-- PAGINAÇÃO -->
+      <div id="paginacao" class="paginacao"></div>
+
       <div class="rodape-card">
         <div class="total-geral" id="totalGeral">Total de Peças: 0</div>
         <button class="btn btn-perigo" id="btnApagarTudo">🗑️ Apagar Tudo</button>
@@ -495,7 +605,7 @@
 'use strict';
 
 // =====================================================
-// 🔥 CONFIGURAÇÃO FIREBASE
+// 🔥 FIREBASE
 // =====================================================
 const firebaseConfig = {
   apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
@@ -528,6 +638,10 @@ const estado = {
   modoEdicao: false,
   producoes: [],
   filtro: '',
+  filtroDataInicio: '',
+  filtroDataFim: '',
+  pagina: 1,
+  porPagina: 20,
   unsubscribe: null,
   editandoId: null,
 };
@@ -551,10 +665,7 @@ function formatarData(d) {
 
 function dataHojeLocal() {
   const d = new Date();
-  const ano = d.getFullYear();
-  const mes = String(d.getMonth() + 1).padStart(2, '0');
-  const dia = String(d.getDate()).padStart(2, '0');
-  return `${ano}-${mes}-${dia}`;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 function exibirMensagem(id, texto, tipo = 'sucesso', tempo = 4000) {
@@ -588,7 +699,7 @@ function categoriaDe(modelo) {
 }
 
 // =====================================================
-// 🔐 AUTENTICAÇÃO
+// 🔐 AUTH
 // =====================================================
 auth.onAuthStateChanged((usuario) => {
   if (usuario) {
@@ -678,12 +789,10 @@ function removerModelo(modelo) {
 function criarTagModelo(modelo) {
   const tipoAtual = $('tipo').value;
   const destaque = tipoAtual === 'MLIVRE' && MODELOS_DESTAQUE_MLIVRE.includes(modelo);
-
   const tag = document.createElement('div');
   tag.className = 'modelo-tag' + (destaque ? ' destaque-m-livre' : '');
   tag.dataset.modelo = modelo;
   tag.innerHTML = `<span>${modelo}</span>`;
-
   if (estado.modoEdicao) {
     const btn = document.createElement('button');
     btn.className = 'btn-remover-modelo';
@@ -701,7 +810,6 @@ function renderizarModelos() {
     hexagonal:    $('listaHexagonais'),
     personalizado:$('listaPersonalizados'),
   };
-
   Object.values(grupos).forEach(el => { if (el) el.innerHTML = ''; });
 
   const agrupados = { retangular: [], redondo: [], hexagonal: [], personalizado: [] };
@@ -712,19 +820,16 @@ function renderizarModelos() {
     if (!container) continue;
     ordenarModelos(lista).forEach(m => container.appendChild(criarTagModelo(m)));
   }
-
-  $('grupoPersonalizado').style.display =
-    agrupados.personalizado.length ? '' : 'none';
+  $('grupoPersonalizado').style.display = agrupados.personalizado.length ? '' : 'none';
 }
 
 // =====================================================
-// 📝 FORMULÁRIO DE PRODUÇÃO
+// 📝 FORMULÁRIO
 // =====================================================
 function atualizarRegrasTipo() {
   const tipo = $('tipo').value;
   const qtd = $('qtdPacote');
   const aviso = $('avisoMinimo');
-
   if (tipo === 'MLIVRE') {
     $('material').value = '4.2';
     qtd.min = 100;
@@ -748,15 +853,8 @@ function mostrarSugestoes(filtro = '') {
   const div = $('sugestoesEstribo');
   const termo = filtro.toLowerCase();
   div.innerHTML = '';
-
-  const lista = ordenarModelos(estado.modelos)
-    .filter(m => m.toLowerCase().includes(termo));
-
-  if (!lista.length) {
-    div.classList.remove('visivel');
-    return;
-  }
-
+  const lista = ordenarModelos(estado.modelos).filter(m => m.toLowerCase().includes(termo));
+  if (!lista.length) { div.classList.remove('visivel'); return; }
   lista.forEach(m => {
     const item = document.createElement('div');
     item.className = 'sugestao-item';
@@ -768,13 +866,12 @@ function mostrarSugestoes(filtro = '') {
     });
     div.appendChild(item);
   });
-
   div.classList.add('visivel');
 }
 
 function limparCampos() {
   ['estribo','material','tipo','qtdPacote','totalPacotes','responsavel']
-    .forEach(id => $('id').value = '');
+    .forEach(id => $(id).value = '');
   calcularSubtotal();
   renderizarModelos();
 }
@@ -782,7 +879,6 @@ function limparCampos() {
 async function adicionarRegistro() {
   const usuario = auth.currentUser;
   if (!usuario) return;
-
   const dados = {
     data: $('data').value,
     estribo: $('estribo').value.trim(),
@@ -818,7 +914,7 @@ async function adicionarRegistro() {
 }
 
 // =====================================================
-// ✏️ EDITAR / 🗑️ EXCLUIR REGISTRO
+// ✏️ EDITAR / 🗑️ EXCLUIR
 // =====================================================
 function preencherDatalistModelos() {
   const dl = $('listaModelosEdit');
@@ -833,16 +929,14 @@ function preencherDatalistModelos() {
 function abrirModalEdicao(id) {
   const r = estado.producoes.find(p => p.id === id);
   if (!r) return;
-
   estado.editandoId = id;
-  $('editData').value        = r.data || '';
-  $('editEstribo').value     = r.estribo || '';
-  $('editMaterial').value    = r.material || '4.2';
-  $('editTipo').value        = r.tipo || 'AMARRADO';
-  $('editQtdPacote').value   = r.qtdPacote || '';
-  $('editTotalPacotes').value= r.totalPacotes || '';
-  $('editResponsavel').value = r.responsavel || '';
-
+  $('editData').value         = r.data || '';
+  $('editEstribo').value      = r.estribo || '';
+  $('editMaterial').value     = r.material || '4.2';
+  $('editTipo').value         = r.tipo || 'AMARRADO';
+  $('editQtdPacote').value    = r.qtdPacote || '';
+  $('editTotalPacotes').value = r.totalPacotes || '';
+  $('editResponsavel').value  = r.responsavel || '';
   preencherDatalistModelos();
   calcularSubtotalEdit();
   $('editMensagem').style.display = 'none';
@@ -865,7 +959,6 @@ function calcularSubtotalEdit() {
 async function salvarEdicao() {
   const id = estado.editandoId;
   if (!id) return;
-
   const dados = {
     data: $('editData').value,
     estribo: $('editEstribo').value.trim(),
@@ -902,7 +995,6 @@ async function salvarEdicao() {
 async function excluirRegistro(id) {
   const r = estado.producoes.find(p => p.id === id);
   if (!r) return;
-
   const msg =
     'Excluir este registro?\n\n' +
     `📅 ${formatarData(r.data)}\n` +
@@ -912,7 +1004,6 @@ async function excluirRegistro(id) {
     `🔢 ${formatarNumero(r.totalPecas)} peças\n` +
     `👤 ${r.responsavel}`;
   if (!confirm(msg)) return;
-
   try {
     await db.collection(COLECAO).doc(id).delete();
     exibirMensagem('mensagem', '🗑️ Registro excluído', 'sucesso');
@@ -922,7 +1013,7 @@ async function excluirRegistro(id) {
 }
 
 // =====================================================
-// ☁️ FIRESTORE (leitura + exclusão em massa)
+// ☁️ FIRESTORE
 // =====================================================
 function carregarDados() {
   const q = db.collection(COLECAO).orderBy('data', 'desc');
@@ -943,7 +1034,6 @@ async function apagarTodosRegistros() {
     const snap = await db.collection(COLECAO).get();
     const docs = snap.docs;
     if (!docs.length) return exibirMensagem('mensagem', 'ℹ️ Nenhum registro para apagar', 'aviso');
-
     for (let i = 0; i < docs.length; i += LIMITE_BATCH) {
       const batch = db.batch();
       docs.slice(i, i + LIMITE_BATCH).forEach(d => batch.delete(d.ref));
@@ -956,7 +1046,7 @@ async function apagarTodosRegistros() {
 }
 
 // =====================================================
-// ⚠️ MODAL DE SENHA (apagar tudo)
+// ⚠️ MODAL SENHA
 // =====================================================
 function abrirModalApagar() {
   $('modalSenhaApagar').classList.add('visivel');
@@ -980,10 +1070,53 @@ async function verificarSenhaApagar() {
 }
 
 // =====================================================
-// 📊 TABELA
+// 📊 FILTROS + TABELA + PAGINAÇÃO
 // =====================================================
+function obterDadosFiltrados() {
+  let dados = estado.producoes;
+
+  if (estado.filtro) {
+    dados = dados.filter(r => (r.responsavel || '').toLowerCase().includes(estado.filtro));
+  }
+  if (estado.filtroDataInicio) {
+    dados = dados.filter(r => (r.data || '') >= estado.filtroDataInicio);
+  }
+  if (estado.filtroDataFim) {
+    dados = dados.filter(r => (r.data || '') <= estado.filtroDataFim);
+  }
+  return dados;
+}
+
+function temFiltroAtivo() {
+  return !!(estado.filtro || estado.filtroDataInicio || estado.filtroDataFim);
+}
+
 function filtrarPorResponsavel() {
   estado.filtro = $('pesquisaResponsavel').value.trim().toLowerCase();
+  estado.pagina = 1;
+  renderizarTabela();
+}
+
+function aplicarFiltroData() {
+  estado.filtroDataInicio = $('filtroDataInicio').value;
+  estado.filtroDataFim = $('filtroDataFim').value;
+  estado.pagina = 1;
+  renderizarTabela();
+}
+
+function limparFiltros() {
+  estado.filtro = '';
+  estado.filtroDataInicio = '';
+  estado.filtroDataFim = '';
+  estado.pagina = 1;
+  $('pesquisaResponsavel').value = '';
+  $('filtroDataInicio').value = '';
+  $('filtroDataFim').value = '';
+  renderizarTabela();
+}
+
+function mudarPagina(n) {
+  estado.pagina = n;
   renderizarTabela();
 }
 
@@ -991,24 +1124,39 @@ function renderizarTabela() {
   const tb = $('corpoTabela');
   tb.innerHTML = '';
 
-  const filtro = estado.filtro;
-  const dados = filtro
-    ? estado.producoes.filter(r => (r.responsavel || '').toLowerCase().includes(filtro))
-    : estado.producoes;
+  const dadosFiltrados = obterDadosFiltrados();
+  const totalRegistros = dadosFiltrados.length;
+  const totalPaginas = Math.max(1, Math.ceil(totalRegistros / estado.porPagina));
 
-  if (!dados.length) {
+  if (estado.pagina > totalPaginas) estado.pagina = totalPaginas;
+  if (estado.pagina < 1) estado.pagina = 1;
+
+  const inicio = (estado.pagina - 1) * estado.porPagina;
+  const fim = inicio + estado.porPagina;
+  const dadosPagina = dadosFiltrados.slice(inicio, fim);
+
+  // ===== Total (sempre sobre dados filtrados) =====
+  const totalFiltrado = dadosFiltrados.reduce((s, r) => s + (Number(r.totalPecas) || 0), 0);
+  if (temFiltroAtivo()) {
+    const totalGeralTodos = estado.producoes.reduce((s, r) => s + (Number(r.totalPecas) || 0), 0);
+    $('totalGeral').textContent =
+      `Total filtrado: ${formatarNumero(totalFiltrado)} de ${formatarNumero(totalGeralTodos)} peças`;
+  } else {
+    $('totalGeral').textContent = `Total de Peças: ${formatarNumero(totalFiltrado)}`;
+  }
+
+  // ===== Vazio =====
+  if (!dadosPagina.length) {
     const tr = document.createElement('tr');
     tr.innerHTML = `<td colspan="9" class="tabela-vazia">📭 Nenhum registro</td>`;
     tb.appendChild(tr);
-    $('totalGeral').textContent = 'Total de Peças: 0';
+    renderizarPaginacao(0, totalPaginas);
     return;
   }
 
-  let total = 0;
+  // ===== Linhas =====
   const frag = document.createDocumentFragment();
-
-  for (const r of dados) {
-    total += Number(r.totalPecas) || 0;
+  for (const r of dadosPagina) {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong>${formatarData(r.data)}</strong></td>
@@ -1029,25 +1177,62 @@ function renderizarTabela() {
     frag.appendChild(tr);
   }
   tb.appendChild(frag);
-  $('totalGeral').textContent = `Total de Peças: ${formatarNumero(total)}`;
+
+  renderizarPaginacao(totalRegistros, totalPaginas);
+}
+
+function renderizarPaginacao(totalRegistros, totalPaginas) {
+  const cont = $('paginacao');
+  if (!cont) return;
+
+  if (totalRegistros === 0) { cont.innerHTML = ''; return; }
+
+  const inicio = (estado.pagina - 1) * estado.porPagina + 1;
+  const fimExibido = Math.min(estado.pagina * estado.porPagina, totalRegistros);
+
+  cont.innerHTML = `
+    <div class="paginacao-info">
+      Mostrando <strong>${inicio}–${fimExibido}</strong> de <strong>${totalRegistros}</strong>
+    </div>
+    <div class="paginacao-controles">
+      <button class="btn-pagina" id="btnPagAnterior" ${estado.pagina === 1 ? 'disabled' : ''}>◀ Anterior</button>
+      <span class="pagina-atual">Página ${estado.pagina} de ${totalPaginas}</span>
+      <button class="btn-pagina" id="btnPagProxima" ${estado.pagina === totalPaginas ? 'disabled' : ''}>Próxima ▶</button>
+    </div>
+    <div class="paginacao-tamanho">
+      <label>Por página:
+        <select id="selectPorPagina">
+          <option value="10"  ${estado.porPagina===10 ?'selected':''}>10</option>
+          <option value="20"  ${estado.porPagina===20 ?'selected':''}>20</option>
+          <option value="50"  ${estado.porPagina===50 ?'selected':''}>50</option>
+          <option value="100" ${estado.porPagina===100?'selected':''}>100</option>
+        </select>
+      </label>
+    </div>
+  `;
+
+  $('btnPagAnterior').addEventListener('click', () => mudarPagina(estado.pagina - 1));
+  $('btnPagProxima').addEventListener('click',  () => mudarPagina(estado.pagina + 1));
+  $('selectPorPagina').addEventListener('change', (e) => {
+    estado.porPagina = parseInt(e.target.value, 10) || 20;
+    estado.pagina = 1;
+    renderizarTabela();
+  });
 }
 
 // =====================================================
-// 📥 EXPORTAR CSV
+// 📥 CSV (exporta o filtrado)
 // =====================================================
 function exportarCSV() {
-  if (!estado.producoes.length) {
-    alert('Sem dados para exportar!');
-    return;
-  }
+  const dados = obterDadosFiltrados();
+  if (!dados.length) { alert('Sem dados para exportar!'); return; }
+
   const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const linhas = [
-    ['Data','Modelo','Bitola','Tipo','Pç/Pct','Pacotes','Total','Responsável']
-      .map(esc).join(';'),
-    ...estado.producoes.map(r =>
+    ['Data','Modelo','Bitola','Tipo','Pç/Pct','Pacotes','Total','Responsável'].map(esc).join(';'),
+    ...dados.map(r =>
       [formatarData(r.data), r.estribo, `${r.material} mm`, r.tipo,
-       r.qtdPacote, r.totalPacotes, r.totalPecas, r.responsavel]
-        .map(esc).join(';')
+       r.qtdPacote, r.totalPacotes, r.totalPecas, r.responsavel].map(esc).join(';')
     ),
   ];
 
@@ -1084,8 +1269,13 @@ $('estribo').addEventListener('blur', () => {
 
 $('btnSalvar').addEventListener('click', adicionarRegistro);
 $('btnExportar').addEventListener('click', exportarCSV);
-$('pesquisaResponsavel').addEventListener('input', filtrarPorResponsavel);
 $('btnApagarTudo').addEventListener('click', abrirModalApagar);
+
+// Filtros
+$('pesquisaResponsavel').addEventListener('input', filtrarPorResponsavel);
+$('filtroDataInicio').addEventListener('change', aplicarFiltroData);
+$('filtroDataFim').addEventListener('change', aplicarFiltroData);
+$('btnLimparFiltros').addEventListener('click', limparFiltros);
 
 // Modal senha
 $('btnCancelarApagar').addEventListener('click', fecharModalApagar);
@@ -1106,7 +1296,7 @@ $('modalEdicao').addEventListener('click', (e) => {
   if (e.target === $('modalEdicao')) fecharModalEdicao();
 });
 
-// Esc fecha modais
+// ESC
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if ($('modalEdicao').classList.contains('visivel')) fecharModalEdicao();
@@ -1114,7 +1304,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Delegação: modelos + ações da tabela
+// Delegação de cliques
 document.addEventListener('click', (e) => {
   const btnRemover = e.target.closest('[data-remover]');
   if (btnRemover) { removerModelo(btnRemover.dataset.remover); return; }
