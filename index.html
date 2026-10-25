@@ -704,6 +704,74 @@
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
         }
+    
+
+        /* Temas selecionáveis — somente variáveis e estilos visuais. */
+        .theme-picker-label { display:inline-block; margin-top:8px; margin-right:5px; color:rgba(255,255,255,.88); font-size:12px; font-weight:700; }
+        .theme-picker { max-width:160px; padding:7px 10px; border:1px solid rgba(255,255,255,.35); border-radius:9px; color:#fff; background:rgba(17,37,113,.35); font:600 12px 'Segoe UI',sans-serif; cursor:pointer; outline:none; }
+        .theme-picker option { color:#172554; background:#fff; }
+
+        body[data-theme="verde"] {
+            --primary:#087e69; --primary-hover:#066652; --bg-color:#edf7f2; --text-main:#173b35; --border:#cfe4db;
+            --success:#15966d; --info:#1686ac; --warning:#e59a20; --danger:#d84855;
+            background:radial-gradient(ellipse at 8% 4%,rgba(40,190,141,.15),transparent 35%),radial-gradient(ellipse at 96% 18%,rgba(181,220,113,.15),transparent 32%),linear-gradient(145deg,#f3faf6 0%,#eaf5f0 48%,#f7fbf8 100%);
+        }
+        body[data-theme="verde"] .header { background:linear-gradient(120deg,#075b50 0%,#07866d 55%,#23a783 100%); box-shadow:0 16px 34px rgba(8,111,87,.22),inset 0 1px 0 rgba(255,255,255,.35); }
+        body[data-theme="verde"] .card { border-left-color:var(--primary); }
+        body[data-theme="verde"] .card p, body[data-theme="verde"] .table-header h3 { color:#087e69; }
+        body[data-theme="verde"] .chip { background:linear-gradient(145deg,#e7f8f0,#d5eee4); border-color:#b8dfd0; box-shadow:0 3px 0 #b9dbcd,0 5px 12px rgba(18,117,86,.08),inset 0 1px 0 #fff; }
+        body[data-theme="verde"] .btn-add { background:linear-gradient(135deg,#12a180,#08775f); }
+        body[data-theme="verde"] .btn-import { background:linear-gradient(135deg,#25a6b3,#168195); }
+        body[data-theme="verde"] .table-header { background:linear-gradient(180deg,#fff,#f1faf6); }
+        body[data-theme="verde"] th { background:linear-gradient(180deg,#f2faf6,#e5f3ed); color:#42685d; }
+        body[data-theme="verde"] tbody tr:hover { background:#eff9f4; }
+        body[data-theme="verde"] .linha-total-geral { background:linear-gradient(100deg,#e0f4eb,#ccebdd); }
+        body[data-theme="verde"] .theme-picker { background:rgba(4,74,62,.45); }
+
+        body[data-theme="ambar"] {
+            --primary:#b45309; --primary-hover:#92400e; --bg-color:#fff7ed; --text-main:#422b1c; --border:#f0dbc3;
+            --success:#13845b; --info:#287cba; --warning:#e39412; --danger:#d44448;
+            background:radial-gradient(ellipse at 8% 4%,rgba(245,158,11,.17),transparent 35%),radial-gradient(ellipse at 96% 18%,rgba(244,114,65,.14),transparent 32%),linear-gradient(145deg,#fffaf2 0%,#fff3e5 48%,#fffaf5 100%);
+        }
+        body[data-theme="ambar"] .header { background:linear-gradient(120deg,#71350b 0%,#b45309 55%,#e27a19 100%); box-shadow:0 16px 34px rgba(149,76,11,.24),inset 0 1px 0 rgba(255,255,255,.3); }
+        body[data-theme="ambar"] .card { border-left-color:var(--primary); }
+        body[data-theme="ambar"] .card p, body[data-theme="ambar"] .table-header h3 { color:#b45309; }
+        body[data-theme="ambar"] .chip { background:linear-gradient(145deg,#fff4df,#fce7c2); border-color:#efd29f; box-shadow:0 3px 0 #e9ce9e,0 5px 12px rgba(147,84,16,.08),inset 0 1px 0 #fff; }
+        body[data-theme="ambar"] .btn-add { background:linear-gradient(135deg,#e58a18,#b45309); }
+        body[data-theme="ambar"] .btn-import { background:linear-gradient(135deg,#e08334,#bb5b22); }
+        body[data-theme="ambar"] .table-header { background:linear-gradient(180deg,#fff,#fff8ef); }
+        body[data-theme="ambar"] th { background:linear-gradient(180deg,#fff8ee,#f9ead7); color:#765638; }
+        body[data-theme="ambar"] tbody tr:hover { background:#fff8ec; }
+        body[data-theme="ambar"] .linha-total-geral { background:linear-gradient(100deg,#fff0d8,#f9dfb4); }
+        body[data-theme="ambar"] .theme-picker { background:rgba(101,47,7,.45); }
+
+        body[data-theme="noite"] {
+            --primary:#8aa8ff; --primary-hover:#a7bcff; --bg-color:#111827; --text-main:#e4eaf5; --border:#354258;
+            --success:#34d399; --info:#60a5fa; --warning:#fbbf24; --danger:#fb7185;
+            background:radial-gradient(ellipse at 8% 4%,rgba(71,94,160,.28),transparent 35%),radial-gradient(ellipse at 96% 18%,rgba(27,132,149,.16),transparent 32%),linear-gradient(145deg,#111827 0%,#182235 50%,#101724 100%);
+        }
+        body[data-theme="noite"] .header { background:linear-gradient(120deg,#111a31 0%,#263b68 58%,#245a72 100%); border-color:#455574; box-shadow:0 16px 34px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12); }
+        body[data-theme="noite"] .card, body[data-theme="noite"] .form-section, body[data-theme="noite"] .table-section, body[data-theme="noite"] .auth-screen { background:#1b2638; border-color:#34435b; box-shadow:0 12px 30px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.035); }
+        body[data-theme="noite"] .card h3, body[data-theme="noite"] .input-group label, body[data-theme="noite"] .padroes-section h4, body[data-theme="noite"] .auth-screen p { color:#aab8d0; }
+        body[data-theme="noite"] .card p, body[data-theme="noite"] .table-header h3, body[data-theme="noite"] .auth-screen h2 { color:#a9bdff; }
+        body[data-theme="noite"] .table-header { background:linear-gradient(180deg,#202c40,#1b2638); border-bottom-color:#354258; }
+        body[data-theme="noite"] th { background:linear-gradient(180deg,#2b384e,#253146); color:#c4cee0; border-color:#354258; }
+        body[data-theme="noite"] td { color:#d4dced; border-color:#354258; }
+        body[data-theme="noite"] tbody tr:hover { background:#243249; }
+        body[data-theme="noite"] .linha-subtotal { background:#253146; }
+        body[data-theme="noite"] .linha-total-geral { background:linear-gradient(100deg,#2b3b5a,#263d52); }
+        body[data-theme="noite"] .chip { color:#c6d2ff; border-color:#455782; background:linear-gradient(145deg,#2a3854,#25324b); box-shadow:0 3px 0 #202b42,0 5px 12px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.06); }
+        body[data-theme="noite"] .add-pattern-box, body[data-theme="noite"] .manage-box, body[data-theme="noite"] .search-box { background:#243149; border-color:#45536c; color:#d7e0f2; box-shadow:0 3px 9px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04); }
+        body[data-theme="noite"] .input-group input, body[data-theme="noite"] .input-group select, body[data-theme="noite"] .auth-screen input, body[data-theme="noite"] .auth-name-row select { color:#e4eaf5; background:#121c2b; border-color:#3b4a63; box-shadow:inset 0 2px 4px rgba(0,0,0,.18); }
+        body[data-theme="noite"] .input-group select option, body[data-theme="noite"] .auth-name-row select option { color:#e4eaf5; background:#121c2b; }
+        body[data-theme="noite"] .autocomplete-items, body[data-theme="noite"] .autocomplete-items div { color:#e4eaf5; background:#1b2638; border-color:#354258; }
+        body[data-theme="noite"] .autocomplete-items div:hover { background:#2b3a54; }
+        body[data-theme="noite"] .consulta-banner { color:#c5d5ff; background:linear-gradient(110deg,#263856,#1c3847); border-color:#415a7b; }
+        body[data-theme="noite"] .btn-clear { color:#fb9bab; background:linear-gradient(135deg,#342833,#31252d); border-color:#8a4c5b; }
+        body[data-theme="noite"] .btn-pdf { color:#fff; }
+        body[data-theme="noite"] .btn-logout { color:#ffc0c9; background:#49303a; }
+        body[data-theme="noite"] .table-responsive { scrollbar-color:#4b5d7a #1b2638; }
+        body[data-theme="noite"] .theme-picker { background:rgba(10,17,30,.56); }
     </style>
 </head>
 <body>
@@ -743,6 +811,13 @@
             <p><strong>Data de Hoje:</strong> <span id="data-hoje"></span></p>
             <p id="firebase-status" aria-live="polite">Conectando ao Firebase...</p>
             <p id="user-email"></p>
+            <label class="theme-picker-label" for="theme-picker">🎨 Tema</label>
+            <select id="theme-picker" class="theme-picker" aria-label="Escolher tema">
+                <option value="azul">Azul vibrante</option>
+                <option value="verde">Verde industrial</option>
+                <option value="ambar">Âmbar oficina</option>
+                <option value="noite">Grafite noturno</option>
+            </select>
             <button class="btn-logout" onclick="sair()">Sair</button>
         </div>
     </div>
@@ -896,6 +971,20 @@
     firebase.initializeApp(firebaseConfig);
     const firebaseDb = firebase.database();
     const firebaseAuth = firebase.auth();
+
+    // Preferência de tema fica salva localmente neste navegador.
+    const seletorTema = document.getElementById('theme-picker');
+    const temasPermitidos = ['azul', 'verde', 'ambar', 'noite'];
+    function aplicarTema(nomeTema) {
+        const tema = temasPermitidos.includes(nomeTema) ? nomeTema : 'azul';
+        document.body.dataset.theme = tema;
+        seletorTema.value = tema;
+        try { localStorage.setItem('tema_producao', tema); } catch (_) {}
+    }
+    let temaSalvo = 'azul';
+    try { temaSalvo = localStorage.getItem('tema_producao') || 'azul'; } catch (_) {}
+    aplicarTema(temaSalvo);
+    seletorTema.addEventListener('change', () => aplicarTema(seletorTema.value));
     let producaoRef = null;
     let padroesRef = null;
     let producaoLegadaRef = null;
