@@ -710,11 +710,11 @@
 
 <section class="auth-screen" id="auth-screen">
     <h2>Acesso ao Controle de Produção</h2>
-    <p>Selecione seu nome e entre com seu e-mail e senha.</p>
+    <p>Administrador: selecione o responsável. Consulta: basta entrar com e-mail e senha.</p>
     <form id="auth-form">
         <label for="auth-operator-name">Nome de quem vai lançar a produção</label>
         <div class="auth-name-row">
-            <select id="auth-operator-name" required>
+            <select id="auth-operator-name">
                 <option value="">Selecione seu nome...</option>
                 <option value="FERNANDO">FERNANDO</option>
                 <option value="ÂNGELO">ÂNGELO</option>
@@ -977,13 +977,14 @@
     document.getElementById('auth-form').addEventListener('submit', async event => {
         event.preventDefault();
         const nomeResponsavel = document.getElementById('auth-operator-name').value.trim().toLocaleUpperCase('pt-BR');
-        const email = document.getElementById('auth-email').value.trim();
+        const email = document.getElementById('auth-email').value.trim().toLowerCase();
         const password = document.getElementById('auth-password').value;
-        if (!nomeResponsavel) {
-            document.getElementById('auth-message').innerText = 'Informe o nome de quem vai lançar a produção.';
+        if (email === EMAIL_ADMIN && !nomeResponsavel) {
+            document.getElementById('auth-message').innerText = 'Selecione o responsável pela produção para entrar como administrador.';
             return;
         }
-        localStorage.setItem('responsavel_login', nomeResponsavel);
+        if (email === EMAIL_ADMIN && nomeResponsavel) localStorage.setItem('responsavel_login', nomeResponsavel);
+        else localStorage.removeItem('responsavel_login');
         document.getElementById('auth-message').innerText = 'Entrando...';
         try { await firebaseAuth.signInWithEmailAndPassword(email, password); }
         catch (error) { mostrarErroLogin(error); }
