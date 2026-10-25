@@ -9,7 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <!-- Biblioteca para Importar e Ler Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
     
     <style>
         :root {
@@ -492,6 +492,7 @@
         }
         .btn-pdf:hover { background-color: #334155; }
         .btn-icon-square { width:48px; height:48px; min-width:48px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; border-radius:12px !important; font-size:23px !important; }
+        .excel-icon { font-size:14px; line-height:1; }
         .btn-refresh-month { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:34px; height:34px; margin-left:8px; border:1px solid var(--border); border-radius:10px; background:linear-gradient(145deg,#fff,#edf2ff); color:var(--primary); font-size:19px; cursor:pointer; box-shadow:0 3px 0 rgba(36,70,200,.16),0 5px 10px rgba(36,70,200,.10); transition:transform .16s ease,box-shadow .16s ease; }
         .btn-refresh-month:hover { transform:translateY(-2px) rotate(18deg); box-shadow:0 5px 0 rgba(36,70,200,.14),0 8px 14px rgba(36,70,200,.14); }
         .btn-clear {
@@ -781,7 +782,7 @@
 
 <section class="auth-screen" id="auth-screen">
     <h2>Acesso ao Controle de Produção</h2>
-    <p>Administrador: selecione o responsável. Consulta: basta entrar com e-mail e senha.</p>
+    <p>As permissões reais são controladas pelas regras do Firebase. Administrador: selecione o responsável.</p>
     <form id="auth-form">
         <label for="auth-operator-name">Nome de quem vai lançar a produção</label>
         <div class="auth-name-row">
@@ -954,7 +955,7 @@
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
         <button class="btn-import solo-admin" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
-        <button class="btn-excel btn-icon-square" type="button" onclick="exportarExcel()" title="Baixar planilha Excel" aria-label="Baixar planilha Excel">▦</button>
+        <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
     </div>
 </div>
 
@@ -1080,7 +1081,11 @@
         catch (error) { mostrarErroLogin(error); }
     });
 
-    function sair() { localStorage.removeItem('responsavel_login'); firebaseAuth.signOut(); }
+    function sair() {
+        localStorage.removeItem('responsavel_login');
+        if (usuarioUidAtual) localStorage.removeItem('producao_salva_' + usuarioUidAtual);
+        firebaseAuth.signOut();
+    }
 
     firebaseAuth.onAuthStateChanged(async user => {
         const authScreen = document.getElementById('auth-screen');
@@ -1133,8 +1138,7 @@
             document.getElementById('in-responsavel').title = 'Responsável definido no login';
         }
 
-        const producaoLocalUsuario = localStorage.getItem('producao_salva_' + user.uid);
-        producao = producaoLocalUsuario ? JSON.parse(producaoLocalUsuario) : dadosIniciais.map(item => ({ ...item }));
+        producao = dadosIniciais.map(item => ({ ...item }));
         const padroesLocalUsuario = localStorage.getItem('estribosPadroes_' + user.uid);
         estribosPadroes = padroesLocalUsuario ? JSON.parse(padroesLocalUsuario) : [...padroesIniciaisFirebase];
         renderizarTabela();
@@ -1207,8 +1211,7 @@
             producao.forEach(item => {
                 if (!item.responsavel || item.responsavel === 'IMPORTADO' || item.responsavel.trim() === '') item.responsavel = 'FERNANDO';
             });
-            if (usuarioUidAtual) localStorage.setItem('producao_salva_' + usuarioUidAtual, JSON.stringify(producao));
-            aplicandoProducaoFirebase = false;
+                aplicandoProducaoFirebase = false;
             firebaseProducaoPronto = true;
             document.getElementById('firebase-status').innerText = 'Sincronizado com Firebase';
             renderizarTabela();
@@ -1235,111 +1238,11 @@
         }, mostrarErroFirebase);
     }
 
-    // DADOS DA PLANILHA DE OUTUBRO
-    const dadosIniciais = [
-        { dataFormatada: "01/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
-        { dataFormatada: "01/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 6, totalPecas: 3000, responsavel: "FERNANDO" },
-        { dataFormatada: "01/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "01/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "01/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "05/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "05/10/2026", produto: "9x25", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 6, totalPecas: 3000, responsavel: "FERNANDO" },
-        { dataFormatada: "05/10/2026", produto: "15x20", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 6, totalPecas: 3000, responsavel: "FERNANDO" },
-        { dataFormatada: "05/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "05/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "05/10/2026", produto: "7x14", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "13x24", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 16, totalEmb: 1, totalPecas: 16, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "13x19", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 23, totalEmb: 1, totalPecas: 23, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "8x54", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 68, totalEmb: 1, totalPecas: 68, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "8x38", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 34, totalEmb: 1, totalPecas: 34, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "8x24", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 748, totalEmb: 1, totalPecas: 748, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "13x29", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 26, totalEmb: 1, totalPecas: 26, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "23x23", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 57, totalEmb: 1, totalPecas: 57, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "RED 15", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "RED 15", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "RED 18", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "10x20", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 125, totalEmb: 6, totalPecas: 750, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "06/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "10x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "10x20", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 125, totalEmb: 2, totalPecas: 250, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "20x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 400, totalEmb: 1, totalPecas: 400, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "12x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "12x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "07/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "12x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 400, totalEmb: 1, totalPecas: 400, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "15x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 400, totalEmb: 1, totalPecas: 400, responsavel: "FERNANDO" },
-        { dataFormatada: "08/10/2026", produto: "14x30", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 700, totalEmb: 1, totalPecas: 700, responsavel: "FERNANDO" },
-        { dataFormatada: "09/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "09/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "09/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "09/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "15x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "15x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "10x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "RED 25", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 1100, totalEmb: 1, totalPecas: 1100, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
-        { dataFormatada: "13/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "14/10/2026", produto: "15x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "14/10/2026", produto: "27x37", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 310, totalEmb: 1, totalPecas: 310, responsavel: "FERNANDO" },
-        { dataFormatada: "14/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "14/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "14/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 5, totalPecas: 2500, responsavel: "FERNANDO" },
-        { dataFormatada: "14/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 7, totalPecas: 3500, responsavel: "FERNANDO" },
-        { dataFormatada: "15/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
-        { dataFormatada: "15/10/2026", produto: "9x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 3, totalPecas: 1500, responsavel: "FERNANDO" },
-        { dataFormatada: "15/10/2026", produto: "15x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "15/10/2026", produto: "15x20", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 135, totalEmb: 1, totalPecas: 135, responsavel: "FERNANDO" },
-        { dataFormatada: "15/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "16/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 3, totalPecas: 1500, responsavel: "FERNANDO" },
-        { dataFormatada: "16/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "16/10/2026", produto: "10x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "16/10/2026", produto: "9x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 3, totalPecas: 1500, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "17x27", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 125, totalEmb: 3, totalPecas: 375, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "HEXA 20", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 50, totalEmb: 1, totalPecas: 50, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x14", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "19/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
-        { dataFormatada: "21/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "21/10/2026", produto: "12x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "21/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
-        { dataFormatada: "21/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
-        { dataFormatada: "22/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "22/10/2026", produto: "RED 20", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 567, totalEmb: 1, totalPecas: 567, responsavel: "FERNANDO" },
-        { dataFormatada: "22/10/2026", produto: "HEX 20", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 63, totalEmb: 1, totalPecas: 63, responsavel: "FERNANDO" },
-        { dataFormatada: "22/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
-        { dataFormatada: "23/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "CAIXA", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
-        { dataFormatada: "23/10/2026", produto: "HEXA 15", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 250, totalEmb: 2, totalPecas: 500, responsavel: "FERNANDO" },
-        { dataFormatada: "23/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "CAIXA", qtdEmb: 250, totalEmb: 2, totalPecas: 500, responsavel: "FERNANDO" }
-    ];
+    // Dados reais ficam no Firebase; nenhum registro de produção é embutido neste arquivo.
+    const dadosIniciais = [];
 
-    // Carrega os dados salvos no navegador.
-    let producaoSalva = JSON.parse(localStorage.getItem('producao_salva'));
-    let producao = producaoSalva || dadosIniciais;
+    // A produção será carregada após autenticação, a partir do Firebase.
+    let producao = dadosIniciais.map(item => ({ ...item }));
 
     producao.forEach(item => {
         if (!item.responsavel || item.responsavel === "IMPORTADO" || item.responsavel.trim() === "") {
@@ -1359,7 +1262,6 @@
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
 
     function salvarDados() {
-        if (usuarioUidAtual) localStorage.setItem('producao_salva_' + usuarioUidAtual, JSON.stringify(producao));
         if (firebaseProducaoPronto && !aplicandoProducaoFirebase) salvarProducaoFirebase();
     }
 
@@ -1394,6 +1296,13 @@
     function escaparHtml(valor) {
         const entidades = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
         return String(valor ?? '').replace(/[&<>"']/g, caractere => entidades[caractere]);
+    }
+
+    // Neutraliza células textuais interpretáveis como fórmulas por planilhas.
+    function escaparCelulaExcel(valor) {
+        let texto = String(valor ?? '');
+        if (/^[\s\u0000-\u001f]*[=+\-@]/.test(texto)) texto = "'" + texto;
+        return escaparHtml(texto);
     }
 
     // ==========================================
@@ -1832,13 +1741,18 @@
 
     function limparTudo() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        const codigo = prompt('Para confirmar a limpeza total, digite o código de segurança:');
-        if (codigo === null) return;
-        if (codigo !== '710150') {
-            alert('Código incorreto. Nenhum registro foi apagado.');
-            return;
-        }
-        if (confirm("⚠️ ATENÇÃO: Isso vai apagar TODOS os registros da tela. Tem certeza que deseja começar do zero?")) {
+        const confirmacao = prompt('Para confirmar, digite APAGAR PRODUÇÃO. Um backup JSON será baixado antes da limpeza.');
+        if (confirmacao !== 'APAGAR PRODUÇÃO') return;
+        const backup = new Blob([JSON.stringify({ exportadoEm: new Date().toISOString(), producao }, null, 2)], { type: 'application/json;charset=utf-8' });
+        const urlBackup = URL.createObjectURL(backup);
+        const linkBackup = document.createElement('a');
+        linkBackup.href = urlBackup;
+        linkBackup.download = `Backup_Producao_Estribos_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(linkBackup);
+        linkBackup.click();
+        linkBackup.remove();
+        setTimeout(() => URL.revokeObjectURL(urlBackup), 1000);
+        if (confirm('Backup solicitado. Confirma apagar TODOS os registros da produção?')) {
             producao = [];
             salvarDados();
             renderizarTabela();
@@ -1914,34 +1828,52 @@
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         const file = event.target.files[0];
         if (!file) return;
+        const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
+        const MAX_IMPORT_ROWS = 20000;
+        if (file.size > MAX_IMPORT_BYTES) {
+            alert('Arquivo muito grande. O limite de importação é 10 MB.');
+            event.target.value = '';
+            return;
+        }
 
         const reader = new FileReader();
         reader.onload = function(e) {
+          try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, {type: 'array', cellDates: true});
             const firstSheetName = workbook.SheetNames[0];
+            if (!firstSheetName) throw new Error('A planilha não contém abas.');
             const worksheet = workbook.Sheets[firstSheetName];
             const json = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+            if (json.length > MAX_IMPORT_ROWS) throw new Error('A planilha excede 20.000 linhas.');
 
             let responsavelImportacao = String(localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR');
             if (!responsavelImportacao) responsavelImportacao = "NÃO INFORMADO";
             
             const novosDados = [];
+            let invalidos = 0;
             
             json.forEach(row => {
                 if (!row.DATA || !row.ESTRIBO) return;
                 if (String(row.DATA).trim() === "" || String(row.ESTRIBO).trim() === "") return;
 
                 let dataStr = row.DATA;
-                if (dataStr instanceof Date) {
+                if (dataStr instanceof Date && !Number.isNaN(dataStr.getTime())) {
                     dataStr = dataStr.toLocaleDateString('pt-BR');
                 } else {
-                    dataStr = String(dataStr).split(' ')[0];
-                    if(dataStr.includes('-')) {
+                    dataStr = String(dataStr).trim().split(' ')[0];
+                    if (dataStr.includes('-')) {
                         const partes = dataStr.split('-');
-                        if(partes.length === 3) dataStr = `${partes[2]}/${partes[1]}/${partes[0]}`;
+                        if (partes.length === 3 && partes[0].length === 4) dataStr = `${partes[2]}/${partes[1]}/${partes[0]}`;
                     }
                 }
+                const partesData = String(dataStr).split('/');
+                const dataValida = partesData.length === 3 && /^\d{2}\/\d{2}\/\d{4}$/.test(dataStr) && (() => {
+                    const d = new Date(Number(partesData[2]), Number(partesData[1])-1, Number(partesData[0]));
+                    return d.getFullYear() === Number(partesData[2]) && d.getMonth() === Number(partesData[1])-1 && d.getDate() === Number(partesData[0]);
+                })();
+                const produtoStr = String(row.ESTRIBO).trim().toUpperCase();
+                if (!dataValida || !produtoStr || produtoStr.length > 100) { invalidos++; return; }
 
                 let materialStr = String(row.MATERIAL || "").trim();
                 if(materialStr.includes('00:00:00')) {
@@ -1954,11 +1886,13 @@
                 const qtdEmb = converterNumeroPlanilha(row["Q POR PACOTE"]);
                 const totalEmb = converterNumeroPlanilha(row["TOTAL PACOTE"]);
                 const totalPecasImportadas = converterNumeroPlanilha(row["PEÇAS TOTAL"]);
+                if (!Number.isSafeInteger(qtdEmb) || !Number.isSafeInteger(totalEmb) || qtdEmb < 1 || totalEmb < 1 || (totalPecasImportadas !== 0 && (!Number.isSafeInteger(totalPecasImportadas) || totalPecasImportadas < 1))) { invalidos++; return; }
                 const totalPecas = totalPecasImportadas || (qtdEmb * totalEmb);
+                if (!Number.isSafeInteger(totalPecas)) { invalidos++; return; }
 
                 novosDados.push({
                     dataFormatada: dataStr,
-                    produto: String(row.ESTRIBO).trim().toUpperCase(),
+                    produto: produtoStr,
                     bitola: materialStr,
                     embalagem: String(row["P,A,C"] || "AMARRADO").trim().toUpperCase(),
                     qtdEmb: qtdEmb,
@@ -2004,9 +1938,15 @@
                     alert(`✅ Importação concluída: ${registrosParaAdicionar.length} novo(s) registro(s) adicionado(s), sem substituir os atuais.`);
                 }
             } else {
-                alert("⚠️ Nenhum dado válido encontrado no arquivo.");
+                alert('Nenhum registro válido encontrado.' + (invalidos ? ` ${invalidos} linha(s) foram rejeitadas por dados inválidos.` : ''));
             }
+            if (novosDados.length > 0 && invalidos > 0) alert(`${invalidos} linha(s) inválida(s) foram ignoradas.`);
+          } catch (error) {
+            console.error('Falha na importação:', error);
+            alert('Não foi possível importar a planilha. Confira o arquivo, os cabeçalhos e os tipos dos dados.');
+          }
         };
+        reader.onerror = function() { alert('Não foi possível ler o arquivo selecionado.'); };
         reader.readAsArrayBuffer(file);
         event.target.value = '';
     }
@@ -2122,14 +2062,14 @@
 
             html += `
                 <tr>
-                    <td>${escaparHtml(item.dataFormatada)}</td>
-                    <td>${escaparHtml(item.produto)}</td>
-                    <td>${escaparHtml(materialLimpo)}</td>
-                    <td>${escaparHtml(item.embalagem)}</td>
+                    <td>${escaparCelulaExcel(item.dataFormatada)}</td>
+                    <td>${escaparCelulaExcel(item.produto)}</td>
+                    <td>${escaparCelulaExcel(materialLimpo)}</td>
+                    <td>${escaparCelulaExcel(item.embalagem)}</td>
                     <td>${item.qtdEmb}</td>
                     <td>${item.totalEmb}</td>
                     <td>${item.totalPecas}</td>
-                    <td>${escaparHtml(item.responsavel)}</td>
+                    <td>${escaparCelulaExcel(item.responsavel)}</td>
                 </tr>`;
         });
 
