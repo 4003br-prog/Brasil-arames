@@ -1647,6 +1647,24 @@
     // ==========================================
     // IMPORTAR EXCEL
     // ==========================================
+    function converterNumeroPlanilha(valor) {
+        if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0;
+        if (valor === null || valor === undefined || valor === '') return 0;
+        let texto = String(valor).trim().replace(/\s/g, '');
+        if (!texto) return 0;
+        // Formato brasileiro: 2.000 ou 2.000,5. O ponto é milhar quando há grupos de 3 dígitos.
+        if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(texto)) {
+            texto = texto.replace(/\./g, '').replace(',', '.');
+        } else if (texto.includes(',') && !texto.includes('.')) {
+            texto = texto.replace(',', '.');
+        } else if (texto.includes(',') && texto.includes('.')) {
+            // Vírgula decimal e ponto de milhar no formato pt-BR.
+            texto = texto.replace(/\./g, '').replace(',', '.');
+        }
+        const numero = Number(texto);
+        return Number.isFinite(numero) ? numero : 0;
+    }
+
     function importarExcel(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1694,9 +1712,10 @@
                     materialStr += "mm";
                 }
 
-                const qtdEmb = Number(row["Q POR PACOTE"]) || 0;
-                const totalEmb = Number(row["TOTAL PACOTE"]) || 0;
-                const totalPecas = Number(row["PEÇAS TOTAL"]) || (qtdEmb * totalEmb);
+                const qtdEmb = converterNumeroPlanilha(row["Q POR PACOTE"]);
+                const totalEmb = converterNumeroPlanilha(row["TOTAL PACOTE"]);
+                const totalPecasImportadas = converterNumeroPlanilha(row["PEÇAS TOTAL"]);
+                const totalPecas = totalPecasImportadas || (qtdEmb * totalEmb);
 
                 novosDados.push({
                     dataFormatada: dataStr,
@@ -1797,8 +1816,8 @@
                 html += `
                     <tr>
                         <td colspan="5" class="subtotal">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
-                        <td class="subtotal">${subtotalEmb.toLocaleString('pt-BR')}</td>
-                        <td class="subtotal">${subtotalPecas.toLocaleString('pt-BR')}</td>
+                        <td class="subtotal">${subtotalEmb}</td>
+                        <td class="subtotal">${subtotalPecas}</td>
                         <td class="subtotal"></td>
                     </tr>`;
                 subtotalPecas = 0;
@@ -1819,9 +1838,9 @@
                     <td>${escaparHtml(item.produto)}</td>
                     <td>${escaparHtml(materialLimpo)}</td>
                     <td>${escaparHtml(item.embalagem)}</td>
-                    <td>${item.qtdEmb.toLocaleString('pt-BR')}</td>
-                    <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
-                    <td>${item.totalPecas.toLocaleString('pt-BR')}</td>
+                    <td>${item.qtdEmb}</td>
+                    <td>${item.totalEmb}</td>
+                    <td>${item.totalPecas}</td>
                     <td>${escaparHtml(item.responsavel)}</td>
                 </tr>`;
         });
@@ -1830,8 +1849,8 @@
             html += `
                 <tr>
                     <td colspan="5" class="subtotal">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
-                    <td class="subtotal">${subtotalEmb.toLocaleString('pt-BR')}</td>
-                    <td class="subtotal">${subtotalPecas.toLocaleString('pt-BR')}</td>
+                    <td class="subtotal">${subtotalEmb}</td>
+                    <td class="subtotal">${subtotalPecas}</td>
                     <td class="subtotal"></td>
                 </tr>`;
         }
@@ -1839,8 +1858,8 @@
         html += `
                 <tr>
                     <td colspan="5" class="total-geral">TOTAL GERAL:</td>
-                    <td class="total-geral">${totalEmbGeral.toLocaleString('pt-BR')}</td>
-                    <td class="total-geral">${totalPecasGeral.toLocaleString('pt-BR')}</td>
+                    <td class="total-geral">${totalEmbGeral}</td>
+                    <td class="total-geral">${totalPecasGeral}</td>
                     <td class="total-geral"></td>
                 </tr>
         `;
