@@ -1,1325 +1,1707 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arames Brasil | Controle de Produção</title>
-  <meta name="theme-color" content="#165DFF">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Produção - Estribos</title>
+    <!-- Firebase Web SDK (compatível com este HTML sem módulos) -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <!-- Biblioteca para Importar e Ler Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #1e40af;
+            --bg-color: #f1f5f9;
+            --text-main: #1e293b;
+            --border: #cbd5e1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
 
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-  <style>
-    :root {
-      --primaria: #165DFF;
-      --primaria-escura: #0E42D2;
-      --primaria-clara: #E8F3FF;
-      --sucesso: #00B42A;
-      --sucesso-claro: #E8FFEA;
-      --aviso: #FF7D00;
-      --aviso-claro: #FFF7E8;
-      --erro: #F53F3F;
-      --erro-claro: #FFECEC;
-      --texto: #1D2129;
-      --texto-secundario: #666F83;
-      --borda: #D0D3D9;
-      --borda-clara: #E5E6EB;
-      --fundo: #F2F5FA;
-      --branco: #FFFFFF;
-      --sombra: 0 4px 16px rgba(22, 93, 255, 0.08);
-      --sombra-leve: 0 2px 6px rgba(0, 0, 0, 0.03);
-      --destaque-fundo: #E6FFE6;
-      --destaque-borda: #00B42A;
-      --grupo-redondo-fundo: #FFF0E8;
-      --grupo-redondo-borda: #FF7D00;
-      --grupo-hexa-fundo: #F0FFF9;
-      --grupo-hexa-borda: #00B48C;
-      --grupo-personalizado-fundo: #F5F0FF;
-      --grupo-personalizado-borda: #7B4EFF;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-    body {
-      background: linear-gradient(135deg, #F2F5FA 0%, #E8EEFA 100%);
-      color: var(--texto); min-height: 100vh; padding: 16px 12px;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+        }
 
-    /* ===== LOGIN ===== */
-    .tela-login {
-      position: fixed; inset: 0;
-      background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999; padding: 20px;
-    }
-    .caixa-login {
-      background: var(--branco); padding: 32px 24px; border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      width: 100%; max-width: 360px; text-align: center;
-    }
-    .caixa-login h1 { color: var(--primaria); font-size: 22px; margin-bottom: 6px; }
-    .caixa-login p { color: var(--texto-secundario); font-size: 14px; margin-bottom: 24px; }
-    .caixa-login input {
-      width: 100%; padding: 14px 16px; border: 2px solid var(--borda-clara);
-      border-radius: 10px; font-size: 15px; margin-bottom: 14px;
-    }
-    .caixa-login input:focus { outline: none; border-color: var(--primaria); }
-    .btn-login {
-      width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primaria), var(--primaria-escura));
-      color: white; border: none; border-radius: 10px; font-size: 16px;
-      font-weight: 700; cursor: pointer; margin-top: 8px;
-    }
-    .erro-login { color: var(--erro); font-size: 13px; margin-top: 12px; display: none; }
-    .erro-login.visivel { display: block; }
-    .carregando { color: var(--primaria); font-size: 14px; margin-top: 12px; display: none; }
-    .carregando.visivel { display: block; }
+        .container { max-width: 1300px; margin: 0 auto; }
 
-    /* ===== MODAIS ===== */
-    .modal-senha {
-      position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.5); display: none;
-      align-items: center; justify-content: center; z-index: 9998; padding: 20px;
-    }
-    .modal-senha.visivel { display: flex; }
-    .caixa-modal {
-      background: var(--branco); padding: 28px 24px; border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      width: 100%; max-width: 340px; text-align: center;
-      max-height: 90vh; overflow-y: auto;
-    }
-    .caixa-modal h3 { color: var(--erro); font-size: 18px; margin-bottom: 8px; }
-    .caixa-modal p { color: var(--texto-secundario); font-size: 14px; margin-bottom: 16px; }
-    .caixa-modal input {
-      width: 100%; padding: 12px 14px; border: 2px solid var(--borda-clara);
-      border-radius: 10px; font-size: 16px; text-align: center;
-      letter-spacing: 6px; margin-bottom: 14px;
-    }
-    .caixa-modal input:focus { outline: none; border-color: var(--erro); }
-    .botoes-modal { display: flex; gap: 10px; margin-top: 8px; }
-    .botoes-modal button {
-      flex: 1; padding: 10px; border-radius: 10px; font-size: 14px;
-      font-weight: 600; cursor: pointer; border: none;
-    }
-    .btn-cancelar { background: var(--borda-clara); color: var(--texto); }
-    .btn-confirmar { background: var(--erro); color: white; }
-    .erro-modal { color: var(--erro); font-size: 12px; margin-top: 8px; display: none; }
-    .erro-modal.visivel { display: block; }
+        /* Topo */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .header h1 { font-size: 24px; color: var(--primary); }
+        .header p { color: #64748b; font-size: 14px; }
 
-    #modalEdicao .caixa-modal { max-width: 520px; text-align: left; }
-    #modalEdicao h3 { color: var(--primaria); text-align: center; margin-bottom: 16px; }
-    #modalEdicao .grupo-form { margin-top: 8px; }
-    #modalEdicao .campo input,
-    #modalEdicao .campo select { letter-spacing: normal; text-align: left; padding: 10px 14px; font-size: 14px; }
+        /* Cards de Resumo */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+        .card h3 { font-size: 12px; text-transform: uppercase; color: #64748b; margin-bottom: 5px; }
+        .card p { font-size: 24px; font-weight: bold; color: var(--primary); }
 
-    /* ===== ESTRUTURA ===== */
-    .conteudo-principal { display: none; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    .cabecalho-topo {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-    }
-    .btn-sair {
-      background: var(--erro-claro); color: var(--erro); border: 1px solid #FFCCC7;
-      padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
-    }
-    .usuario-info { font-size: 13px; color: var(--primaria); font-weight: 500; }
+        /* Formulário */
+        .form-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
 
-    header {
-      text-align: center; margin-bottom: 24px; padding: 24px 20px;
-      background: var(--branco); border-radius: 16px; box-shadow: var(--sombra);
-      border: 1px solid var(--primaria-clara);
-    }
-    header h1 { font-size: 24px; font-weight: 800; color: var(--primaria); margin-bottom: 6px; }
-    header p { color: var(--texto-secundario); font-size: 14px; }
+        /* Área de Estribos Padrões (Chips) */
+        .padroes-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .padroes-section h4 {
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .chip {
+            background: #e0e7ff;
+            color: var(--primary);
+            border: 1px solid #c7d2fe;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            height: 36px;
+        }
+        .chip:hover { background: #c7d2fe; }
+        
+        /* Botões de Editar/Apagar (Só aparecem no modo gerenciar) */
+        .chip-edit {
+            color: #64748b;
+            font-size: 14px;
+            cursor: pointer;
+            line-height: 1;
+            border: none;
+            background: transparent;
+            transition: 0.2s;
+            padding: 2px;
+        }
+        .chip-edit:hover { color: var(--primary); transform: scale(1.2); }
+        
+        .chip-delete {
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            line-height: 1;
+            border: none;
+            background: transparent;
+            transition: 0.2s;
+            padding: 2px;
+        }
+        .chip-delete:hover { color: #b91c1c; transform: scale(1.2); }
 
-    .card {
-      background: var(--branco); border-radius: 16px; box-shadow: var(--sombra-leve);
-      padding: 22px; margin-bottom: 20px; border: 1px solid var(--borda-clara);
-    }
-    .card-titulo {
-      font-size: 17px; font-weight: 700; color: var(--texto); margin-bottom: 18px;
-      display: flex; align-items: center; justify-content: space-between;
-      padding-bottom: 10px; border-bottom: 2px solid var(--primaria-clara);
-      flex-wrap: wrap; gap: 12px;
-    }
+        /* --- BOTÃO SALVAR PADRÃO EXPANSÍVEL --- */
+        .add-pattern-box {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px dashed #94a3b8;
+            border-radius: 20px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px; 
+            overflow: hidden;
+            height: 36px;
+            color: #475569;
+        }
+        .add-pattern-box:hover { background: #e2e8f0; }
+        
+        .add-pattern-box.active {
+            width: 150px;
+            background: #fff;
+            border-color: var(--primary);
+            border-style: solid;
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+            background-color: #eff6ff;
+        }
 
-    /* ===== MODELOS ===== */
-    .grupo-modelos { margin-bottom: 16px; }
-    .grupo-titulo {
-      font-size: 14px; font-weight: 700; margin-bottom: 8px;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .grupo-retangular .grupo-titulo { color: var(--primaria); }
-    .grupo-redondo .grupo-titulo { color: var(--grupo-redondo-borda); }
-    .grupo-hexagonal .grupo-titulo { color: var(--grupo-hexa-borda); }
-    .grupo-personalizado .grupo-titulo { color: var(--grupo-personalizado-borda); }
-    .modelos-lista { display: flex; flex-wrap: wrap; gap: 8px; }
-    .modelo-tag {
-      padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
-      display: flex; align-items: center; gap: 6px; cursor: pointer;
-      border: 1px solid transparent;
-      transition: transform 0.1s ease;
-    }
-    .modelo-tag:hover { transform: translateY(-1px); }
-    .grupo-retangular .modelo-tag { background: var(--primaria-clara); color: var(--primaria-escura); }
-    .grupo-retangular .modelo-tag:hover { border-color: var(--primaria); }
-    .grupo-redondo .modelo-tag { background: var(--grupo-redondo-fundo); color: #9E4A00; }
-    .grupo-redondo .modelo-tag:hover { border-color: var(--grupo-redondo-borda); }
-    .grupo-hexagonal .modelo-tag { background: var(--grupo-hexa-fundo); color: #007760; }
-    .grupo-hexagonal .modelo-tag:hover { border-color: var(--grupo-hexa-borda); }
-    .grupo-personalizado .modelo-tag { background: var(--grupo-personalizado-fundo); color: #4B21A8; }
-    .grupo-personalizado .modelo-tag:hover { border-color: var(--grupo-personalizado-borda); }
-    .modelo-tag.destaque-m-livre {
-      background: var(--destaque-fundo); color: #008021;
-      border-color: var(--destaque-borda);
-    }
-    .btn-remover-modelo {
-      background: none; border: none; color: var(--erro);
-      cursor: pointer; font-size: 14px; padding: 0 2px;
-    }
+        .add-pattern-box .add-icon {
+            font-size: 20px;
+            font-weight: bold;
+            color: #64748b;
+            user-select: none;
+            transition: 0.3s;
+            line-height: 1;
+        }
+        .add-pattern-box.active .add-icon {
+            color: var(--primary);
+        }
 
-    /* ===== FORM ===== */
-    .grupo-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px 20px; }
-    .campo { position: relative; }
-    .campo label {
-      display: block; font-size: 13px; font-weight: 600;
-      color: var(--texto-secundario); margin-bottom: 6px;
-    }
-    input, select {
-      width: 100%; padding: 10px 14px; border: 1.5px solid var(--borda);
-      border-radius: 10px; font-size: 14px; background: var(--branco);
-    }
-    input:focus, select:focus { outline: none; border-color: var(--primaria); }
-    .aviso-minimo { font-size: 12px; color: var(--aviso); margin-top: 4px; display: none; }
-    .aviso-minimo.visivel { display: block; }
+        .add-pattern-box .add-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+            margin-left: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .add-pattern-box.active .add-text {
+            opacity: 1;
+        }
 
-    .sugestoes {
-      position: absolute; top: 100%; left: 0; right: 0; background: var(--branco);
-      border: 1.5px solid var(--primaria); border-top: none;
-      border-radius: 0 0 10px 10px; max-height: 200px; overflow-y: auto;
-      z-index: 50; display: none;
-    }
-    .sugestoes.visivel { display: block; }
-    .sugestao-item { padding: 10px 14px; cursor: pointer; font-size: 14px; }
-    .sugestao-item:hover { background: var(--primaria-clara); }
+        /* --- BOTÃO GERENCIAR EXPANSÍVEL --- */
+        .manage-box {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px; 
+            overflow: hidden;
+            margin-left: 5px;
+            height: 36px;
+        }
+        .manage-box:hover { background: #f1f5f9; }
+        
+        .manage-box.active {
+            width: 160px;
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+            background-color: #eff6ff;
+        }
 
-    .btn {
-      border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
-      cursor: pointer; padding: 10px 18px; display: inline-flex;
-      align-items: center; gap: 8px;
-    }
-    .btn-principal { background: linear-gradient(135deg, var(--primaria) 0%, var(--primaria-escura) 100%); color: white; }
-    .btn-sucesso { background: linear-gradient(135deg, var(--sucesso) 0%, #009a23 100%); color: white; }
-    .btn-perigo { background: var(--erro-claro); color: var(--erro); border: 1px solid #FFCCC7; }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .manage-icon {
+            font-size: 16px;
+            color: #64748b;
+            user-select: none;
+            transition: 0.3s;
+        }
+        .manage-box.active .manage-icon {
+            color: var(--primary);
+        }
 
-    /* ===== FILTROS ===== */
-    .filtros {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      margin-bottom: 16px;
-      padding: 14px;
-      background: #F7F9FC;
-      border-radius: 12px;
-      border: 1px solid var(--borda-clara);
-    }
-    .filtro-campo {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-width: 140px;
-      flex: 1;
-    }
-    .filtro-campo label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--texto-secundario);
-    }
-    .filtro-campo input { padding: 8px 12px; font-size: 13px; }
-    .btn-limpar {
-      padding: 9px 16px;
-      background: var(--branco);
-      border: 1.5px solid var(--borda);
-      border-radius: 10px;
-      color: var(--texto-secundario);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .btn-limpar:hover { background: var(--erro-claro); color: var(--erro); border-color: var(--erro); }
+        .manage-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+            margin-left: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .manage-box.active .manage-text {
+            opacity: 1;
+        }
 
-    /* ===== TABELA ===== */
-    .tabela-wrapper { overflow-x: auto; border: 1px solid var(--borda-clara); border-radius: 12px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; background: var(--branco); }
-    table th, table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--borda-clara); }
-    table th { background: #F7F9FC; font-weight: 700; color: var(--texto); }
-    table tbody tr:hover { background: #FAFBFD; }
-    .tabela-vazia { text-align: center; color: #86909C; padding: 32px; }
+        /* Grid do Formulário */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #475569; }
+        
+        .input-group input, .input-group select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            background-color: #fff;
+            width: 100%;
+        }
+        .input-group input:focus, .input-group select:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2); 
+        }
 
-    .acoes-celula { display: flex; gap: 6px; justify-content: center; }
-    .btn-acao {
-      border: none; border-radius: 8px; padding: 7px 11px;
-      cursor: pointer; font-size: 14px; line-height: 1;
-      display: inline-flex; align-items: center; justify-content: center;
-      transition: background 0.15s ease, transform 0.1s ease;
-    }
-    .btn-acao:hover { transform: translateY(-1px); }
-    .btn-editar { background: var(--primaria-clara); color: var(--primaria); }
-    .btn-editar:hover { background: var(--primaria); color: white; }
-    .btn-excluir { background: var(--erro-claro); color: var(--erro); }
-    .btn-excluir:hover { background: var(--erro); color: white; }
+        .auto-filled { background-color: #dbeafe !important; transition: background-color 0.5s; }
 
-    /* ===== PAGINAÇÃO ===== */
-    .paginacao {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 16px;
-      padding: 12px 16px;
-      background: #F7F9FC;
-      border-radius: 12px;
-      border: 1px solid var(--borda-clara);
-      font-size: 13px;
-    }
-    .paginacao:empty { display: none; }
-    .paginacao-info { color: var(--texto-secundario); }
-    .paginacao-controles {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-pagina {
-      padding: 7px 14px;
-      background: var(--branco);
-      border: 1.5px solid var(--borda);
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--primaria);
-      transition: all 0.15s ease;
-    }
-    .btn-pagina:hover:not(:disabled) {
-      background: var(--primaria);
-      color: white;
-      border-color: var(--primaria);
-    }
-    .btn-pagina:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      color: var(--texto-secundario);
-    }
-    .pagina-atual {
-      font-weight: 700;
-      color: var(--texto);
-      min-width: 110px;
-      text-align: center;
-    }
-    .paginacao-tamanho label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: var(--texto-secundario);
-    }
-    .paginacao-tamanho select {
-      padding: 6px 10px;
-      font-size: 13px;
-      width: auto;
-      min-width: 70px;
-    }
+        /* ------- AUTOCOMPLETE ------- */
+        .autocomplete-wrapper { position: relative; }
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid var(--border);
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            max-height: 200px;
+            overflow-y: auto;
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            color: #1e293b;
+            transition: background 0.2s;
+        }
+        .autocomplete-items div:hover { background-color: #e2e8f0; }
+        .autocomplete-items div strong { color: var(--primary); }
+        /* --------------------------- */
 
-    .rodape-card {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--borda-clara);
-      flex-wrap: wrap; gap: 12px;
-    }
-    .total-geral { font-size: 16px; font-weight: 800; color: var(--sucesso); }
+        /* Botões do Formulário */
+        .btn-add {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            height: 40px;
+        }
+        .btn-add:hover { background-color: var(--primary-hover); }
+        
+        .btn-cancel {
+            background-color: #94a3b8;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            height: 40px;
+            display: none;
+        }
+        .btn-cancel:hover { background-color: #64748b; }
 
-    .mensagem {
-      padding: 12px 16px; border-radius: 10px; margin-top: 12px;
-      font-size: 13px; display: none; font-weight: 500;
-    }
-    .mensagem.sucesso { background: var(--sucesso-claro); color: #008021; display: block; border: 1px solid #B3FFB9; }
-    .mensagem.aviso { background: var(--aviso-claro); color: #9E5E00; display: block; border: 1px solid #FFE2A8; }
-    .mensagem.erro { background: var(--erro-claro); color: #C53030; display: block; border: 1px solid #FFCCC7; }
+        /* Input de Operador */
+        .input-with-buttons { display: flex; gap: 5px; }
+        .btn-icon {
+            background: #e2e8f0;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            width: 35px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: #475569;
+            transition: 0.2s;
+        }
+        .btn-icon:hover { background: #cbd5e1; }
 
-    #subtotalCalculado, #editSubtotal {
-      padding: 12px 16px !important; background: #F0FFF4; border-radius: 10px !important;
-      font-weight: 700; color: #008021; font-size: 15px; border: 1px solid #B3FFB9;
-    }
+        /* Tabela e Barra de Busca */
+        .table-section {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
 
-    .linha-add-modelo { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #fff;
+        }
 
-    @media (max-width: 600px) {
-      .grupo-form { grid-template-columns: 1fr; }
-      .rodape-card { flex-direction: column; align-items: stretch; }
-      .filtro-campo { min-width: 100%; }
-      .paginacao { flex-direction: column; align-items: stretch; }
-      .paginacao-controles { justify-content: center; }
-    }
-  </style>
+        .table-header h3 { font-size: 18px; color: var(--primary); }
+
+        /* --- LUPA EXPANSÍVEL --- */
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px; 
+            overflow: hidden;
+            height: 36px;
+        }
+        
+        .search-box:hover { background: #f1f5f9; }
+        
+        .search-box.expandida {
+            width: 250px; 
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+        }
+
+        .search-box input {
+            width: 0;
+            padding: 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            margin-left: 8px;
+        }
+
+        .search-box.expandida input {
+            width: 100%;
+            opacity: 1;
+        }
+
+        .search-icon {
+            font-size: 16px;
+            color: #64748b;
+            user-select: none;
+            transition: 0.3s;
+        }
+        .search-box.expandida .search-icon {
+            color: var(--primary);
+        }
+        /* --------------------------- */
+
+        /* LIMITAÇÃO DE ALTURA */
+        .table-responsive { 
+            overflow-x: auto; 
+            max-height: 400px; 
+            overflow-y: auto; 
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        
+        th {
+            background: #f8fafc;
+            padding: 12px 15px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        tbody tr:hover { background: #f8fafc; }
+
+        .btn-action {
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            transition: 0.2s;
+            margin-right: 5px;
+        }
+        .btn-edit-row { background: #fef3c7; color: #d97706; }
+        .btn-edit-row:hover { background: #fde68a; }
+        .btn-delete { background: #fee2e2; color: var(--danger); }
+        .btn-delete:hover { background: #fecaca; }
+
+        /* Botões Finais */
+        .actions { display: flex; justify-content: flex-end; gap: 15px; flex-wrap: wrap; }
+        .btn-excel {
+            background-color: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-excel:hover { background-color: #059669; }
+        
+        .btn-import {
+            background-color: var(--info);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-import:hover { background-color: #2563eb; }
+
+        .btn-pdf {
+            background-color: #475569;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-pdf:hover { background-color: #334155; }
+        .btn-clear {
+            background-color: #f1f5f9;
+            color: #ef4444;
+            padding: 12px 24px;
+            border: 1px solid #ef4444;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-clear:hover { background-color: #fee2e2; }
+
+        /* --- ANIMAÇÃO DE LINHA NOVA --- */
+        @keyframes highlightNew {
+            0% { background-color: #bbf7d0; }
+            100% { background-color: transparent; }
+        }
+        .row-new td {
+            animation: highlightNew 3s ease-out;
+        }
+
+        /* --- IMPRESSÃO PDF --- */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .header, .dashboard, .form-section, .actions, .btn-action, .table-header, th:last-child, td:last-child { display: none !important; }
+            .table-section { box-shadow: none; }
+            .table-responsive { max-height: none; overflow: visible; }
+            th { background: #f1f5f9 !important; color: #000 !important; -webkit-print-color-adjust: exact; position: static; }
+            table, th, td { border: 1px solid #000; }
+            h1.print-title { display: block !important; font-size: 20px; margin-bottom: 15px; text-align: center; }
+            
+            .linha-subtotal td { font-weight: bold; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
+            .linha-total-geral td { font-weight: bold; background-color: #e2e8f0 !important; font-size: 15px; -webkit-print-color-adjust: exact; }
+            .row-new td { animation: none; }
+        }
+        .print-title { display: none; }
+
+        /* Estilos para linhas de Subtotal na tela */
+        .linha-subtotal { background-color: #f8fafc; }
+        .linha-subtotal td { font-weight: bold; color: #475569; border-top: 2px solid var(--border); }
+        .linha-total-geral { background-color: #e2e8f0; }
+        .linha-total-geral td { font-weight: bold; color: var(--primary); font-size: 15px; border-top: 2px solid #94a3b8; }
+        .auth-screen { max-width: 420px; margin: 8vh auto; background: #fff; padding: 28px; border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.10); }
+        .auth-screen h2 { color: var(--primary); margin-bottom: 8px; }
+        .auth-screen p { color: #64748b; margin-bottom: 18px; }
+        .auth-screen label { display:block; font-size:13px; font-weight:600; margin: 12px 0 5px; }
+        .auth-screen input { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; }
+        .auth-buttons { display:flex; gap:10px; margin-top:16px; }
+        .auth-buttons button { flex:1; }
+        .auth-message { min-height:20px; margin-top:12px !important; color:var(--danger) !important; font-size:14px; }
+        #app-container { display:none; }
+        .btn-logout { background:#fee2e2; color:#b91c1c; border:0; border-radius:6px; padding:8px 12px; cursor:pointer; font-weight:bold; margin-top:8px; }
+    </style>
 </head>
 <body>
 
-<!-- ===== LOGIN ===== -->
-<div class="tela-login" id="telaLogin">
-  <form class="caixa-login" id="formLogin" autocomplete="on">
-    <h1>🏢 Arames Brasil</h1>
-    <p>Controle de Produção — Acesso Restrito</p>
-    <input type="email" id="campoEmail" placeholder="📧 Digite seu e-mail" required autocomplete="email">
-    <input type="password" id="campoSenha" placeholder="🔑 Digite sua senha" required autocomplete="current-password">
-    <button type="submit" class="btn-login">🔓 Entrar</button>
-    <div class="carregando" id="carregando">⏳ Entrando...</div>
-    <div class="erro-login" id="erroLogin">❌ E-mail ou senha incorretos</div>
-  </form>
-</div>
+<section class="auth-screen" id="auth-screen">
+    <h2>Acesso ao Controle de Produção</h2>
+    <p>Entre com seu e-mail e senha ou crie sua conta.</p>
+    <form id="auth-form">
+        <label for="auth-email">E-mail</label>
+        <input type="email" id="auth-email" autocomplete="username" required>
+        <label for="auth-password">Senha</label>
+        <input type="password" id="auth-password" autocomplete="current-password" minlength="6" required>
+        <div class="auth-buttons">
+            <button class="btn-add" type="submit">Entrar</button>
+            <button class="btn-import" type="button" id="create-account">Criar conta</button>
+        </div>
+    </form>
+    <button type="button" id="reset-password" style="margin-top:14px;border:0;background:none;color:#1e40af;cursor:pointer;text-decoration:underline">Esqueci minha senha</button>
+    <p class="auth-message" id="auth-message" aria-live="polite"></p>
+</section>
 
-<!-- ===== MODAL SENHA ===== -->
-<div class="modal-senha" id="modalSenhaApagar">
-  <div class="caixa-modal">
-    <h3>⚠️ Atenção!</h3>
-    <p>Digite a senha para apagar TODOS os dados. Esta ação não pode ser desfeita.</p>
-    <input type="password" id="senhaApagar" placeholder="••••••" maxlength="6" inputmode="numeric">
-    <div class="botoes-modal">
-      <button class="btn-cancelar" id="btnCancelarApagar">❌ Cancelar</button>
-      <button class="btn-confirmar" id="btnConfirmarApagar">✅ Confirmar</button>
-    </div>
-    <div class="erro-modal" id="erroModalApagar">❌ Senha incorreta.</div>
-  </div>
-</div>
-
-<!-- ===== MODAL EDIÇÃO ===== -->
-<div class="modal-senha" id="modalEdicao">
-  <div class="caixa-modal">
-    <h3>✏️ Editar Registro</h3>
-    <div class="grupo-form">
-      <div class="campo">
-        <label>📅 Data</label>
-        <input type="date" id="editData">
-      </div>
-      <div class="campo">
-        <label>📐 Modelo</label>
-        <input type="text" id="editEstribo" list="listaModelosEdit" autocomplete="off">
-        <datalist id="listaModelosEdit"></datalist>
-      </div>
-      <div class="campo">
-        <label>🔩 Bitola</label>
-        <select id="editMaterial">
-          <option value="3.8">Ø 3,8 mm</option>
-          <option value="4.2">Ø 4,2 mm</option>
-          <option value="5.0">Ø 5,0 mm</option>
-          <option value="6.0">Ø 6,0 mm</option>
-        </select>
-      </div>
-      <div class="campo">
-        <label>📦 Tipo</label>
-        <select id="editTipo">
-          <option value="AMARRADO">AMARRADO</option>
-          <option value="MLIVRE">M. LIVRE</option>
-          <option value="PACOTE">PACOTE</option>
-        </select>
-      </div>
-      <div class="campo">
-        <label>Peças / Pacote</label>
-        <input type="number" id="editQtdPacote" min="1">
-      </div>
-      <div class="campo">
-        <label>Total de Pacotes</label>
-        <input type="number" id="editTotalPacotes" min="1">
-      </div>
-      <div class="campo">
-        <label>✅ Subtotal</label>
-        <div id="editSubtotal">0 peças</div>
-      </div>
-      <div class="campo">
-        <label>👤 Responsável</label>
-        <input type="text" id="editResponsavel">
-      </div>
-    </div>
-    <div id="editMensagem" class="mensagem"></div>
-    <div class="botoes-modal" style="margin-top: 18px;">
-      <button class="btn-cancelar" id="btnCancelarEdicao">❌ Cancelar</button>
-      <button class="btn-confirmar" id="btnSalvarEdicao" style="background: var(--primaria);">💾 Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ===== CONTEÚDO PRINCIPAL ===== -->
-<div class="conteudo-principal" id="conteudoPrincipal">
-  <div class="container">
-    <div class="cabecalho-topo">
-      <span class="usuario-info" id="usuarioLogado"></span>
-      <button class="btn-sair" id="btnSair">🚪 Sair</button>
+<div class="container" id="app-container">
+    <div class="header">
+        <div>
+            <h1>Controle de Produção</h1>
+            <p>Gestão de Estribos e Embalagens</p>
+        </div>
+        <div style="text-align: right;">
+            <p><strong>Data de Hoje:</strong> <span id="data-hoje"></span></p>
+            <p id="firebase-status" aria-live="polite">Conectando ao Firebase...</p>
+            <p id="user-email"></p>
+            <button class="btn-logout" onclick="sair()">Sair</button>
+        </div>
     </div>
 
-    <header>
-      <h1>🏢 Arames Brasil</h1>
-      <p>Controle de Produção & Estoque de Estribos</p>
-    </header>
+    <!-- Painel de Resumo -->
+    <div class="dashboard">
+        <div class="card">
+            <h3>Total de Peças</h3>
+            <p id="kpi-pecas">0</p>
+        </div>
+        <div class="card" style="border-left-color: var(--warning);">
+            <h3>Total de Embalagens</h3>
+            <p id="kpi-embalagens">0</p>
+        </div>
+    </div>
 
-    <!-- MODELOS -->
-    <section class="card">
-      <div class="card-titulo">
-        <span>📋 Modelos de Estribo</span>
-        <button class="btn btn-principal" id="btnModoEdicao" style="padding: 6px 12px; font-size: 12px;">✏️ Gerenciar</button>
-      </div>
-      <div class="grupo-modelos grupo-retangular">
-        <div class="grupo-titulo">📐 Retangulares</div>
-        <div class="modelos-lista" id="listaRetangulares"></div>
-      </div>
-      <div class="grupo-modelos grupo-redondo">
-        <div class="grupo-titulo">⭕ Redondos</div>
-        <div class="modelos-lista" id="listaRedondos"></div>
-      </div>
-      <div class="grupo-modelos grupo-hexagonal">
-        <div class="grupo-titulo">🔷 Hexagonais</div>
-        <div class="modelos-lista" id="listaHexagonais"></div>
-      </div>
-      <div class="grupo-modelos grupo-personalizado" id="grupoPersonalizado" style="display:none;">
-        <div class="grupo-titulo">✨ Personalizados</div>
-        <div class="modelos-lista" id="listaPersonalizados"></div>
-      </div>
-      <div class="linha-add-modelo">
-        <input type="text" id="novoModelo" placeholder="Novo modelo..." style="flex:1; min-width:180px;">
-        <button class="btn btn-principal" id="btnAdicionarModelo">➕ Adicionar</button>
-      </div>
-      <div id="msgModelo" class="mensagem"></div>
-    </section>
+    <!-- Formulário -->
+    <div class="form-section">
+        
+        <!-- Área de Botões Rápidos (Estribos Padrões) -->
+        <div class="padroes-section">
+            <h4>Clique em um Estribo Padrão para preencher:</h4>
+            <div class="chips-container" id="chips-container">
+                <!-- Os botões são gerados via JavaScript -->
+            </div>
+        </div>
 
-    <!-- NOVA PRODUÇÃO -->
-    <section class="card">
-      <div class="card-titulo">➕ Nova Produção</div>
-      <div class="grupo-form">
-        <div class="campo">
-          <label>📅 Data</label>
-          <input type="date" id="data">
-        </div>
-        <div class="campo campo-sugestoes">
-          <label>📐 Estribo (Modelo)</label>
-          <input type="text" id="estribo" placeholder="Clique num modelo acima..." autocomplete="off">
-          <div class="sugestoes" id="sugestoesEstribo"></div>
-        </div>
-        <div class="campo">
-          <label>🔩 Bitola (mm)</label>
-          <select id="material">
-            <option value="">Selecione...</option>
-            <option value="3.8">Ø 3,8 mm</option>
-            <option value="4.2">Ø 4,2 mm</option>
-            <option value="5.0">Ø 5,0 mm</option>
-            <option value="6.0">Ø 6,0 mm</option>
-          </select>
-        </div>
-        <div class="campo">
-          <label>📦 Tipo</label>
-          <select id="tipo">
-            <option value="">Selecione...</option>
-            <option value="AMARRADO">AMARRADO</option>
-            <option value="MLIVRE">M. LIVRE</option>
-            <option value="PACOTE">PACOTE</option>
-          </select>
-        </div>
-        <div class="campo">
-          <label>Peças / Pacote</label>
-          <input type="number" id="qtdPacote" placeholder="0" min="1">
-          <div class="aviso-minimo" id="avisoMinimo">⚠️ Mín. 100 p/ M. LIVRE</div>
-        </div>
-        <div class="campo">
-          <label>Total de Pacotes</label>
-          <input type="number" id="totalPacotes" placeholder="0" min="1">
-        </div>
-        <div class="campo">
-          <label>✅ Subtotal</label>
-          <div id="subtotalCalculado">0 peças</div>
-        </div>
-        <div class="campo">
-          <label>👤 Responsável</label>
-          <input type="text" id="responsavel" placeholder="Nome">
-        </div>
-      </div>
-      <div style="margin-top: 18px; display: flex; gap: 10px; flex-wrap: wrap;">
-        <button class="btn btn-principal" id="btnSalvar">💾 Salvar Produção</button>
-        <button class="btn btn-sucesso" id="btnExportar">📊 Baixar Excel</button>
-      </div>
-      <div id="mensagem" class="mensagem"></div>
-    </section>
+        <div class="form-grid">
+            <div class="input-group">
+                <label>Data</label>
+                <input type="date" id="in-data" required>
+            </div>
+            
+            <!-- Campo de Produto com AUTOCOMPLETE -->
+            <div class="input-group autocomplete-wrapper">
+                <label>Estribo / Produto</label>
+                <input type="text" id="in-produto" placeholder="Ex: RED 15" autocomplete="off" required>
+                <div id="autocomplete-list" class="autocomplete-items"></div>
+            </div>
 
-    <!-- TABELA -->
-    <section class="card">
-      <div class="card-titulo">
-        <span>📊 Produções Registradas</span>
-      </div>
-
-      <!-- FILTROS -->
-      <div class="filtros">
-        <div class="filtro-campo">
-          <label>🔍 Pesquisar responsável</label>
-          <input type="text" id="pesquisaResponsavel" placeholder="Nome do responsável...">
+            <div class="input-group">
+                <label>Bitola</label>
+                <select id="in-bitola" required>
+                    <option value="">Selecione...</option>
+                    <option value="3.8mm">3.8mm</option>
+                    <option value="4.2mm">4.2mm</option>
+                    <option value="5.0mm">5.0mm</option>
+                    <option value="6.0mm">6.0mm</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Embalagem</label>
+                <select id="in-embalagem" onchange="automatizarPreenchimento()" required>
+                    <option value="">Selecione...</option>
+                    <option value="PACOTE">PACOTE</option>
+                    <option value="AMARRADO">AMARRADO</option>
+                    <option value="CAIXA">CAIXA</option>
+                    <option value="M. LIVRE">M. LIVRE</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Qtd. na Embalagem</label>
+                <input type="number" id="in-qtd-emb" min="1" placeholder="Ex: 100" required>
+            </div>
+            <div class="input-group">
+                <label>Total de Embalagens</label>
+                <input type="number" id="in-total-emb" min="1" placeholder="Ex: 5" required>
+            </div>
+            <div class="input-group">
+                <label>Responsável</label>
+                <div class="input-with-buttons">
+                    <select id="in-responsavel" required>
+                        <option value="">Selecione...</option>
+                        <option value="FERNANDO" selected>FERNANDO</option>
+                        <option value="ÂNGELO">ÂNGELO</option>
+                        <option value="GENIVAL">GENIVAL</option>
+                    </select>
+                    <button type="button" class="btn-icon" onclick="adicionarOperador()" title="Adicionar Operador">+</button>
+                    <button type="button" class="btn-icon" onclick="removerOperador()" title="Remover Operador Selecionado">-</button>
+                </div>
+            </div>
+            <button class="btn-add" id="btn-add" onclick="adicionarRegistro()">+ Adicionar</button>
+            <button class="btn-cancel" id="btn-cancel" onclick="cancelarEdicao()">Cancelar</button>
         </div>
-        <div class="filtro-campo">
-          <label>📅 Data inicial</label>
-          <input type="date" id="filtroDataInicio">
+    </div>
+
+    <!-- Tabela -->
+    <h1 class="print-title" id="print-title">Relatório de Produção</h1>
+    
+    <div class="table-section">
+        <!-- Cabeçalho da Tabela com a Lupa de Busca -->
+        <div class="table-header">
+            <h3>Produção do Dia</h3>
+            
+            <!-- LUPA -->
+            <div class="search-box" id="search-box" onclick="expandirBusca()">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="busca-responsavel" placeholder="Buscar operador..." oninput="filtrarPorResponsavel()" onblur="recolherBusca()">
+            </div>
+            
         </div>
-        <div class="filtro-campo">
-          <label>📅 Data final</label>
-          <input type="date" id="filtroDataFim">
+
+        <div class="table-responsive">
+            <table id="tabela">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Estribo/Produto</th>
+                        <th>Bitola</th>
+                        <th>Embalagem</th>
+                        <th>Qtd. Emb.</th>
+                        <th>Total Emb.</th>
+                        <th>Total Peças</th>
+                        <th>Responsável</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-tabela">
+                    <!-- Inserido via JS -->
+                </tbody>
+            </table>
         </div>
-        <button class="btn-limpar" id="btnLimparFiltros">🧹 Limpar filtros</button>
-      </div>
+    </div>
 
-      <div class="tabela-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Modelo</th>
-              <th>Bitola</th>
-              <th>Tipo</th>
-              <th>Pç/Pct</th>
-              <th>Pacotes</th>
-              <th>Total Peças</th>
-              <th>Responsável</th>
-              <th style="text-align:center;">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="corpoTabela"></tbody>
-        </table>
-      </div>
-
-      <!-- PAGINAÇÃO -->
-      <div id="paginacao" class="paginacao"></div>
-
-      <div class="rodape-card">
-        <div class="total-geral" id="totalGeral">Total de Peças: 0</div>
-        <button class="btn btn-perigo" id="btnApagarTudo">🗑️ Apagar Tudo</button>
-      </div>
-    </section>
-  </div>
+    <!-- Botões de Exportação e Importação -->
+    <div class="actions">
+        <button class="btn-clear" onclick="limparTudo()">🗑️ Limpar Tudo</button>
+        <button class="btn-pdf" onclick="window.print()">🖨️ Salvar em PDF</button>
+        
+        <!-- NOVO BOTÃO DE IMPORTAR -->
+        <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
+        <button class="btn-import" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
+        
+        <button class="btn-excel" onclick="exportarExcel()">📥 Baixar Planilha Excel</button>
+    </div>
 </div>
 
 <script>
-'use strict';
+    // Configuração Web do Firebase (não use aqui a chave de service account/Admin SDK).
+    const firebaseConfig = {
+        apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
+        authDomain: "controle---estoque.firebaseapp.com",
+        databaseURL: "https://controle---estoque-default-rtdb.firebaseio.com",
+        projectId: "controle---estoque",
+        storageBucket: "controle---estoque.firebasestorage.app",
+        messagingSenderId: "10157072339",
+        appId: "1:10157072339:web:37a7f7732e4a9224c2d926"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const firebaseDb = firebase.database();
+    const firebaseAuth = firebase.auth();
+    let producaoRef = null;
+    let padroesRef = null;
+    let firebaseProducaoPronto = false;
+    let firebasePadroesPronto = false;
+    let aplicandoProducaoFirebase = false;
+    let aplicandoPadroesFirebase = false;
+    let avisoErroFirebaseExibido = false;
+    let usuarioUidAtual = null;
+    const padroesIniciaisFirebase = ["9x15", "9x20", "RED 20", "HEXA 20", "7x17", "7x27", "15x15", "10x20"];
 
-// =====================================================
-// 🔥 FIREBASE
-// =====================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
-  authDomain: "controle---estoque.firebaseapp.com",
-  databaseURL: "https://controle---estoque-default-rtdb.firebaseio.com",
-  projectId: "controle---estoque",
-  storageBucket: "controle---estoque.firebasestorage.app",
-  messagingSenderId: "10157072339",
-  appId: "1:10157072339:web:37a7f7732e4a9224c2d926"
-};
+    function mostrarErroFirebase(error) {
+        console.error('Erro do Firebase:', error);
+        const status = document.getElementById('firebase-status');
+        if (status) status.innerText = 'Falha na sincronização com Firebase';
+        if (!avisoErroFirebaseExibido) {
+            avisoErroFirebaseExibido = true;
+            alert('Não foi possível acessar o Firebase. Confira se o login por e-mail/senha está ativado e se as regras do Realtime Database permitem acesso ao caminho do seu usuário. Os dados continuam salvos neste navegador.');
+        }
+    }
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+    function mostrarErroLogin(error) {
+        const mensagens = {
+            'auth/invalid-email': 'O e-mail informado não é válido.',
+            'auth/user-disabled': 'Esta conta foi desativada.',
+            'auth/user-not-found': 'Conta não encontrada. Confira os dados ou crie sua conta.',
+            'auth/wrong-password': 'Senha incorreta. Tente novamente ou redefina a senha.',
+            'auth/invalid-credential': 'E-mail ou senha incorretos.',
+            'auth/email-already-in-use': 'Já existe uma conta com este e-mail. Faça login.',
+            'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
+            'auth/operation-not-allowed': 'Ative o método E-mail/senha em Authentication no Firebase Console.',
+            'auth/network-request-failed': 'Sem conexão com a internet. Tente novamente.'
+        };
+        document.getElementById('auth-message').innerText = mensagens[error.code] || 'Não foi possível concluir. Confira a configuração de Authentication no Firebase.';
+    }
 
-// =====================================================
-// ⚙️ CONSTANTES E ESTADO
-// =====================================================
-const SENHA_APAGAR = '710150';
-const COLECAO = 'producoes';
-const LIMITE_BATCH = 450;
-
-const RETANGULARES = ["7x14","7x17","7x27","9x15","9x20","9x25","12x20","12x25","15x15","15x20","15x25"];
-const REDONDOS     = ["Red 15","Red 20","Red 25","Red 30"];
-const HEXAGONAIS   = ["Hexa 15","Hexa 20","Hexa 25","Hexa 30"];
-const MODELOS_DESTAQUE_MLIVRE = ["7x14","7x17","7x27","9x15","9x20","15x15"];
-
-const estado = {
-  modelos: [...RETANGULARES, ...REDONDOS, ...HEXAGONAIS],
-  modoEdicao: false,
-  producoes: [],
-  filtro: '',
-  filtroDataInicio: '',
-  filtroDataFim: '',
-  pagina: 1,
-  porPagina: 20,
-  unsubscribe: null,
-  editandoId: null,
-};
-
-const fmtNum = new Intl.NumberFormat('pt-BR');
-
-// =====================================================
-// 🧰 HELPERS
-// =====================================================
-const $ = (id) => document.getElementById(id);
-
-function formatarNumero(n) { return fmtNum.format(Number(n) || 0); }
-
-function formatarData(d) {
-  if (!d) return '-';
-  const partes = String(d).split('-');
-  if (partes.length !== 3) return d;
-  const [ano, mes, dia] = partes;
-  return `${dia}/${mes}/${ano}`;
-}
-
-function dataHojeLocal() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function exibirMensagem(id, texto, tipo = 'sucesso', tempo = 4000) {
-  const el = $(id);
-  if (!el) return;
-  el.className = `mensagem ${tipo}`;
-  el.textContent = texto;
-  clearTimeout(el._timer);
-  el._timer = setTimeout(() => { el.style.display = 'none'; }, tempo);
-}
-
-function extrairNumeros(txt) {
-  const m = String(txt || '').match(/(\d+)x(\d+)/);
-  return m ? [parseInt(m[1], 10) || 0, parseInt(m[2], 10) || 0] : [0, 0];
-}
-
-function ordenarModelos(lista) {
-  return lista.slice().sort((a, b) => {
-    const [a1, a2] = extrairNumeros(a);
-    const [b1, b2] = extrairNumeros(b);
-    if (a1 !== b1) return a1 - b1;
-    return a2 - b2;
-  });
-}
-
-function categoriaDe(modelo) {
-  if (RETANGULARES.includes(modelo)) return 'retangular';
-  if (REDONDOS.includes(modelo))     return 'redondo';
-  if (HEXAGONAIS.includes(modelo))   return 'hexagonal';
-  return 'personalizado';
-}
-
-// =====================================================
-// 🔐 AUTH
-// =====================================================
-auth.onAuthStateChanged((usuario) => {
-  if (usuario) {
-    mostrarConteudo(usuario);
-    carregarDados();
-  } else {
-    mostrarLogin();
-  }
-});
-
-function mostrarLogin() {
-  $('telaLogin').style.display = 'flex';
-  $('conteudoPrincipal').style.display = 'none';
-}
-
-function mostrarConteudo(usuario) {
-  $('telaLogin').style.display = 'none';
-  $('conteudoPrincipal').style.display = 'block';
-  $('usuarioLogado').textContent = '✅ Conectado: ' + usuario.email;
-  $('data').value = dataHojeLocal();
-  renderizarModelos();
-}
-
-const MENSAGENS_ERRO_LOGIN = {
-  'auth/user-not-found': 'Usuário não encontrado',
-  'auth/wrong-password': 'Senha incorreta',
-  'auth/invalid-email': 'E-mail inválido',
-  'auth/invalid-credential': 'E-mail ou senha incorretos',
-  'auth/too-many-requests': 'Muitas tentativas. Tente mais tarde.',
-  'auth/network-request-failed': 'Sem conexão com a internet',
-};
-
-async function fazerLogin() {
-  const email = $('campoEmail').value.trim();
-  const senha = $('campoSenha').value;
-  const erroEl = $('erroLogin');
-  const carregando = $('carregando');
-
-  erroEl.classList.remove('visivel');
-  carregando.classList.add('visivel');
-
-  try {
-    await auth.signInWithEmailAndPassword(email, senha);
-  } catch (erro) {
-    carregando.classList.remove('visivel');
-    erroEl.textContent = '❌ ' + (MENSAGENS_ERRO_LOGIN[erro.code] || 'E-mail ou senha incorretos');
-    erroEl.classList.add('visivel');
-    $('campoSenha').value = '';
-  }
-}
-
-async function fazerLogout() {
-  if (!confirm('Tem certeza que deseja sair?')) return;
-  if (estado.unsubscribe) estado.unsubscribe();
-  await auth.signOut();
-}
-
-// =====================================================
-// 📐 MODELOS
-// =====================================================
-function alternarModoEdicao() {
-  estado.modoEdicao = !estado.modoEdicao;
-  $('btnModoEdicao').textContent = estado.modoEdicao ? '✓ Concluir' : '✏️ Gerenciar';
-  renderizarModelos();
-}
-
-function adicionarModelo() {
-  const inp = $('novoModelo');
-  const valor = inp.value.trim();
-  if (!valor) return;
-  if (estado.modelos.includes(valor)) {
-    return exibirMensagem('msgModelo', '⚠️ Esse modelo já existe', 'aviso');
-  }
-  estado.modelos.push(valor);
-  estado.modelos = ordenarModelos(estado.modelos);
-  inp.value = '';
-  renderizarModelos();
-  exibirMensagem('msgModelo', '✅ Modelo adicionado!', 'sucesso');
-}
-
-function removerModelo(modelo) {
-  if (!confirm(`Excluir "${modelo}"?`)) return;
-  estado.modelos = estado.modelos.filter(m => m !== modelo);
-  renderizarModelos();
-}
-
-function criarTagModelo(modelo) {
-  const tipoAtual = $('tipo').value;
-  const destaque = tipoAtual === 'MLIVRE' && MODELOS_DESTAQUE_MLIVRE.includes(modelo);
-  const tag = document.createElement('div');
-  tag.className = 'modelo-tag' + (destaque ? ' destaque-m-livre' : '');
-  tag.dataset.modelo = modelo;
-  tag.innerHTML = `<span>${modelo}</span>`;
-  if (estado.modoEdicao) {
-    const btn = document.createElement('button');
-    btn.className = 'btn-remover-modelo';
-    btn.dataset.remover = modelo;
-    btn.textContent = '✖';
-    tag.appendChild(btn);
-  }
-  return tag;
-}
-
-function renderizarModelos() {
-  const grupos = {
-    retangular:   $('listaRetangulares'),
-    redondo:      $('listaRedondos'),
-    hexagonal:    $('listaHexagonais'),
-    personalizado:$('listaPersonalizados'),
-  };
-  Object.values(grupos).forEach(el => { if (el) el.innerHTML = ''; });
-
-  const agrupados = { retangular: [], redondo: [], hexagonal: [], personalizado: [] };
-  estado.modelos.forEach(m => agrupados[categoriaDe(m)].push(m));
-
-  for (const [cat, lista] of Object.entries(agrupados)) {
-    const container = grupos[cat];
-    if (!container) continue;
-    ordenarModelos(lista).forEach(m => container.appendChild(criarTagModelo(m)));
-  }
-  $('grupoPersonalizado').style.display = agrupados.personalizado.length ? '' : 'none';
-}
-
-// =====================================================
-// 📝 FORMULÁRIO
-// =====================================================
-function atualizarRegrasTipo() {
-  const tipo = $('tipo').value;
-  const qtd = $('qtdPacote');
-  const aviso = $('avisoMinimo');
-  if (tipo === 'MLIVRE') {
-    $('material').value = '4.2';
-    qtd.min = 100;
-    aviso.classList.add('visivel');
-    if (!qtd.value || parseInt(qtd.value, 10) < 100) qtd.value = 100;
-  } else {
-    qtd.min = 1;
-    aviso.classList.remove('visivel');
-  }
-  calcularSubtotal();
-  renderizarModelos();
-}
-
-function calcularSubtotal() {
-  const qtd = parseInt($('qtdPacote').value, 10) || 0;
-  const pacotes = parseInt($('totalPacotes').value, 10) || 0;
-  $('subtotalCalculado').textContent = `${formatarNumero(qtd * pacotes)} peças`;
-}
-
-function mostrarSugestoes(filtro = '') {
-  const div = $('sugestoesEstribo');
-  const termo = filtro.toLowerCase();
-  div.innerHTML = '';
-  const lista = ordenarModelos(estado.modelos).filter(m => m.toLowerCase().includes(termo));
-  if (!lista.length) { div.classList.remove('visivel'); return; }
-  lista.forEach(m => {
-    const item = document.createElement('div');
-    item.className = 'sugestao-item';
-    item.textContent = m;
-    item.addEventListener('mousedown', (ev) => {
-      ev.preventDefault();
-      $('estribo').value = m;
-      div.classList.remove('visivel');
+    document.getElementById('auth-form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const email = document.getElementById('auth-email').value.trim();
+        const password = document.getElementById('auth-password').value;
+        document.getElementById('auth-message').innerText = 'Entrando...';
+        try { await firebaseAuth.signInWithEmailAndPassword(email, password); }
+        catch (error) { mostrarErroLogin(error); }
     });
-    div.appendChild(item);
-  });
-  div.classList.add('visivel');
-}
 
-function limparCampos() {
-  ['estribo','material','tipo','qtdPacote','totalPacotes','responsavel']
-    .forEach(id => $(id).value = '');
-  calcularSubtotal();
-  renderizarModelos();
-}
+    document.getElementById('create-account').addEventListener('click', async () => {
+        const email = document.getElementById('auth-email').value.trim();
+        const password = document.getElementById('auth-password').value;
+        if (!email || !password) {
+            document.getElementById('auth-message').innerText = 'Preencha o e-mail e a senha (mínimo 6 caracteres) para criar a conta.';
+            return;
+        }
+        document.getElementById('auth-message').innerText = 'Criando conta...';
+        try { await firebaseAuth.createUserWithEmailAndPassword(email, password); }
+        catch (error) { mostrarErroLogin(error); }
+    });
 
-async function adicionarRegistro() {
-  const usuario = auth.currentUser;
-  if (!usuario) return;
-  const dados = {
-    data: $('data').value,
-    estribo: $('estribo').value.trim(),
-    material: $('material').value,
-    tipo: $('tipo').value,
-    qtdPacote: parseInt($('qtdPacote').value, 10) || 0,
-    totalPacotes: parseInt($('totalPacotes').value, 10) || 0,
-    responsavel: $('responsavel').value.trim(),
-    totalPecas: 0,
-    uid: usuario.uid,
-    criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
-  };
-  dados.totalPecas = dados.qtdPacote * dados.totalPacotes;
+    document.getElementById('reset-password').addEventListener('click', async () => {
+        const email = document.getElementById('auth-email').value.trim();
+        if (!email) {
+            document.getElementById('auth-message').innerText = 'Digite seu e-mail para receber o link de redefinição.';
+            return;
+        }
+        try {
+            await firebaseAuth.sendPasswordResetEmail(email);
+            document.getElementById('auth-message').innerText = 'Enviamos um link de redefinição para seu e-mail.';
+        } catch (error) { mostrarErroLogin(error); }
+    });
 
-  if (!dados.data || !dados.estribo || !dados.material || !dados.tipo
-      || !dados.qtdPacote || !dados.totalPacotes || !dados.responsavel) {
-    return exibirMensagem('mensagem', '⚠️ Preencha todos os campos', 'aviso');
-  }
-  if (dados.tipo === 'MLIVRE' && dados.qtdPacote < 100) {
-    return exibirMensagem('mensagem', '⚠️ Mínimo 100 p/ M. LIVRE', 'aviso');
-  }
+    function sair() { firebaseAuth.signOut(); }
 
-  try {
-    $('btnSalvar').disabled = true;
-    await db.collection(COLECAO).add(dados);
-    exibirMensagem('mensagem', '✅ Salvo na nuvem! ☁️', 'sucesso');
-    limparCampos();
-  } catch (erro) {
-    exibirMensagem('mensagem', '❌ Erro: ' + erro.message, 'erro', 6000);
-  } finally {
-    $('btnSalvar').disabled = false;
-  }
-}
+    firebaseAuth.onAuthStateChanged(user => {
+        const authScreen = document.getElementById('auth-screen');
+        const app = document.getElementById('app-container');
+        if (!user) {
+            if (producaoRef) producaoRef.off();
+            if (padroesRef) padroesRef.off();
+            producaoRef = padroesRef = null;
+            firebaseProducaoPronto = firebasePadroesPronto = false;
+            app.style.display = 'none';
+            authScreen.style.display = 'block';
+            document.getElementById('auth-message').innerText = '';
+            return;
+        }
+        authScreen.style.display = 'none';
+        app.style.display = 'block';
+        document.getElementById('user-email').innerText = user.email || '';
+        // Cache local separado por conta; nunca reutiliza o cache de outro usuário.
+        usuarioUidAtual = user.uid;
+        const producaoLocalUsuario = localStorage.getItem('producao_salva_' + user.uid);
+        producao = producaoLocalUsuario ? JSON.parse(producaoLocalUsuario) : dadosIniciais.map(item => ({ ...item }));
+        const padroesLocalUsuario = localStorage.getItem('estribosPadroes_' + user.uid);
+        estribosPadroes = padroesLocalUsuario ? JSON.parse(padroesLocalUsuario) : [...padroesIniciaisFirebase];
+        renderizarTabela();
+        renderizarEstribosPadroes();
+        // Os dados de cada conta ficam separados pelo UID autenticado.
+        producaoRef = firebaseDb.ref('usuarios/' + user.uid + '/producao');
+        padroesRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
+        firebaseProducaoPronto = firebasePadroesPronto = false;
+        conectarFirebase();
+    });
 
-// =====================================================
-// ✏️ EDITAR / 🗑️ EXCLUIR
-// =====================================================
-function preencherDatalistModelos() {
-  const dl = $('listaModelosEdit');
-  dl.innerHTML = '';
-  ordenarModelos(estado.modelos).forEach(m => {
-    const opt = document.createElement('option');
-    opt.value = m;
-    dl.appendChild(opt);
-  });
-}
-
-function abrirModalEdicao(id) {
-  const r = estado.producoes.find(p => p.id === id);
-  if (!r) return;
-  estado.editandoId = id;
-  $('editData').value         = r.data || '';
-  $('editEstribo').value      = r.estribo || '';
-  $('editMaterial').value     = r.material || '4.2';
-  $('editTipo').value         = r.tipo || 'AMARRADO';
-  $('editQtdPacote').value    = r.qtdPacote || '';
-  $('editTotalPacotes').value = r.totalPacotes || '';
-  $('editResponsavel').value  = r.responsavel || '';
-  preencherDatalistModelos();
-  calcularSubtotalEdit();
-  $('editMensagem').style.display = 'none';
-  $('editMensagem').className = 'mensagem';
-  $('modalEdicao').classList.add('visivel');
-  setTimeout(() => $('editData').focus(), 50);
-}
-
-function fecharModalEdicao() {
-  $('modalEdicao').classList.remove('visivel');
-  estado.editandoId = null;
-}
-
-function calcularSubtotalEdit() {
-  const q = parseInt($('editQtdPacote').value, 10) || 0;
-  const p = parseInt($('editTotalPacotes').value, 10) || 0;
-  $('editSubtotal').textContent = `${formatarNumero(q * p)} peças`;
-}
-
-async function salvarEdicao() {
-  const id = estado.editandoId;
-  if (!id) return;
-  const dados = {
-    data: $('editData').value,
-    estribo: $('editEstribo').value.trim(),
-    material: $('editMaterial').value,
-    tipo: $('editTipo').value,
-    qtdPacote: parseInt($('editQtdPacote').value, 10) || 0,
-    totalPacotes: parseInt($('editTotalPacotes').value, 10) || 0,
-    responsavel: $('editResponsavel').value.trim(),
-    totalPecas: 0,
-    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp(),
-  };
-  dados.totalPecas = dados.qtdPacote * dados.totalPacotes;
-
-  if (!dados.data || !dados.estribo || !dados.material || !dados.tipo
-      || !dados.qtdPacote || !dados.totalPacotes || !dados.responsavel) {
-    return exibirMensagem('editMensagem', '⚠️ Preencha todos os campos', 'aviso');
-  }
-  if (dados.tipo === 'MLIVRE' && dados.qtdPacote < 100) {
-    return exibirMensagem('editMensagem', '⚠️ Mínimo 100 p/ M. LIVRE', 'aviso');
-  }
-
-  try {
-    $('btnSalvarEdicao').disabled = true;
-    await db.collection(COLECAO).doc(id).update(dados);
-    fecharModalEdicao();
-    exibirMensagem('mensagem', '✅ Registro atualizado!', 'sucesso');
-  } catch (erro) {
-    exibirMensagem('editMensagem', '❌ Erro: ' + erro.message, 'erro', 6000);
-  } finally {
-    $('btnSalvarEdicao').disabled = false;
-  }
-}
-
-async function excluirRegistro(id) {
-  const r = estado.producoes.find(p => p.id === id);
-  if (!r) return;
-  const msg =
-    'Excluir este registro?\n\n' +
-    `📅 ${formatarData(r.data)}\n` +
-    `📐 ${r.estribo}\n` +
-    `🔩 Ø ${r.material} mm\n` +
-    `📦 ${r.tipo}\n` +
-    `🔢 ${formatarNumero(r.totalPecas)} peças\n` +
-    `👤 ${r.responsavel}`;
-  if (!confirm(msg)) return;
-  try {
-    await db.collection(COLECAO).doc(id).delete();
-    exibirMensagem('mensagem', '🗑️ Registro excluído', 'sucesso');
-  } catch (erro) {
-    exibirMensagem('mensagem', '❌ Erro ao excluir: ' + erro.message, 'erro', 6000);
-  }
-}
-
-// =====================================================
-// ☁️ FIRESTORE
-// =====================================================
-function carregarDados() {
-  const q = db.collection(COLECAO).orderBy('data', 'desc');
-  estado.unsubscribe = q.onSnapshot(
-    (snap) => {
-      estado.producoes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderizarTabela();
-    },
-    (erro) => {
-      console.error('Erro Firestore:', erro);
-      exibirMensagem('mensagem', '❌ Erro ao carregar: ' + erro.message, 'erro', 6000);
+    function salvarProducaoFirebase() {
+        const items = {};
+        producao.forEach((item, index) => { items[String(index)] = item; });
+        producaoRef.set({ initialized: true, items }).catch(mostrarErroFirebase);
     }
-  );
-}
 
-async function apagarTodosRegistros() {
-  try {
-    const snap = await db.collection(COLECAO).get();
-    const docs = snap.docs;
-    if (!docs.length) return exibirMensagem('mensagem', 'ℹ️ Nenhum registro para apagar', 'aviso');
-    for (let i = 0; i < docs.length; i += LIMITE_BATCH) {
-      const batch = db.batch();
-      docs.slice(i, i + LIMITE_BATCH).forEach(d => batch.delete(d.ref));
-      await batch.commit();
+    function salvarPadroesFirebase() {
+        const items = {};
+        estribosPadroes.forEach((nome, index) => { items[String(index)] = nome; });
+        padroesRef.set({ initialized: true, items }).catch(mostrarErroFirebase);
     }
-    exibirMensagem('mensagem', '🗑️ Todos os registros foram apagados', 'sucesso');
-  } catch (erro) {
-    exibirMensagem('mensagem', '❌ Erro ao apagar: ' + erro.message, 'erro', 6000);
-  }
-}
 
-// =====================================================
-// ⚠️ MODAL SENHA
-// =====================================================
-function abrirModalApagar() {
-  $('modalSenhaApagar').classList.add('visivel');
-  $('senhaApagar').value = '';
-  $('erroModalApagar').classList.remove('visivel');
-  setTimeout(() => $('senhaApagar').focus(), 50);
-}
+    function conectarFirebase() {
+        producaoRef.on('value', snapshot => {
+            if (!snapshot.exists()) {
+                firebaseProducaoPronto = true;
+                salvarProducaoFirebase(); // Migra os dados deste navegador na primeira conexão.
+                return;
+            }
+            const payload = snapshot.val() || {};
+            const items = payload.items || {};
+            aplicandoProducaoFirebase = true;
+            producao = Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]);
+            producao.forEach(item => {
+                if (!item.responsavel || item.responsavel === 'IMPORTADO' || item.responsavel.trim() === '') item.responsavel = 'FERNANDO';
+            });
+            if (usuarioUidAtual) localStorage.setItem('producao_salva_' + usuarioUidAtual, JSON.stringify(producao));
+            aplicandoProducaoFirebase = false;
+            firebaseProducaoPronto = true;
+            document.getElementById('firebase-status').innerText = 'Sincronizado com Firebase';
+            renderizarTabela();
+        }, mostrarErroFirebase);
 
-function fecharModalApagar() {
-  $('modalSenhaApagar').classList.remove('visivel');
-}
+        padroesRef.on('value', snapshot => {
+            if (!snapshot.exists()) {
+                firebasePadroesPronto = true;
+                salvarPadroesFirebase(); // Migra os padrões locais na primeira conexão.
+                return;
+            }
+            const payload = snapshot.val() || {};
+            const items = payload.items || {};
+            aplicandoPadroesFirebase = true;
+            estribosPadroes = Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]);
+            if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
+            aplicandoPadroesFirebase = false;
+            firebasePadroesPronto = true;
+            renderizarEstribosPadroes();
+        }, mostrarErroFirebase);
+    }
 
-async function verificarSenhaApagar() {
-  if ($('senhaApagar').value !== SENHA_APAGAR) {
-    $('erroModalApagar').classList.add('visivel');
-    return;
-  }
-  fecharModalApagar();
-  if (!confirm('⚠️ Confirmar exclusão de TODOS os registros? Esta ação é irreversível.')) return;
-  await apagarTodosRegistros();
-}
+    // DADOS DA PLANILHA DE OUTUBRO
+    const dadosIniciais = [
+        { dataFormatada: "01/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
+        { dataFormatada: "01/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 6, totalPecas: 3000, responsavel: "FERNANDO" },
+        { dataFormatada: "01/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "01/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "01/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "05/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "05/10/2026", produto: "9x25", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 6, totalPecas: 3000, responsavel: "FERNANDO" },
+        { dataFormatada: "05/10/2026", produto: "15x20", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 500, totalEmb: 6, totalPecas: 3000, responsavel: "FERNANDO" },
+        { dataFormatada: "05/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "05/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "05/10/2026", produto: "7x14", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "13x24", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 16, totalEmb: 1, totalPecas: 16, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "13x19", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 23, totalEmb: 1, totalPecas: 23, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "8x54", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 68, totalEmb: 1, totalPecas: 68, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "8x38", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 34, totalEmb: 1, totalPecas: 34, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "8x24", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 748, totalEmb: 1, totalPecas: 748, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "13x29", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 26, totalEmb: 1, totalPecas: 26, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "23x23", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 57, totalEmb: 1, totalPecas: 57, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "RED 15", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "RED 15", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "RED 18", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "10x20", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 125, totalEmb: 6, totalPecas: 750, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "06/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "10x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "10x20", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 125, totalEmb: 2, totalPecas: 250, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "20x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 400, totalEmb: 1, totalPecas: 400, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "12x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "12x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "07/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "12x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 400, totalEmb: 1, totalPecas: 400, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "15x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 400, totalEmb: 1, totalPecas: 400, responsavel: "FERNANDO" },
+        { dataFormatada: "08/10/2026", produto: "14x30", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 700, totalEmb: 1, totalPecas: 700, responsavel: "FERNANDO" },
+        { dataFormatada: "09/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "09/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "09/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "09/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "15x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "15x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "10x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "RED 25", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 1100, totalEmb: 1, totalPecas: 1100, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 300, totalEmb: 1, totalPecas: 300, responsavel: "FERNANDO" },
+        { dataFormatada: "13/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "14/10/2026", produto: "15x25", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "14/10/2026", produto: "27x37", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 310, totalEmb: 1, totalPecas: 310, responsavel: "FERNANDO" },
+        { dataFormatada: "14/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "14/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "14/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 5, totalPecas: 2500, responsavel: "FERNANDO" },
+        { dataFormatada: "14/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 7, totalPecas: 3500, responsavel: "FERNANDO" },
+        { dataFormatada: "15/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
+        { dataFormatada: "15/10/2026", produto: "9x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 3, totalPecas: 1500, responsavel: "FERNANDO" },
+        { dataFormatada: "15/10/2026", produto: "15x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "15/10/2026", produto: "15x20", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 135, totalEmb: 1, totalPecas: 135, responsavel: "FERNANDO" },
+        { dataFormatada: "15/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "16/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 3, totalPecas: 1500, responsavel: "FERNANDO" },
+        { dataFormatada: "16/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "16/10/2026", produto: "10x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "16/10/2026", produto: "9x25", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 3, totalPecas: 1500, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "17x27", bitola: "6.0mm", embalagem: "PACOTE", qtdEmb: 125, totalEmb: 3, totalPecas: 375, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "HEXA 20", bitola: "5.0mm", embalagem: "AMARRADO", qtdEmb: 50, totalEmb: 1, totalPecas: 50, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x14", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x27", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "19/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 200, totalEmb: 1, totalPecas: 200, responsavel: "FERNANDO" },
+        { dataFormatada: "21/10/2026", produto: "10x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "21/10/2026", produto: "12x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 1, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "21/10/2026", produto: "9x15", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 4, totalPecas: 2000, responsavel: "FERNANDO" },
+        { dataFormatada: "21/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
+        { dataFormatada: "22/10/2026", produto: "7x17", bitola: "4.2mm", embalagem: "M. LIVRE", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "22/10/2026", produto: "RED 20", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 567, totalEmb: 1, totalPecas: 567, responsavel: "FERNANDO" },
+        { dataFormatada: "22/10/2026", produto: "HEX 20", bitola: "6.0mm", embalagem: "AMARRADO", qtdEmb: 63, totalEmb: 1, totalPecas: 63, responsavel: "FERNANDO" },
+        { dataFormatada: "22/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "PACOTE", qtdEmb: 500, totalEmb: 2, totalPecas: 1000, responsavel: "FERNANDO" },
+        { dataFormatada: "23/10/2026", produto: "15x15", bitola: "4.2mm", embalagem: "CAIXA", qtdEmb: 100, totalEmb: 1, totalPecas: 100, responsavel: "FERNANDO" },
+        { dataFormatada: "23/10/2026", produto: "HEXA 15", bitola: "4.2mm", embalagem: "AMARRADO", qtdEmb: 250, totalEmb: 2, totalPecas: 500, responsavel: "FERNANDO" },
+        { dataFormatada: "23/10/2026", produto: "9x20", bitola: "4.2mm", embalagem: "CAIXA", qtdEmb: 250, totalEmb: 2, totalPecas: 500, responsavel: "FERNANDO" }
+    ];
 
-// =====================================================
-// 📊 FILTROS + TABELA + PAGINAÇÃO
-// =====================================================
-function obterDadosFiltrados() {
-  let dados = estado.producoes;
+    // Carrega os dados salvos no navegador.
+    let producaoSalva = JSON.parse(localStorage.getItem('producao_salva'));
+    let producao = producaoSalva || dadosIniciais;
 
-  if (estado.filtro) {
-    dados = dados.filter(r => (r.responsavel || '').toLowerCase().includes(estado.filtro));
-  }
-  if (estado.filtroDataInicio) {
-    dados = dados.filter(r => (r.data || '') >= estado.filtroDataInicio);
-  }
-  if (estado.filtroDataFim) {
-    dados = dados.filter(r => (r.data || '') <= estado.filtroDataFim);
-  }
-  return dados;
-}
+    producao.forEach(item => {
+        if (!item.responsavel || item.responsavel === "IMPORTADO" || item.responsavel.trim() === "") {
+            item.responsavel = "FERNANDO";
+        }
+    });
 
-function temFiltroAtivo() {
-  return !!(estado.filtro || estado.filtroDataInicio || estado.filtroDataFim);
-}
+    let idContador = 1;
+    let editandoIndex = -1;
+    let filtroAtual = ""; 
+    let modoGerenciar = false;
+    let ultimoAdicionadoIndex = -1;
 
-function filtrarPorResponsavel() {
-  estado.filtro = $('pesquisaResponsavel').value.trim().toLowerCase();
-  estado.pagina = 1;
-  renderizarTabela();
-}
+    let estribosPadroes = JSON.parse(localStorage.getItem('estribosPadroes')) || ["9x15", "9x20", "RED 20", "HEXA 20", "7x17", "7x27", "15x15", "10x20"];
 
-function aplicarFiltroData() {
-  estado.filtroDataInicio = $('filtroDataInicio').value;
-  estado.filtroDataFim = $('filtroDataFim').value;
-  estado.pagina = 1;
-  renderizarTabela();
-}
+    document.getElementById('in-data').valueAsDate = new Date();
+    document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
 
-function limparFiltros() {
-  estado.filtro = '';
-  estado.filtroDataInicio = '';
-  estado.filtroDataFim = '';
-  estado.pagina = 1;
-  $('pesquisaResponsavel').value = '';
-  $('filtroDataInicio').value = '';
-  $('filtroDataFim').value = '';
-  renderizarTabela();
-}
+    function salvarDados() {
+        if (usuarioUidAtual) localStorage.setItem('producao_salva_' + usuarioUidAtual, JSON.stringify(producao));
+        if (firebaseProducaoPronto && !aplicandoProducaoFirebase) salvarProducaoFirebase();
+    }
 
-function mudarPagina(n) {
-  estado.pagina = n;
-  renderizarTabela();
-}
+    function salvarPadroes() {
+        if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
+        else localStorage.setItem('estribosPadroes', JSON.stringify(estribosPadroes));
+        if (firebasePadroesPronto && !aplicandoPadroesFirebase) salvarPadroesFirebase();
+    }
+    
+    salvarDados();
 
-function renderizarTabela() {
-  const tb = $('corpoTabela');
-  tb.innerHTML = '';
+    // ==========================================
+    // CONTROLE DA LUPA EXPANSÍVEL
+    // ==========================================
+    function expandirBusca() {
+        document.getElementById('search-box').classList.add('expandida');
+        document.getElementById('busca-responsavel').focus();
+    }
 
-  const dadosFiltrados = obterDadosFiltrados();
-  const totalRegistros = dadosFiltrados.length;
-  const totalPaginas = Math.max(1, Math.ceil(totalRegistros / estado.porPagina));
+    function recolherBusca() {
+        const input = document.getElementById('busca-responsavel');
+        if (input.value.trim() === '') {
+            document.getElementById('search-box').classList.remove('expandida');
+        }
+    }
 
-  if (estado.pagina > totalPaginas) estado.pagina = totalPaginas;
-  if (estado.pagina < 1) estado.pagina = 1;
+    function filtrarPorResponsavel() {
+        filtroAtual = document.getElementById('busca-responsavel').value.trim().toUpperCase();
+        renderizarTabela();
+    }
 
-  const inicio = (estado.pagina - 1) * estado.porPagina;
-  const fim = inicio + estado.porPagina;
-  const dadosPagina = dadosFiltrados.slice(inicio, fim);
+    // ==========================================
+    // AUTOCOMPLETE E AUTOMAÇÃO DE AMARRADO
+    // ==========================================
+    const inputProduto = document.getElementById('in-produto');
+    const listaAutocomplete = document.getElementById('autocomplete-list');
 
-  // ===== Total (sempre sobre dados filtrados) =====
-  const totalFiltrado = dadosFiltrados.reduce((s, r) => s + (Number(r.totalPecas) || 0), 0);
-  if (temFiltroAtivo()) {
-    const totalGeralTodos = estado.producoes.reduce((s, r) => s + (Number(r.totalPecas) || 0), 0);
-    $('totalGeral').textContent =
-      `Total filtrado: ${formatarNumero(totalFiltrado)} de ${formatarNumero(totalGeralTodos)} peças`;
-  } else {
-    $('totalGeral').textContent = `Total de Peças: ${formatarNumero(totalFiltrado)}`;
-  }
+    inputProduto.addEventListener('input', function() {
+        const valorDigitado = this.value.toUpperCase();
+        closeAllLists(); 
+        
+        if (!valorDigitado) { return false; }
 
-  // ===== Vazio =====
-  if (!dadosPagina.length) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td colspan="9" class="tabela-vazia">📭 Nenhum registro</td>`;
-    tb.appendChild(tr);
-    renderizarPaginacao(0, totalPaginas);
-    return;
-  }
+        const correspondentes = estribosPadroes.filter(estribo => estribo.startsWith(valorDigitado));
 
-  // ===== Linhas =====
-  const frag = document.createDocumentFragment();
-  for (const r of dadosPagina) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><strong>${formatarData(r.data)}</strong></td>
-      <td style="font-weight:700;color:var(--primaria);">${r.estribo}</td>
-      <td>Ø ${r.material} mm</td>
-      <td><strong>${r.tipo}</strong></td>
-      <td>${formatarNumero(r.qtdPacote)}</td>
-      <td>${formatarNumero(r.totalPacotes)}</td>
-      <td style="font-weight:700;color:var(--sucesso);">${formatarNumero(r.totalPecas)}</td>
-      <td>${r.responsavel}</td>
-      <td>
-        <div class="acoes-celula">
-          <button class="btn-acao btn-editar"  data-editar="${r.id}"  title="Editar">✏️</button>
-          <button class="btn-acao btn-excluir" data-excluir="${r.id}" title="Excluir">🗑️</button>
-        </div>
-      </td>
-    `;
-    frag.appendChild(tr);
-  }
-  tb.appendChild(frag);
+        if (correspondentes.length > 0) {
+            listaAutocomplete.style.display = 'block';
+            correspondentes.forEach(match => {
+                const div = document.createElement('div');
+                const parteNegrito = match.substring(0, valorDigitado.length);
+                const parteNormal = match.substring(valorDigitado.length);
+                div.innerHTML = `<strong>${parteNegrito}</strong>${parteNormal}`;
+                
+                div.addEventListener('click', function() {
+                    inputProduto.value = match;
+                    closeAllLists();
+                    aplicarAutomacaoAmaciado(match); 
+                    document.getElementById('in-bitola').focus(); 
+                });
+                listaAutocomplete.appendChild(div);
+            });
+        }
+    });
 
-  renderizarPaginacao(totalRegistros, totalPaginas);
-}
+    document.addEventListener('click', function (e) {
+        if (e.target !== inputProduto) closeAllLists();
+    });
 
-function renderizarPaginacao(totalRegistros, totalPaginas) {
-  const cont = $('paginacao');
-  if (!cont) return;
+    function closeAllLists() {
+        listaAutocomplete.innerHTML = '';
+        listaAutocomplete.style.display = 'none';
+    }
 
-  if (totalRegistros === 0) { cont.innerHTML = ''; return; }
+    function aplicarAutomacaoAmaciado(nomeEstribo) {
+        if (!nomeEstribo.toUpperCase().includes('X')) {
+            const selectEmbalagem = document.getElementById('in-embalagem');
+            selectEmbalagem.value = 'AMARRADO';
+            
+            selectEmbalagem.classList.add('auto-filled');
+            setTimeout(() => {
+                selectEmbalagem.classList.remove('auto-filled');
+            }, 1000);
+        }
+    }
 
-  const inicio = (estado.pagina - 1) * estado.porPagina + 1;
-  const fimExibido = Math.min(estado.pagina * estado.porPagina, totalRegistros);
+    // ==========================================
+    // LÓGICA DOS ESTRIBOS PADRÕES
+    // ==========================================
+    function toggleModoGerenciar() {
+        modoGerenciar = !modoGerenciar;
+        renderizarEstribosPadroes();
+    }
 
-  cont.innerHTML = `
-    <div class="paginacao-info">
-      Mostrando <strong>${inicio}–${fimExibido}</strong> de <strong>${totalRegistros}</strong>
-    </div>
-    <div class="paginacao-controles">
-      <button class="btn-pagina" id="btnPagAnterior" ${estado.pagina === 1 ? 'disabled' : ''}>◀ Anterior</button>
-      <span class="pagina-atual">Página ${estado.pagina} de ${totalPaginas}</span>
-      <button class="btn-pagina" id="btnPagProxima" ${estado.pagina === totalPaginas ? 'disabled' : ''}>Próxima ▶</button>
-    </div>
-    <div class="paginacao-tamanho">
-      <label>Por página:
-        <select id="selectPorPagina">
-          <option value="10"  ${estado.porPagina===10 ?'selected':''}>10</option>
-          <option value="20"  ${estado.porPagina===20 ?'selected':''}>20</option>
-          <option value="50"  ${estado.porPagina===50 ?'selected':''}>50</option>
-          <option value="100" ${estado.porPagina===100?'selected':''}>100</option>
-        </select>
-      </label>
-    </div>
-  `;
+    function renderizarEstribosPadroes() {
+        const container = document.getElementById('chips-container');
+        container.innerHTML = '';
 
-  $('btnPagAnterior').addEventListener('click', () => mudarPagina(estado.pagina - 1));
-  $('btnPagProxima').addEventListener('click',  () => mudarPagina(estado.pagina + 1));
-  $('selectPorPagina').addEventListener('change', (e) => {
-    estado.porPagina = parseInt(e.target.value, 10) || 20;
-    estado.pagina = 1;
+        estribosPadroes.forEach(nome => {
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            
+            chip.onclick = () => {
+                if (modoGerenciar) return;
+                document.getElementById('in-produto').value = nome;
+                aplicarAutomacaoAmaciado(nome); 
+                document.getElementById('in-bitola').focus();
+            };
+            
+            let htmlInterno = `<span>${nome}</span>`;
+
+            if (modoGerenciar) {
+                htmlInterno += `
+                    <button class="chip-edit" onclick="editarEstriboPadrao(event, '${nome}')" title="Renomear">✏️</button>
+                    <button class="chip-delete" onclick="excluirEstriboPadrao(event, '${nome}')" title="Apagar">×</button>
+                `;
+            }
+
+            chip.innerHTML = htmlInterno;
+            container.appendChild(chip);
+        });
+
+        // BOTÃO DE SALVAR PADRÃO EXPANSÍVEL
+        const btnAdd = document.createElement('div');
+        btnAdd.className = 'add-pattern-box';
+        btnAdd.id = 'btn-add-pattern';
+        btnAdd.onclick = (e) => {
+            e.stopPropagation();
+            const box = document.getElementById('btn-add-pattern');
+            box.classList.add('active');
+            
+            setTimeout(() => {
+                adicionarNovoEstriboPadrao();
+                box.classList.remove('active');
+            }, 250);
+        };
+        
+        btnAdd.innerHTML = `
+            <span class="add-icon">+</span>
+            <span class="add-text">Salvar Padrão</span>
+        `;
+        container.appendChild(btnAdd);
+
+        // BOTÃO GERENCIAR EXPANSÍVEL
+        const btnGerenciar = document.createElement('div');
+        btnGerenciar.className = modoGerenciar ? 'manage-box active' : 'manage-box';
+        btnGerenciar.onclick = (e) => {
+            e.stopPropagation();
+            toggleModoGerenciar();
+        };
+        
+        btnGerenciar.innerHTML = `
+            <span class="manage-icon">${modoGerenciar ? '✔️' : '⚙️'}</span>
+            <span class="manage-text">Concluir</span>
+        `;
+        container.appendChild(btnGerenciar);
+    }
+
+    function adicionarNovoEstriboPadrao() {
+        const valorAtual = document.getElementById('in-produto').value.trim().toUpperCase();
+        let nome = prompt("Digite o nome do novo Estribo Padrão:", valorAtual);
+        
+        if (nome && nome.trim() !== '') {
+            nome = nome.trim().toUpperCase();
+            if (!estribosPadroes.includes(nome)) {
+                estribosPadroes.push(nome);
+                salvarPadroes();
+                renderizarEstribosPadroes();
+            } else {
+                alert("Este estribo já está na lista de padrões!");
+            }
+        }
+    }
+
+    function editarEstriboPadrao(event, nomeAntigo) {
+        event.stopPropagation(); 
+        
+        let novoNome = prompt(`Renomear "${nomeAntigo}" para:`, nomeAntigo);
+        
+        if (novoNome === null) return; 
+        
+        novoNome = novoNome.trim().toUpperCase();
+        
+        if (novoNome !== "" && novoNome !== nomeAntigo) {
+            if (estribosPadroes.includes(novoNome)) {
+                alert("Já existe um estribo com este nome na lista!");
+                return;
+            }
+            const index = estribosPadroes.indexOf(nomeAntigo);
+            estribosPadroes[index] = novoNome;
+            salvarPadroes();
+            renderizarEstribosPadroes();
+        }
+    }
+
+    function excluirEstriboPadrao(event, nome) {
+        event.stopPropagation();
+        if (confirm(`Tem certeza que deseja APAGAR o padrão "${nome}"?`)) {
+            estribosPadroes = estribosPadroes.filter(item => item !== nome);
+            salvarPadroes();
+            renderizarEstribosPadroes();
+        }
+    }
+
+    // ==========================================
+    // LÓGICA DO FORMULÁRIO E TABELA
+    // ==========================================
+
+    function automatizarPreenchimento() {
+        const embalagem = document.getElementById('in-embalagem').value;
+        const inputQtdEmb = document.getElementById('in-qtd-emb');
+        const inputBitola = document.getElementById('in-bitola');
+
+        if (embalagem === 'M. LIVRE') {
+            inputQtdEmb.value = 100;
+            inputBitola.value = "4.2mm";
+            piscarCampos(inputQtdEmb, inputBitola);
+        } else if (embalagem === 'CAIXA') {
+            inputQtdEmb.value = 250;
+            inputBitola.value = "4.2mm";
+            piscarCampos(inputQtdEmb, inputBitola);
+        }
+    }
+
+    function piscarCampos(campo1, campo2) {
+        campo1.classList.add('auto-filled');
+        campo2.classList.add('auto-filled');
+        setTimeout(() => {
+            campo1.classList.remove('auto-filled');
+            campo2.classList.remove('auto-filled');
+        }, 1000);
+    }
+
+    function adicionarRegistro() {
+        const data = document.getElementById('in-data').value;
+        const produto = document.getElementById('in-produto').value.trim().toUpperCase();
+        const bitola = document.getElementById('in-bitola').value;
+        const embalagem = document.getElementById('in-embalagem').value;
+        const qtdEmb = parseInt(document.getElementById('in-qtd-emb').value);
+        const totalEmb = parseInt(document.getElementById('in-total-emb').value);
+        const responsavel = document.getElementById('in-responsavel').value;
+
+        if (!data || !produto || !bitola || !embalagem || isNaN(qtdEmb) || isNaN(totalEmb) || !responsavel) {
+            alert("⚠️ Por favor, preencha todos os campos corretamente.");
+            return;
+        }
+
+        const totalPecas = qtdEmb * totalEmb;
+
+        const registro = {
+            dataFormatada: formatarData(data),
+            produto,
+            bitola,
+            embalagem,
+            qtdEmb,
+            totalEmb,
+            totalPecas,
+            responsavel
+        };
+
+        if (editandoIndex !== -1) {
+            producao[editandoIndex] = registro;
+            cancelarEdicao();
+        } else {
+            producao.push(registro);
+            ultimoAdicionadoIndex = producao.length - 1;
+            limparFormulario();
+        }
+        
+        salvarDados();
+        renderizarTabela();
+    }
+
+    function formatarData(dataString) {
+        if (!dataString) return "";
+        const [ano, mes, dia] = dataString.split("-");
+        return `${dia}/${mes}/${ano}`;
+    }
+
+    function renderizarTabela() {
+        const tbody = document.getElementById('corpo-tabela');
+        tbody.innerHTML = "";
+
+        let somaPecasGeral = 0;
+        let somaEmbGeral = 0;
+
+        const printTitle = document.getElementById('print-title');
+        if (filtroAtual !== "") {
+            printTitle.innerText = `Relatório de Produção - ${filtroAtual}`;
+        } else {
+            printTitle.innerText = `Relatório de Produção Geral`;
+        }
+
+        let dadosExibicao = [];
+        producao.forEach((item, index) => {
+            if (filtroAtual === "" || item.responsavel.includes(filtroAtual)) {
+                dadosExibicao.push({ ...item, originalIndex: index });
+            }
+        });
+
+        // ORDENAÇÃO: Alfabética pelo operador, e Recentes no Topo dentro do grupo
+        if (filtroAtual === "") {
+            dadosExibicao.sort((a, b) => {
+                if (a.responsavel !== b.responsavel) {
+                    return a.responsavel.localeCompare(b.responsavel);
+                }
+                return b.originalIndex - a.originalIndex;
+            });
+        } else {
+            dadosExibicao.sort((a, b) => b.originalIndex - a.originalIndex);
+        }
+
+        let lastResponsavel = null;
+        let subtotalPecas = 0;
+        let subtotalEmb = 0;
+
+        dadosExibicao.forEach((item) => {
+            if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
+                const trSub = document.createElement('tr');
+                trSub.className = 'linha-subtotal';
+                trSub.innerHTML = `
+                    <td colspan="5" style="text-align: right;">Subtotal - ${lastResponsavel}:</td>
+                    <td>${subtotalEmb.toLocaleString('pt-BR')}</td>
+                    <td>${subtotalPecas.toLocaleString('pt-BR')}</td>
+                    <td colspan="2"></td>
+                `;
+                tbody.appendChild(trSub);
+                
+                subtotalPecas = 0;
+                subtotalEmb = 0;
+            }
+
+            lastResponsavel = item.responsavel;
+            subtotalPecas += item.totalPecas;
+            subtotalEmb += item.totalEmb;
+            somaPecasGeral += item.totalPecas;
+            somaEmbGeral += item.totalEmb;
+
+            const tr = document.createElement('tr');
+            
+            if (item.originalIndex === ultimoAdicionadoIndex) {
+                tr.className = 'row-new';
+            }
+
+            tr.innerHTML = `
+                <td>${item.dataFormatada}</td>
+                <td><strong>${item.produto}</strong></td>
+                <td>${item.bitola}</td>
+                <td>${item.embalagem}</td>
+                <td>${item.qtdEmb.toLocaleString('pt-BR')}</td>
+                <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
+                <td><strong style="color: var(--primary);">${item.totalPecas.toLocaleString('pt-BR')}</strong></td>
+                <td>${item.responsavel}</td>
+                <td>
+                    <button class="btn-action btn-edit-row" onclick="editarItem(${item.originalIndex})">Editar</button>
+                    <button class="btn-action btn-delete" onclick="excluirItem(${item.originalIndex})">X</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        if (filtroAtual === "" && lastResponsavel !== null) {
+            const trSub = document.createElement('tr');
+            trSub.className = 'linha-subtotal';
+            trSub.innerHTML = `
+                <td colspan="5" style="text-align: right;">Subtotal - ${lastResponsavel}:</td>
+                <td>${subtotalEmb.toLocaleString('pt-BR')}</td>
+                <td>${subtotalPecas.toLocaleString('pt-BR')}</td>
+                <td colspan="2"></td>
+            `;
+            tbody.appendChild(trSub);
+        }
+
+        if (dadosExibicao.length > 0) {
+            const trTotal = document.createElement('tr');
+            trTotal.className = 'linha-total-geral';
+            trTotal.innerHTML = `
+                <td colspan="5" style="text-align: right;">TOTAL GERAL:</td>
+                <td>${somaEmbGeral.toLocaleString('pt-BR')}</td>
+                <td>${somaPecasGeral.toLocaleString('pt-BR')}</td>
+                <td colspan="2"></td>
+            `;
+            tbody.appendChild(trTotal);
+        } else {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #64748b; padding: 20px;">Nenhum registro encontrado.</td></tr>`;
+        }
+
+        document.getElementById('kpi-pecas').innerText = somaPecasGeral.toLocaleString('pt-BR');
+        document.getElementById('kpi-embalagens').innerText = somaEmbGeral.toLocaleString('pt-BR');
+    }
+
+    function editarItem(index) {
+        const item = producao[index];
+        const [dia, mes, ano] = item.dataFormatada.split('/');
+        
+        document.getElementById('in-data').value = `${ano}-${mes}-${dia}`;
+        document.getElementById('in-produto').value = item.produto;
+        document.getElementById('in-bitola').value = item.bitola;
+        document.getElementById('in-embalagem').value = item.embalagem;
+        document.getElementById('in-qtd-emb').value = item.qtdEmb;
+        document.getElementById('in-total-emb').value = item.totalEmb;
+        document.getElementById('in-responsavel').value = item.responsavel;
+
+        const btnAdd = document.getElementById('btn-add');
+        btnAdd.innerText = "💾 Salvar Alteração";
+        btnAdd.style.backgroundColor = "var(--warning)";
+        
+        document.getElementById('btn-cancel').style.display = "block";
+        editandoIndex = index;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelarEdicao() {
+        editandoIndex = -1;
+        limparFormulario();
+        
+        const btnAdd = document.getElementById('btn-add');
+        btnAdd.innerText = "+ Adicionar";
+        btnAdd.style.backgroundColor = "var(--primary)";
+        
+        document.getElementById('btn-cancel').style.display = "none";
+    }
+
+    function excluirItem(index) {
+        if (confirm("Deseja realmente excluir este registro?")) {
+            producao.splice(index, 1);
+            if (editandoIndex === index) cancelarEdicao();
+            salvarDados();
+            renderizarTabela();
+        }
+    }
+
+    function limparTudo() {
+        if (confirm("⚠️ ATENÇÃO: Isso vai apagar TODOS os registros da tela. Tem certeza que deseja começar do zero?")) {
+            producao = [];
+            salvarDados();
+            renderizarTabela();
+        }
+    }
+
+    function limparFormulario() {
+        document.getElementById('in-produto').value = "";
+        document.getElementById('in-bitola').value = "";
+        document.getElementById('in-embalagem').value = "";
+        document.getElementById('in-qtd-emb').value = "";
+        document.getElementById('in-total-emb').value = "";
+        document.getElementById('in-produto').focus();
+    }
+
+    function adicionarOperador() {
+        let nome = prompt("Digite o nome do novo operador:");
+        if (nome && nome.trim() !== "") {
+            nome = nome.trim().toUpperCase();
+            const select = document.getElementById('in-responsavel');
+            for(let i = 0; i < select.options.length; i++) {
+                if(select.options[i].value === nome) {
+                    alert("Este operador já está na lista!");
+                    return;
+                }
+            }
+            const option = document.createElement('option');
+            option.value = nome;
+            option.text = nome;
+            select.appendChild(option);
+            select.value = nome;
+        }
+    }
+
+    function removerOperador() {
+        const select = document.getElementById('in-responsavel');
+        if (select.selectedIndex > 0) {
+            if (confirm(`Remover o operador ${select.value} da lista?`)) {
+                select.remove(select.selectedIndex);
+            }
+        } else {
+            alert("Selecione um operador válido para remover.");
+        }
+    }
+
+    // ==========================================
+    // IMPORTAR EXCEL
+    // ==========================================
+    function importarExcel(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+
+            let responsavelImportacao = prompt("Quem é o responsável por esta importação?", "FERNANDO");
+            
+            if (responsavelImportacao === null) {
+                event.target.value = '';
+                return;
+            }
+            
+            responsavelImportacao = responsavelImportacao.trim().toUpperCase();
+            if (responsavelImportacao === "") responsavelImportacao = "NÃO INFORMADO";
+            
+            const novosDados = [];
+            
+            json.forEach(row => {
+                if (!row.DATA || !row.ESTRIBO) return;
+                if (String(row.DATA).trim() === "" || String(row.ESTRIBO).trim() === "") return;
+
+                let dataStr = row.DATA;
+                if (dataStr instanceof Date) {
+                    dataStr = dataStr.toLocaleDateString('pt-BR');
+                } else {
+                    dataStr = String(dataStr).split(' ')[0];
+                    if(dataStr.includes('-')) {
+                        const partes = dataStr.split('-');
+                        if(partes.length === 3) dataStr = `${partes[2]}/${partes[1]}/${partes[0]}`;
+                    }
+                }
+
+                let materialStr = String(row.MATERIAL || "").trim();
+                if(materialStr.includes('00:00:00')) {
+                    materialStr = materialStr.split(' ')[0];
+                    materialStr = "4.2mm";
+                } else if (materialStr && !materialStr.includes('mm')) {
+                    materialStr += "mm";
+                }
+
+                const qtdEmb = Number(row["Q POR PACOTE"]) || 0;
+                const totalEmb = Number(row["TOTAL PACOTE"]) || 0;
+                const totalPecas = Number(row["PEÇAS TOTAL"]) || (qtdEmb * totalEmb);
+
+                novosDados.push({
+                    dataFormatada: dataStr,
+                    produto: String(row.ESTRIBO).trim().toUpperCase(),
+                    bitola: materialStr,
+                    embalagem: String(row["P,A,C"] || "AMARRADO").trim().toUpperCase(),
+                    qtdEmb: qtdEmb,
+                    totalEmb: totalEmb,
+                    totalPecas: totalPecas,
+                    responsavel: responsavelImportacao
+                });
+            });
+
+            if (novosDados.length > 0) {
+                const substituir = confirm(`Foram encontrados ${novosDados.length} registros no Excel para o operador ${responsavelImportacao}.\n\nClique OK para SUBSTITUIR a tabela atual (recomendado).\nClique CANCELAR para ADICIONAR à tabela atual.`);
+                
+                if (substituir) {
+                    producao = novosDados;
+                } else {
+                    producao = producao.concat(novosDados);
+                }
+                
+                salvarDados();
+                renderizarTabela();
+                alert("✅ Importação concluída com sucesso!");
+            } else {
+                alert("⚠️ Nenhum dado válido encontrado no arquivo.");
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        event.target.value = '';
+    }
+
+    // ==========================================
+    // EXPORTAR EXCEL
+    // ==========================================
+    function exportarExcel() {
+        if (producao.length === 0) {
+            alert("Não há dados para exportar!");
+            return;
+        }
+
+        let dadosExibicao = [];
+        producao.forEach(item => {
+            if (filtroAtual === "" || item.responsavel.includes(filtroAtual)) {
+                dadosExibicao.push(item);
+            }
+        });
+
+        if (filtroAtual === "") {
+            dadosExibicao.sort((a, b) => {
+                if (a.responsavel !== b.responsavel) {
+                    return a.responsavel.localeCompare(b.responsavel);
+                }
+                return producao.indexOf(b) - producao.indexOf(a);
+            });
+        } else {
+            dadosExibicao.sort((a, b) => producao.indexOf(b) - producao.indexOf(a));
+        }
+
+        let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <style>
+                table { border-collapse: collapse; font-family: Arial, sans-serif; }
+                th { background-color: #d9d9d9; color: black; padding: 8px; text-align: center; font-weight: bold; border: 1px solid #000; }
+                td { border: 1px solid #000; padding: 5px; text-align: center; }
+                .subtotal { font-weight: bold; background-color: #e2e8f0; text-align: right; }
+                .total-geral { font-weight: bold; background-color: #cbd5e1; text-align: right; font-size: 14px; }
+            </style>
+        </head>
+        <body>
+            <table>
+                <thead>
+                    <tr>
+                        <th>DATA</th>
+                        <th>ESTRIBO</th>
+                        <th>MATERIAL</th>
+                        <th>P,A,C</th>
+                        <th>Q POR PACOTE</th>
+                        <th>TOTAL PACOTE</th>
+                        <th>PEÇAS TOTAL</th>
+                        <th>RESPONSÁVEL</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+        let totalPecasGeral = 0;
+        let totalEmbGeral = 0;
+        let lastResponsavel = null;
+        let subtotalPecas = 0;
+        let subtotalEmb = 0;
+
+        dadosExibicao.forEach(item => {
+            if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
+                html += `
+                    <tr>
+                        <td colspan="5" class="subtotal">Subtotal - ${lastResponsavel}:</td>
+                        <td class="subtotal">${subtotalEmb.toLocaleString('pt-BR')}</td>
+                        <td class="subtotal">${subtotalPecas.toLocaleString('pt-BR')}</td>
+                        <td class="subtotal"></td>
+                    </tr>`;
+                subtotalPecas = 0;
+                subtotalEmb = 0;
+            }
+
+            lastResponsavel = item.responsavel;
+            subtotalPecas += item.totalPecas;
+            subtotalEmb += item.totalEmb;
+            totalPecasGeral += item.totalPecas;
+            totalEmbGeral += item.totalEmb;
+            
+            let materialLimpo = item.bitola.replace("mm", "").trim();
+
+            html += `
+                <tr>
+                    <td>${item.dataFormatada}</td>
+                    <td>${item.produto}</td>
+                    <td>${materialLimpo}</td>
+                    <td>${item.embalagem}</td>
+                    <td>${item.qtdEmb.toLocaleString('pt-BR')}</td>
+                    <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
+                    <td>${item.totalPecas.toLocaleString('pt-BR')}</td>
+                    <td>${item.responsavel}</td>
+                </tr>`;
+        });
+
+        if (filtroAtual === "" && lastResponsavel !== null) {
+            html += `
+                <tr>
+                    <td colspan="5" class="subtotal">Subtotal - ${lastResponsavel}:</td>
+                    <td class="subtotal">${subtotalEmb.toLocaleString('pt-BR')}</td>
+                    <td class="subtotal">${subtotalPecas.toLocaleString('pt-BR')}</td>
+                    <td class="subtotal"></td>
+                </tr>`;
+        }
+
+        html += `
+                <tr>
+                    <td colspan="5" class="total-geral">TOTAL GERAL:</td>
+                    <td class="total-geral">${totalEmbGeral.toLocaleString('pt-BR')}</td>
+                    <td class="total-geral">${totalPecasGeral.toLocaleString('pt-BR')}</td>
+                    <td class="total-geral"></td>
+                </tr>
+        `;
+
+        html += `</tbody></table></body></html>`;
+
+        const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+        const sufixo = filtroAtual ? `_${filtroAtual}` : '';
+        
+        a.href = url;
+        a.download = `Producao_Estribos_${dataHoje}${sufixo}.xls`;
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Inicializa a tela e conecta a sincronização em nuvem.
+    renderizarEstribosPadroes();
     renderizarTabela();
-  });
-}
-
-// =====================================================
-// 📥 CSV (exporta o filtrado)
-// =====================================================
-function exportarCSV() {
-  const dados = obterDadosFiltrados();
-  if (!dados.length) { alert('Sem dados para exportar!'); return; }
-
-  const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const linhas = [
-    ['Data','Modelo','Bitola','Tipo','Pç/Pct','Pacotes','Total','Responsável'].map(esc).join(';'),
-    ...dados.map(r =>
-      [formatarData(r.data), r.estribo, `${r.material} mm`, r.tipo,
-       r.qtdPacote, r.totalPacotes, r.totalPecas, r.responsavel].map(esc).join(';')
-    ),
-  ];
-
-  const csv = '\uFEFF' + linhas.join('\r\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Arames_Brasil_${dataHojeLocal()}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-// =====================================================
-// 🎛️ EVENTOS
-// =====================================================
-$('formLogin').addEventListener('submit', (e) => { e.preventDefault(); fazerLogin(); });
-$('btnSair').addEventListener('click', fazerLogout);
-
-$('btnModoEdicao').addEventListener('click', alternarModoEdicao);
-$('btnAdicionarModelo').addEventListener('click', adicionarModelo);
-$('novoModelo').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { e.preventDefault(); adicionarModelo(); }
-});
-
-$('tipo').addEventListener('change', atualizarRegrasTipo);
-$('qtdPacote').addEventListener('input', calcularSubtotal);
-$('totalPacotes').addEventListener('input', calcularSubtotal);
-$('estribo').addEventListener('input', (e) => mostrarSugestoes(e.target.value));
-$('estribo').addEventListener('focus', (e) => mostrarSugestoes(e.target.value));
-$('estribo').addEventListener('blur', () => {
-  setTimeout(() => $('sugestoesEstribo').classList.remove('visivel'), 150);
-});
-
-$('btnSalvar').addEventListener('click', adicionarRegistro);
-$('btnExportar').addEventListener('click', exportarCSV);
-$('btnApagarTudo').addEventListener('click', abrirModalApagar);
-
-// Filtros
-$('pesquisaResponsavel').addEventListener('input', filtrarPorResponsavel);
-$('filtroDataInicio').addEventListener('change', aplicarFiltroData);
-$('filtroDataFim').addEventListener('change', aplicarFiltroData);
-$('btnLimparFiltros').addEventListener('click', limparFiltros);
-
-// Modal senha
-$('btnCancelarApagar').addEventListener('click', fecharModalApagar);
-$('btnConfirmarApagar').addEventListener('click', verificarSenhaApagar);
-$('senhaApagar').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { e.preventDefault(); verificarSenhaApagar(); }
-});
-$('modalSenhaApagar').addEventListener('click', (e) => {
-  if (e.target === $('modalSenhaApagar')) fecharModalApagar();
-});
-
-// Modal edição
-$('btnCancelarEdicao').addEventListener('click', fecharModalEdicao);
-$('btnSalvarEdicao').addEventListener('click', salvarEdicao);
-$('editQtdPacote').addEventListener('input', calcularSubtotalEdit);
-$('editTotalPacotes').addEventListener('input', calcularSubtotalEdit);
-$('modalEdicao').addEventListener('click', (e) => {
-  if (e.target === $('modalEdicao')) fecharModalEdicao();
-});
-
-// ESC
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if ($('modalEdicao').classList.contains('visivel')) fecharModalEdicao();
-    if ($('modalSenhaApagar').classList.contains('visivel')) fecharModalApagar();
-  }
-});
-
-// Delegação de cliques
-document.addEventListener('click', (e) => {
-  const btnRemover = e.target.closest('[data-remover]');
-  if (btnRemover) { removerModelo(btnRemover.dataset.remover); return; }
-
-  const btnEditar = e.target.closest('[data-editar]');
-  if (btnEditar) { abrirModalEdicao(btnEditar.dataset.editar); return; }
-
-  const btnExcluir = e.target.closest('[data-excluir]');
-  if (btnExcluir) { excluirRegistro(btnExcluir.dataset.excluir); return; }
-
-  const tag = e.target.closest('.modelo-tag');
-  if (tag && !estado.modoEdicao) {
-    $('estribo').value = tag.dataset.modelo;
-  }
-});
 </script>
 
 </body>
