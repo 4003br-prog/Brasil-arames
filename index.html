@@ -708,8 +708,10 @@
 
 <section class="auth-screen" id="auth-screen">
     <h2>Acesso ao Controle de Produção</h2>
-    <p>Entre com seu e-mail e senha.</p>
+    <p>Informe seu nome e entre com seu e-mail e senha.</p>
     <form id="auth-form">
+        <label for="auth-operator-name">Nome de quem vai lançar a produção</label>
+        <input type="text" id="auth-operator-name" autocomplete="name" maxlength="50" placeholder="Ex.: FERNANDO" required>
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="username" required>
         <label for="auth-password">Senha</label>
@@ -927,14 +929,20 @@
 
     document.getElementById('auth-form').addEventListener('submit', async event => {
         event.preventDefault();
+        const nomeResponsavel = document.getElementById('auth-operator-name').value.trim().toLocaleUpperCase('pt-BR');
         const email = document.getElementById('auth-email').value.trim();
         const password = document.getElementById('auth-password').value;
+        if (!nomeResponsavel) {
+            document.getElementById('auth-message').innerText = 'Informe o nome de quem vai lançar a produção.';
+            return;
+        }
+        localStorage.setItem('responsavel_login', nomeResponsavel);
         document.getElementById('auth-message').innerText = 'Entrando...';
         try { await firebaseAuth.signInWithEmailAndPassword(email, password); }
         catch (error) { mostrarErroLogin(error); }
     });
 
-    function sair() { firebaseAuth.signOut(); }
+    function sair() { localStorage.removeItem('responsavel_login'); firebaseAuth.signOut(); }
 
     firebaseAuth.onAuthStateChanged(async user => {
         const authScreen = document.getElementById('auth-screen');
@@ -967,7 +975,19 @@
         document.body.classList.toggle('solo-consulta', !usuarioEhAdmin);
         authScreen.style.display = 'none';
         app.style.display = 'block';
-        document.getElementById('user-email').innerText = (user.email || '') + (usuarioEhAdmin ? ' • Administrador' : ' • Consulta');
+        const nomeResponsavelLogin = String(localStorage.getItem('responsavel_login') || '').trim().toLocaleUpperCase('pt-BR');
+        document.getElementById('user-email').innerText = (user.email || '') + (usuarioEhAdmin ? ' • Administrador' : ' • Consulta') + (nomeResponsavelLogin ? ' • ' + nomeResponsavelLogin : '');
+        const seletorResponsavel = document.getElementById('in-responsavel');
+        if (nomeResponsavelLogin && seletorResponsavel) {
+            let opcaoResponsavel = Array.from(seletorResponsavel.options).find(opcao => opcao.value.toLocaleUpperCase('pt-BR') === nomeResponsavelLogin);
+            if (!opcaoResponsavel) {
+                opcaoResponsavel = document.createElement('option');
+                opcaoResponsavel.value = nomeResponsavelLogin;
+                opcaoResponsavel.textContent = nomeResponsavelLogin;
+                seletorResponsavel.appendChild(opcaoResponsavel);
+            }
+            seletorResponsavel.value = nomeResponsavelLogin;
+        }
 
         const producaoLocalUsuario = localStorage.getItem('producao_salva_' + user.uid);
         producao = producaoLocalUsuario ? JSON.parse(producaoLocalUsuario) : dadosIniciais.map(item => ({ ...item }));
@@ -1750,15 +1770,8 @@
             const worksheet = workbook.Sheets[firstSheetName];
             const json = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
 
-            let responsavelImportacao = prompt("Quem é o responsável por esta importação?", "FERNANDO");
-            
-            if (responsavelImportacao === null) {
-                event.target.value = '';
-                return;
-            }
-            
-            responsavelImportacao = responsavelImportacao.trim().toUpperCase();
-            if (responsavelImportacao === "") responsavelImportacao = "NÃO INFORMADO";
+            let responsavelImportacao = String(localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR');
+            if (!responsavelImportacao) responsavelImportacao = "NÃO INFORMADO";
             
             const novosDados = [];
             
