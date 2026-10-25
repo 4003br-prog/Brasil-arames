@@ -539,6 +539,12 @@
         .auth-screen p { color: #64748b; margin-bottom: 18px; }
         .auth-screen label { display:block; font-size:13px; font-weight:600; margin: 12px 0 5px; }
         .auth-screen input { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; }
+        .consulta-banner { display:none; margin:0 0 18px; padding:13px 16px; border-radius:12px; color:#1e40af; background:linear-gradient(110deg,#e6efff,#effbff); border:1px solid #cbdcff; box-shadow:0 5px 14px rgba(37,66,139,.08); font-weight:600; }
+        body.solo-consulta .consulta-banner { display:block; }
+        body.solo-consulta #production-form-section,
+        body.solo-consulta .solo-admin,
+        body.solo-consulta #col-acoes { display:none !important; }
+        body.solo-consulta th:last-child, body.solo-consulta td:last-child { display:none !important; }
         .auth-buttons { display:flex; gap:10px; margin-top:16px; }
         .auth-message { min-height:20px; margin-top:12px !important; color:var(--danger) !important; font-size:14px; }
         #app-container { display:none; }
@@ -730,6 +736,8 @@
     </div>
 
     <!-- Painel de Resumo -->
+    <div class="consulta-banner" id="consulta-banner">👁️ Acesso de consulta: você pode visualizar e exportar a produção, mas não alterá-la.</div>
+
     <div class="dashboard">
         <div class="card">
             <h3>Total de Peças</h3>
@@ -742,7 +750,7 @@
     </div>
 
     <!-- Formulário -->
-    <div class="form-section">
+    <div class="form-section" id="production-form-section">
         
         <!-- Área de Botões Rápidos (Estribos Padrões) -->
         <div class="padroes-section">
@@ -839,7 +847,7 @@
                         <th>Total Emb.</th>
                         <th>Total Peças</th>
                         <th>Responsável</th>
-                        <th>Ações</th>
+                        <th id="col-acoes">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="corpo-tabela">
@@ -851,13 +859,13 @@
 
     <!-- Botões de Exportação e Importação -->
     <div class="actions">
-        <button class="btn-clear" onclick="limparTudo()">🗑️ Limpar Tudo</button>
+        <button class="btn-clear solo-admin" onclick="limparTudo()">🗑️ Limpar Tudo</button>
         <button class="btn-pdf" onclick="window.print()">🖨️ Salvar em PDF</button>
         
         <!-- NOVO BOTÃO DE IMPORTAR -->
-        <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
-        <button class="btn-import" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
-        <button class="btn-add" type="button" onclick="atualizarTotaisProducao()">🔄 Conferir/atualizar totais</button>
+        <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
+        <button class="btn-import solo-admin" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
+        <button class="btn-add solo-admin" type="button" onclick="atualizarTotaisProducao()">🔄 Conferir/atualizar totais</button>
         <button class="btn-excel" onclick="exportarExcel()">📥 Baixar Planilha Excel</button>
     </div>
 </div>
@@ -878,6 +886,12 @@
     const firebaseAuth = firebase.auth();
     let producaoRef = null;
     let padroesRef = null;
+    let producaoLegadaRef = null;
+    let padroesLegadosRef = null;
+    const EMAIL_ADMIN = 'arames@brasil.com';
+    const EMAIL_CONSULTA = 'arames@confere.com';
+    let usuarioEhAdmin = false;
+    let acessoNegado = false;
     let firebaseProducaoPronto = false;
     let firebasePadroesPronto = false;
     let aplicandoProducaoFirebase = false;
@@ -922,7 +936,7 @@
 
     function sair() { firebaseAuth.signOut(); }
 
-    firebaseAuth.onAuthStateChanged(user => {
+    firebaseAuth.onAuthStateChanged(async user => {
         const authScreen = document.getElementById('auth-screen');
         const app = document.getElementById('app-container');
         if (!user) {
@@ -930,36 +944,79 @@
             if (padroesRef) padroesRef.off();
             producaoRef = padroesRef = null;
             firebaseProducaoPronto = firebasePadroesPronto = false;
+            usuarioUidAtual = null;
+            usuarioEhAdmin = false;
+            document.body.classList.remove('solo-consulta');
             app.style.display = 'none';
             authScreen.style.display = 'block';
-            document.getElementById('auth-message').innerText = '';
+            if (!acessoNegado) document.getElementById('auth-message').innerText = '';
+            acessoNegado = false;
             return;
         }
+
+        const email = String(user.email || '').trim().toLowerCase();
+        if (email !== EMAIL_ADMIN && email !== EMAIL_CONSULTA) {
+            acessoNegado = true;
+            document.getElementById('auth-message').innerText = 'Esta conta não está autorizada a acessar o sistema.';
+            await firebaseAuth.signOut();
+            return;
+        }
+
+        usuarioEhAdmin = email === EMAIL_ADMIN;
+        usuarioUidAtual = user.uid;
+        document.body.classList.toggle('solo-consulta', !usuarioEhAdmin);
         authScreen.style.display = 'none';
         app.style.display = 'block';
-        document.getElementById('user-email').innerText = user.email || '';
-        // Cache local separado por conta; nunca reutiliza o cache de outro usuário.
-        usuarioUidAtual = user.uid;
+        document.getElementById('user-email').innerText = (user.email || '') + (usuarioEhAdmin ? ' • Administrador' : ' • Consulta');
+
         const producaoLocalUsuario = localStorage.getItem('producao_salva_' + user.uid);
         producao = producaoLocalUsuario ? JSON.parse(producaoLocalUsuario) : dadosIniciais.map(item => ({ ...item }));
         const padroesLocalUsuario = localStorage.getItem('estribosPadroes_' + user.uid);
         estribosPadroes = padroesLocalUsuario ? JSON.parse(padroesLocalUsuario) : [...padroesIniciaisFirebase];
         renderizarTabela();
         renderizarEstribosPadroes();
-        // Os dados de cada conta ficam separados pelo UID autenticado.
-        producaoRef = firebaseDb.ref('usuarios/' + user.uid + '/producao');
-        padroesRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
+
+        // Os dois usuários leem e trabalham sobre as mesmas referências.
+        producaoRef = firebaseDb.ref('producao');
+        padroesRef = firebaseDb.ref('estribosPadroes');
+        producaoLegadaRef = firebaseDb.ref('usuarios/' + user.uid + '/producao');
+        padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         firebaseProducaoPronto = firebasePadroesPronto = false;
+
+        // Migra dados privados antigos apenas uma vez e somente pelo administrador.
+        if (usuarioEhAdmin) {
+            try {
+                const [sharedProd, sharedPatterns] = await Promise.all([producaoRef.once('value'), padroesRef.once('value')]);
+                if (!sharedProd.exists()) {
+                    const old = await producaoLegadaRef.once('value');
+                    const cached = localStorage.getItem('producao_salva_' + user.uid);
+                    const local = cached ? JSON.parse(cached) : dadosIniciais;
+                    const legacy = old.val();
+                    await producaoRef.set(legacy || { initialized: true, items: Object.fromEntries(local.map((item, index) => [String(index), item])) });
+                }
+                if (!sharedPatterns.exists()) {
+                    const old = await padroesLegadosRef.once('value');
+                    const cached = localStorage.getItem('estribosPadroes_' + user.uid);
+                    const local = cached ? JSON.parse(cached) : padroesIniciaisFirebase;
+                    const legacy = old.val();
+                    await padroesRef.set(legacy || { initialized: true, items: Object.fromEntries(local.map((item, index) => [String(index), item])) });
+                }
+            } catch (error) {
+                mostrarErroFirebase(error);
+            }
+        }
         conectarFirebase();
     });
 
     function salvarProducaoFirebase() {
+        if (!usuarioEhAdmin || !producaoRef) return;
         const items = {};
         producao.forEach((item, index) => { items[String(index)] = item; });
         producaoRef.set({ initialized: true, items }).catch(mostrarErroFirebase);
     }
 
     function salvarPadroesFirebase() {
+        if (!usuarioEhAdmin || !padroesRef) return;
         const items = {};
         estribosPadroes.forEach((nome, index) => { items[String(index)] = nome; });
         padroesRef.set({ initialized: true, items }).catch(mostrarErroFirebase);
@@ -969,7 +1026,14 @@
         producaoRef.on('value', snapshot => {
             if (!snapshot.exists()) {
                 firebaseProducaoPronto = true;
-                salvarProducaoFirebase(); // Migra os dados deste navegador na primeira conexão.
+                if (usuarioEhAdmin) {
+                    salvarProducaoFirebase();
+                } else {
+                    // Não exibir dados locais particulares para uma conta de consulta.
+                    producao = [];
+                    renderizarTabela();
+                    document.getElementById('firebase-status').innerText = 'Ainda não há produção compartilhada';
+                }
                 return;
             }
             const payload = snapshot.val() || {};
@@ -989,7 +1053,7 @@
         padroesRef.on('value', snapshot => {
             if (!snapshot.exists()) {
                 firebasePadroesPronto = true;
-                salvarPadroesFirebase(); // Migra os padrões locais na primeira conexão.
+                if (usuarioEhAdmin) salvarPadroesFirebase();
                 return;
             }
             const payload = snapshot.val() || {};
@@ -1323,6 +1387,7 @@
     }
 
     function adicionarNovoEstriboPadrao() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         const valorAtual = document.getElementById('in-produto').value.trim().toUpperCase();
         let nome = prompt("Digite o nome do novo Estribo Padrão:", valorAtual);
         
@@ -1339,6 +1404,7 @@
     }
 
     function editarEstriboPadrao(event, nomeAntigo) {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         event.stopPropagation(); 
         
         let novoNome = prompt(`Renomear "${nomeAntigo}" para:`, nomeAntigo);
@@ -1361,6 +1427,7 @@
     }
 
     function excluirEstriboPadrao(event, nome) {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         event.stopPropagation();
         if (confirm(`Tem certeza que deseja APAGAR o padrão "${nome}"?`)) {
             estribosPadroes = ordenarListaEstribos(estribosPadroes.filter(item => item !== nome));
@@ -1399,6 +1466,7 @@
     }
 
     function adicionarRegistro() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         const data = document.getElementById('in-data').value;
         const produto = document.getElementById('in-produto').value.trim().toUpperCase();
         const bitola = document.getElementById('in-bitola').value;
@@ -1589,6 +1657,7 @@
     }
 
     function excluirItem(index) {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (confirm("Deseja realmente excluir este registro?")) {
             producao.splice(index, 1);
             if (editandoIndex === index) cancelarEdicao();
@@ -1598,6 +1667,7 @@
     }
 
     function limparTudo() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (confirm("⚠️ ATENÇÃO: Isso vai apagar TODOS os registros da tela. Tem certeza que deseja começar do zero?")) {
             producao = [];
             salvarDados();
@@ -1615,6 +1685,7 @@
     }
 
     function adicionarOperador() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         let nome = prompt("Digite o nome do novo operador:");
         if (nome && nome.trim() !== "") {
             nome = nome.trim().toUpperCase();
@@ -1634,6 +1705,7 @@
     }
 
     function removerOperador() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         const select = document.getElementById('in-responsavel');
         if (select.selectedIndex > 0) {
             if (confirm(`Remover o operador ${select.value} da lista?`)) {
@@ -1666,6 +1738,7 @@
     }
 
     function importarExcel(event) {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         const file = event.target.files[0];
         if (!file) return;
 
@@ -1775,6 +1848,7 @@
     // Recalcula total de peças por registro antes de gerar a planilha.
     // Fórmula usada: quantidade por embalagem × total de embalagens.
     function atualizarTotaisProducao() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (producao.length === 0) {
             alert("Não há registros para conferir.");
             return;
