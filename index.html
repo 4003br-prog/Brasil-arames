@@ -491,6 +491,9 @@
             transition: 0.2s;
         }
         .btn-pdf:hover { background-color: #334155; }
+        .btn-icon-square { width:48px; height:48px; min-width:48px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; border-radius:12px !important; font-size:23px !important; }
+        .btn-refresh-month { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:34px; height:34px; margin-left:8px; border:1px solid var(--border); border-radius:10px; background:linear-gradient(145deg,#fff,#edf2ff); color:var(--primary); font-size:19px; cursor:pointer; box-shadow:0 3px 0 rgba(36,70,200,.16),0 5px 10px rgba(36,70,200,.10); transition:transform .16s ease,box-shadow .16s ease; }
+        .btn-refresh-month:hover { transform:translateY(-2px) rotate(18deg); box-shadow:0 5px 0 rgba(36,70,200,.14),0 8px 14px rgba(36,70,200,.14); }
         .btn-clear {
             background-color: #f1f5f9;
             color: #ef4444;
@@ -882,11 +885,11 @@
             </div>
             <div class="input-group">
                 <label>Qtd. na Embalagem</label>
-                <input type="number" id="in-qtd-emb" min="1" placeholder="Ex: 100" required>
+                <input type="number" id="in-qtd-emb" min="1" step="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ex: 100" required>
             </div>
             <div class="input-group">
                 <label>Total de Embalagens</label>
-                <input type="number" id="in-total-emb" min="1" placeholder="Ex: 5" required>
+                <input type="number" id="in-total-emb" min="1" step="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ex: 5" required>
             </div>
             <div class="input-group">
                 <label>Responsável</label>
@@ -912,7 +915,7 @@
     <div class="table-section">
         <!-- Cabeçalho da Tabela com a Lupa de Busca -->
         <div class="table-header">
-            <h3>Produção do Dia</h3>
+            <h3>Produção do Mês <button class="btn-refresh-month solo-admin" type="button" onclick="atualizarTotaisProducao()" title="Conferir e atualizar os totais" aria-label="Conferir e atualizar os totais">⟳</button></h3>
             
             <!-- LUPA -->
             <div class="search-box" id="search-box" onclick="expandirBusca()">
@@ -946,14 +949,13 @@
 
     <!-- Botões de Exportação e Importação -->
     <div class="actions">
-        <button class="btn-clear solo-admin" onclick="limparTudo()">🗑️ Limpar Tudo</button>
-        <button class="btn-pdf" onclick="window.print()">🖨️ Salvar em PDF</button>
+        <button class="btn-clear btn-icon-square solo-admin" type="button" onclick="limparTudo()" title="Limpar toda a produção" aria-label="Limpar toda a produção">🗑️</button>
+        <button class="btn-pdf btn-icon-square" type="button" onclick="window.print()" title="Salvar em PDF" aria-label="Salvar em PDF">▤</button>
         
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
         <button class="btn-import solo-admin" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
-        <button class="btn-add solo-admin" type="button" onclick="atualizarTotaisProducao()">🔄 Conferir/atualizar totais</button>
-        <button class="btn-excel" onclick="exportarExcel()">📥 Baixar Planilha Excel</button>
+        <button class="btn-excel btn-icon-square" type="button" onclick="exportarExcel()" title="Baixar planilha Excel" aria-label="Baixar planilha Excel">▦</button>
     </div>
 </div>
 
@@ -1831,6 +1833,12 @@
 
     function limparTudo() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        const codigo = prompt('Para confirmar a limpeza total, digite o código de segurança:');
+        if (codigo === null) return;
+        if (codigo !== '710150') {
+            alert('Código incorreto. Nenhum registro foi apagado.');
+            return;
+        }
         if (confirm("⚠️ ATENÇÃO: Isso vai apagar TODOS os registros da tela. Tem certeza que deseja começar do zero?")) {
             producao = [];
             salvarDados();
