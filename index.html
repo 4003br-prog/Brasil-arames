@@ -1730,17 +1730,40 @@
             });
 
             if (novosDados.length > 0) {
-                const substituir = confirm(`Foram encontrados ${novosDados.length} registros no Excel para o operador ${responsavelImportacao}.\n\nClique OK para SUBSTITUIR a tabela atual (recomendado).\nClique CANCELAR para ADICIONAR à tabela atual.`);
-                
-                if (substituir) {
-                    producao = novosDados;
-                } else {
-                    producao = producao.concat(novosDados);
+                const chaveRegistro = item => [
+                    item.dataFormatada, item.produto, item.bitola, item.embalagem,
+                    item.qtdEmb, item.totalEmb, item.totalPecas, item.responsavel
+                ].map(valor => String(valor ?? '').trim().toLocaleUpperCase('pt-BR')).join('|');
+
+                const chavesExistentes = new Set(producao.map(chaveRegistro));
+                const chavesDoArquivo = new Set();
+                const registrosParaAdicionar = [];
+                let duplicados = 0;
+
+                novosDados.forEach(item => {
+                    const chave = chaveRegistro(item);
+                    if (chavesExistentes.has(chave) || chavesDoArquivo.has(chave)) {
+                        duplicados++;
+                        return;
+                    }
+                    chavesDoArquivo.add(chave);
+                    registrosParaAdicionar.push(item);
+                });
+
+                // A importação sempre acrescenta; registros repetidos são ignorados, nunca substituem os dados.
+                if (registrosParaAdicionar.length > 0) {
+                    producao = producao.concat(registrosParaAdicionar);
+                    salvarDados();
+                    renderizarTabela();
                 }
-                
-                salvarDados();
-                renderizarTabela();
-                alert("✅ Importação concluída com sucesso!");
+
+                if (duplicados > 0 && registrosParaAdicionar.length > 0) {
+                    alert(`Importação concluída: ${registrosParaAdicionar.length} novo(s) registro(s) adicionado(s).\n\n⚠️ ${duplicados} registro(s) igual(is) já existiam e foram ignorados. Os dados anteriores foram mantidos.`);
+                } else if (duplicados > 0) {
+                    alert(`⚠️ Os ${duplicados} registro(s) do arquivo já existiam. Nenhum foi adicionado e seus dados foram mantidos.`);
+                } else {
+                    alert(`✅ Importação concluída: ${registrosParaAdicionar.length} novo(s) registro(s) adicionado(s), sem substituir os atuais.`);
+                }
             } else {
                 alert("⚠️ Nenhum dado válido encontrado no arquivo.");
             }
