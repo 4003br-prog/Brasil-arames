@@ -538,7 +538,9 @@
         .auth-screen h2 { color: var(--primary); margin-bottom: 8px; }
         .auth-screen p { color: #64748b; margin-bottom: 18px; }
         .auth-screen label { display:block; font-size:13px; font-weight:600; margin: 12px 0 5px; }
-        .auth-screen input { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; }
+        .auth-screen input, .auth-name-row select { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; background:#fff; }
+        .auth-name-row { display:flex; gap:8px; }
+        .auth-name-row .btn-icon { min-width:44px; }
         .consulta-banner { display:none; margin:0 0 18px; padding:13px 16px; border-radius:12px; color:#1e40af; background:linear-gradient(110deg,#e6efff,#effbff); border:1px solid #cbdcff; box-shadow:0 5px 14px rgba(37,66,139,.08); font-weight:600; }
         body.solo-consulta .consulta-banner { display:block; }
         body.solo-consulta #production-form-section,
@@ -708,10 +710,18 @@
 
 <section class="auth-screen" id="auth-screen">
     <h2>Acesso ao Controle de Produção</h2>
-    <p>Informe seu nome e entre com seu e-mail e senha.</p>
+    <p>Selecione seu nome e entre com seu e-mail e senha.</p>
     <form id="auth-form">
         <label for="auth-operator-name">Nome de quem vai lançar a produção</label>
-        <input type="text" id="auth-operator-name" autocomplete="name" maxlength="50" placeholder="Ex.: FERNANDO" required>
+        <div class="auth-name-row">
+            <select id="auth-operator-name" required>
+                <option value="">Selecione seu nome...</option>
+                <option value="FERNANDO">FERNANDO</option>
+                <option value="ÂNGELO">ÂNGELO</option>
+                <option value="GENIVAL">GENIVAL</option>
+            </select>
+            <button class="btn-icon" type="button" id="add-login-name" title="Adicionar nome">+</button>
+        </div>
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="username" required>
         <label for="auth-password">Senha</label>
@@ -927,6 +937,43 @@
         document.getElementById('auth-message').innerText = mensagens[error.code] || 'Não foi possível concluir. Confira a configuração de Authentication no Firebase.';
     }
 
+    const loginNameSelect = document.getElementById('auth-operator-name');
+    const standardOperatorNames = ['FERNANDO', 'ÂNGELO', 'GENIVAL'];
+
+    function carregarNomesLogin() {
+        let nomesSalvos = [];
+        try { nomesSalvos = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
+        const nomes = [...new Set([...standardOperatorNames, ...(Array.isArray(nomesSalvos) ? nomesSalvos : [])]
+            .map(nome => String(nome).trim().toLocaleUpperCase('pt-BR')).filter(Boolean))];
+        const selecionado = loginNameSelect.value || localStorage.getItem('responsavel_login') || '';
+        loginNameSelect.innerHTML = '<option value="">Selecione seu nome...</option>';
+        nomes.forEach(nome => {
+            const option = document.createElement('option');
+            option.value = nome;
+            option.textContent = nome;
+            loginNameSelect.appendChild(option);
+        });
+        if (nomes.includes(selecionado)) loginNameSelect.value = selecionado;
+    }
+
+    carregarNomesLogin();
+    document.getElementById('add-login-name').addEventListener('click', () => {
+        const novoNome = prompt('Digite o nome para adicionar à lista:');
+        if (!novoNome || !novoNome.trim()) return;
+        const nome = novoNome.trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+        let nomesSalvos = [];
+        try { nomesSalvos = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
+        if ([...standardOperatorNames, ...(Array.isArray(nomesSalvos) ? nomesSalvos : [])]
+            .some(item => String(item).trim().toLocaleUpperCase('pt-BR') === nome)) {
+            alert(`O nome "${nome}" já está na lista.`);
+            return;
+        }
+        nomesSalvos.push(nome);
+        localStorage.setItem('nomes_responsaveis', JSON.stringify(nomesSalvos));
+        carregarNomesLogin();
+        loginNameSelect.value = nome;
+    });
+
     document.getElementById('auth-form').addEventListener('submit', async event => {
         event.preventDefault();
         const nomeResponsavel = document.getElementById('auth-operator-name').value.trim().toLocaleUpperCase('pt-BR');
@@ -955,6 +1002,9 @@
             usuarioUidAtual = null;
             usuarioEhAdmin = false;
             document.body.classList.remove('solo-consulta');
+            const responsavelSelect = document.getElementById('in-responsavel');
+            if (responsavelSelect) responsavelSelect.disabled = false;
+            document.querySelectorAll('.input-with-buttons .btn-icon').forEach(botao => botao.disabled = false);
             app.style.display = 'none';
             authScreen.style.display = 'block';
             if (!acessoNegado) document.getElementById('auth-message').innerText = '';
@@ -987,6 +1037,9 @@
                 seletorResponsavel.appendChild(opcaoResponsavel);
             }
             seletorResponsavel.value = nomeResponsavelLogin;
+            seletorResponsavel.disabled = true;
+            document.querySelectorAll('.input-with-buttons .btn-icon').forEach(botao => botao.disabled = true);
+            document.getElementById('in-responsavel').title = 'Responsável definido no login';
         }
 
         const producaoLocalUsuario = localStorage.getItem('producao_salva_' + user.uid);
@@ -1493,7 +1546,7 @@
         const embalagem = document.getElementById('in-embalagem').value;
         const qtdEmb = parseInt(document.getElementById('in-qtd-emb').value);
         const totalEmb = parseInt(document.getElementById('in-total-emb').value);
-        const responsavel = document.getElementById('in-responsavel').value;
+        const responsavel = editandoIndex !== -1 ? producao[editandoIndex].responsavel : (localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value);
 
         if (!data || !produto || !bitola || !embalagem || !Number.isFinite(qtdEmb) || !Number.isFinite(totalEmb) || qtdEmb < 1 || totalEmb < 1 || !responsavel) {
             alert("⚠️ Por favor, preencha todos os campos corretamente.");
