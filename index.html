@@ -992,7 +992,6 @@
     seletorTema.addEventListener('change', () => aplicarTema(seletorTema.value));
     let producaoRef = null;
     let padroesRef = null;
-    let producaoLegadaRef = null;
     let padroesLegadosRef = null;
     const EMAIL_ADMIN = 'arames@brasil.com';
     const EMAIL_CONSULTA = 'arames@confere.com';
@@ -1000,6 +999,7 @@
     let acessoNegado = false;
     let firebaseProducaoPronto = false;
     let firebasePadroesPronto = false;
+    let firebaseEdicaoLiberada = false;
     let aplicandoProducaoFirebase = false;
     let aplicandoPadroesFirebase = false;
     let avisoErroFirebaseExibido = false;
@@ -1010,6 +1010,8 @@
         console.error('Erro do Firebase:', error);
         const status = document.getElementById('firebase-status');
         if (status) status.innerText = 'Falha na sincronização com Firebase';
+        firebaseEdicaoLiberada = false;
+        atualizarBloqueioEdicao();
         if (!avisoErroFirebaseExibido) {
             avisoErroFirebaseExibido = true;
             alert('Não foi possível acessar o Firebase. Confira se o login por e-mail/senha está ativado e se as regras do Realtime Database permitem acesso ao caminho do seu usuário. Os dados continuam salvos neste navegador.');
@@ -1086,7 +1088,6 @@
 
     function sair() {
         localStorage.removeItem('responsavel_login');
-        if (usuarioUidAtual) localStorage.removeItem('producao_salva_' + usuarioUidAtual);
         firebaseAuth.signOut();
     }
 
@@ -1098,6 +1099,7 @@
             if (padroesRef) padroesRef.off();
             producaoRef = padroesRef = null;
             firebaseProducaoPronto = firebasePadroesPronto = false;
+            firebaseEdicaoLiberada = false;
             usuarioUidAtual = null;
             usuarioEhAdmin = false;
             document.body.classList.remove('solo-consulta');
@@ -1124,6 +1126,8 @@
         document.body.classList.toggle('solo-consulta', !usuarioEhAdmin);
         authScreen.style.display = 'none';
         app.style.display = 'block';
+        firebaseEdicaoLiberada = false;
+        atualizarBloqueioEdicao();
         const nomeResponsavelLogin = String(localStorage.getItem('responsavel_login') || '').trim().toLocaleUpperCase('pt-BR');
         document.getElementById('user-email').innerText = (user.email || '') + (usuarioEhAdmin ? ' • Administrador' : ' • Consulta') + (nomeResponsavelLogin ? ' • ' + nomeResponsavelLogin : '');
         const seletorResponsavel = document.getElementById('in-responsavel');
@@ -1150,27 +1154,22 @@
         // Os dois usuários leem e trabalham sobre as mesmas referências.
         producaoRef = firebaseDb.ref('producao');
         padroesRef = firebaseDb.ref('estribosPadroes');
-        producaoLegadaRef = firebaseDb.ref('usuarios/' + user.uid + '/producao');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         firebaseProducaoPronto = firebasePadroesPronto = false;
 
-        // Migra dados privados antigos apenas uma vez e somente pelo administrador.
+        // Não restaura produção do cache antigo nem migra automaticamente dados privados.
+        // Se produção estiver vazia no Firebase, a confirmação de vazio é mostrada; não se apaga histórico local.
         if (usuarioEhAdmin) {
             try {
-                const [sharedProd, sharedPatterns] = await Promise.all([producaoRef.once('value'), padroesRef.once('value')]);
-                if (!sharedProd.exists()) {
-                    const old = await producaoLegadaRef.once('value');
-                    const cached = localStorage.getItem('producao_salva_' + user.uid);
-                    const local = cached ? JSON.parse(cached) : dadosIniciais;
-                    const legacy = old.val();
-                    await producaoRef.set(legacy || { initialized: true, items: Object.fromEntries(local.map((item, index) => [String(index), item])) });
-                }
+                const sharedPatterns = await padroesRef.once('value');
                 if (!sharedPatterns.exists()) {
-                    const old = await padroesLegadosRef.once('value');
-                    const cached = localStorage.getItem('estribosPadroes_' + user.uid);
-                    const local = cached ? JSON.parse(cached) : padroesIniciaisFirebase;
-                    const legacy = old.val();
-                    await padroesRef.set(legacy || { initialized: true, items: Object.fromEntries(local.map((item, index) => [String(index), item])) });
+                    const oldPatterns = await padroesLegadosRef.once('value');
+                    if (oldPatterns.exists()) await padroesRef.set(oldPatterns.val());
+                    else {
+                        const localPatterns = localStorage.getItem('estribosPadroes_' + user.uid);
+                        const defaults = localPatterns ? JSON.parse(localPatterns) : padroesIniciaisFirebase;
+                        await padroesRef.set({ initialized: true, items: Object.fromEntries(defaults.map((item, index) => [String(index), item])) });
+                    }
                 }
             } catch (error) {
                 mostrarErroFirebase(error);
@@ -1179,11 +1178,32 @@
         conectarFirebase();
     });
 
+    function atualizarBloqueioEdicao() {
+        const bloqueado = !firebaseEdicaoLiberada || !usuarioEhAdmin;
+        document.querySelectorAll('.solo-admin').forEach(el => {
+            if ('disabled' in el) el.disabled = bloqueado;
+        });
+        ['btn-add', 'btn-cancel', 'in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = bloqueado;
+        });
+        const status = document.getElementById('firebase-status');
+        if (status && !firebaseEdicaoLiberada) status.innerText = 'Carregando dados do Firebase…';
+    }
+
+    function chaveTemporaria() {
+        return firebaseDb.ref('producao/items').push().key;
+    }
+
+    function assinaturaRegistro(item) {
+        const copia = { ...item };
+        delete copia._firebaseKey;
+        return JSON.stringify(copia);
+    }
+
     function salvarProducaoFirebase() {
-        if (!usuarioEhAdmin || !producaoRef) return;
-        const items = {};
-        producao.forEach((item, index) => { items[String(index)] = item; });
-        producaoRef.set({ initialized: true, items }).catch(mostrarErroFirebase);
+        // Não há gravação em massa da lista; cada CRUD atualiza um registro pela chave.
+        return Promise.resolve();
     }
 
     function salvarPadroesFirebase() {
@@ -1195,35 +1215,28 @@
 
     function conectarFirebase() {
         producaoRef.on('value', snapshot => {
-            if (!snapshot.exists()) {
-                firebaseProducaoPronto = true;
-                if (usuarioEhAdmin) {
-                    salvarProducaoFirebase();
-                } else {
-                    // Não exibir dados locais particulares para uma conta de consulta.
-                    producao = [];
-                    renderizarTabela();
-                    document.getElementById('firebase-status').innerText = 'Ainda não há produção compartilhada';
-                }
-                return;
-            }
             const payload = snapshot.val() || {};
             const items = payload.items || {};
             aplicandoProducaoFirebase = true;
-            producao = Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]);
+            producao = Object.keys(items).map(key => ({ ...items[key], _firebaseKey: key }));
             producao.forEach(item => {
-                if (!item.responsavel || item.responsavel === 'IMPORTADO' || item.responsavel.trim() === '') item.responsavel = 'FERNANDO';
+                if (!item.responsavel || item.responsavel === 'IMPORTADO' || String(item.responsavel).trim() === '') item.responsavel = 'FERNANDO';
             });
-                aplicandoProducaoFirebase = false;
+            aplicandoProducaoFirebase = false;
             firebaseProducaoPronto = true;
-            document.getElementById('firebase-status').innerText = 'Sincronizado com Firebase';
+            firebaseEdicaoLiberada = firebaseProducaoPronto && firebasePadroesPronto;
+            atualizarBloqueioEdicao();
+            document.getElementById('firebase-status').innerText = snapshot.exists() ? 'Sincronizado com Firebase' : 'Banco vazio; pronto para iniciar';
             renderizarTabela();
         }, mostrarErroFirebase);
 
         padroesRef.on('value', snapshot => {
             if (!snapshot.exists()) {
                 firebasePadroesPronto = true;
-                if (usuarioEhAdmin) salvarPadroesFirebase();
+                firebaseEdicaoLiberada = firebaseProducaoPronto && firebasePadroesPronto;
+                atualizarBloqueioEdicao();
+                estribosPadroes = [...padroesIniciaisFirebase];
+                renderizarEstribosPadroes();
                 return;
             }
             const payload = snapshot.val() || {};
@@ -1235,6 +1248,8 @@
             if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
             aplicandoPadroesFirebase = false;
             firebasePadroesPronto = true;
+            firebaseEdicaoLiberada = firebaseProducaoPronto && firebasePadroesPronto;
+            atualizarBloqueioEdicao();
             renderizarEstribosPadroes();
             // Normaliza também a ordem guardada na nuvem para não reverter ao recarregar.
             if (JSON.stringify(ordemRecebida) !== JSON.stringify(ordemCrescente)) salvarPadroesFirebase();
@@ -1255,18 +1270,16 @@
 
     let idContador = 1;
     let editandoIndex = -1;
+    let editandoFirebaseKey = null;
+    let editandoAssinaturaOriginal = null;
     let filtroAtual = ""; 
     let modoGerenciar = false;
     let ultimoAdicionadoIndex = -1;
 
-    let estribosPadroes = JSON.parse(localStorage.getItem('estribosPadroes')) || ["9x15", "9x20", "RED 20", "HEXA 20", "7x17", "7x27", "15x15", "10x20"];
+    let estribosPadroes = (() => { try { return JSON.parse(localStorage.getItem('estribosPadroes') || 'null') || [...padroesIniciaisFirebase]; } catch (_) { return [...padroesIniciaisFirebase]; } })();
 
     document.getElementById('in-data').valueAsDate = new Date();
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
-
-    function salvarDados() {
-        if (firebaseProducaoPronto && !aplicandoProducaoFirebase) salvarProducaoFirebase();
-    }
 
     function salvarPadroes() {
         if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
@@ -1274,7 +1287,6 @@
         if (firebasePadroesPronto && !aplicandoPadroesFirebase) salvarPadroesFirebase();
     }
     
-    salvarDados();
 
     // ==========================================
     // CONTROLE DA LUPA EXPANSÍVEL
@@ -1464,6 +1476,8 @@
 
     function adicionarNovoEstriboPadrao() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const valorAtual = document.getElementById('in-produto').value.trim().toUpperCase();
         let nome = prompt("Digite o nome do novo Estribo Padrão:", valorAtual);
         
@@ -1481,6 +1495,8 @@
 
     function editarEstriboPadrao(event, nomeAntigo) {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         event.stopPropagation(); 
         
         let novoNome = prompt(`Renomear "${nomeAntigo}" para:`, nomeAntigo);
@@ -1504,6 +1520,8 @@
 
     function excluirEstriboPadrao(event, nome) {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         event.stopPropagation();
         if (confirm(`Tem certeza que deseja APAGAR o padrão "${nome}"?`)) {
             estribosPadroes = ordenarListaEstribos(estribosPadroes.filter(item => item !== nome));
@@ -1543,13 +1561,15 @@
 
     function adicionarRegistro() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const data = document.getElementById('in-data').value;
         const produto = document.getElementById('in-produto').value.trim().toUpperCase();
         const bitola = document.getElementById('in-bitola').value;
         const embalagem = document.getElementById('in-embalagem').value;
         const qtdEmb = parseInt(document.getElementById('in-qtd-emb').value);
         const totalEmb = parseInt(document.getElementById('in-total-emb').value);
-        const responsavel = editandoIndex !== -1 ? producao[editandoIndex].responsavel : (localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value);
+        const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
+        const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value);
 
         if (!data || !produto || !bitola || !embalagem || !Number.isFinite(qtdEmb) || !Number.isFinite(totalEmb) || qtdEmb < 1 || totalEmb < 1 || !responsavel) {
             alert("⚠️ Por favor, preencha todos os campos corretamente.");
@@ -1569,17 +1589,28 @@
             responsavel
         };
 
-        if (editandoIndex !== -1) {
-            producao[editandoIndex] = registro;
-            cancelarEdicao();
+        if (!producaoRef) { alert('Firebase indisponível. Nenhuma alteração foi salva.'); return; }
+        if (editandoFirebaseKey) {
+            const key = editandoFirebaseKey;
+            const atual = producao.find(item => item._firebaseKey === key);
+            if (!atual) { alert('Este registro foi removido. Atualize a página antes de continuar.'); return; }
+            if (assinaturaRegistro(atual) !== editandoAssinaturaOriginal) { alert('Outra pessoa alterou este registro enquanto você editava. Seus dados não foram gravados; atualize e confira a versão mais recente.'); cancelarEdicao(); return; }
+            producaoRef.child('items').child(key).transaction(atualNoBanco => {
+                if (!atualNoBanco || assinaturaRegistro(atualNoBanco) !== editandoAssinaturaOriginal) return;
+                return registro;
+            }, undefined, false).then(resultado => {
+                if (!resultado.committed) {
+                    alert('Outra pessoa alterou ou removeu este registro durante a edição. Seus dados não foram gravados; confira a versão atualizada.');
+                    cancelarEdicao();
+                    return;
+                }
+                cancelarEdicao();
+            }).catch(mostrarErroFirebase);
         } else {
-            producao.push(registro);
-            ultimoAdicionadoIndex = producao.length - 1;
-            limparFormulario();
+            const key = chaveTemporaria();
+            const itemEnviado = producaoRef.child('items').child(key).set(registro);
+            itemEnviado.then(() => limparFormulario()).catch(mostrarErroFirebase);
         }
-        
-        salvarDados();
-        renderizarTabela();
     }
 
     function formatarData(dataString) {
@@ -1663,8 +1694,8 @@
                 <td><strong style="color: var(--primary);">${item.totalPecas.toLocaleString('pt-BR')}</strong></td>
                 <td>${escaparHtml(item.responsavel)}</td>
                 <td>
-                    <button class="btn-action btn-edit-row" onclick="editarItem(${item.originalIndex})">Editar</button>
-                    <button class="btn-action btn-delete" onclick="excluirItem(${item.originalIndex})">X</button>
+                    <button class="btn-action btn-edit-row" onclick="editarItem('${item._firebaseKey || ''}')">Editar</button>
+                    <button class="btn-action btn-delete" onclick="excluirItem('${item._firebaseKey || ''}')">X</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -1700,7 +1731,10 @@
         document.getElementById('kpi-embalagens').innerText = somaEmbGeral.toLocaleString('pt-BR');
     }
 
-    function editarItem(index) {
+    function editarItem(key) {
+        if (!firebaseEdicaoLiberada || !usuarioEhAdmin) return;
+        const index = producao.findIndex(item => item._firebaseKey === key);
+        if (index < 0) return;
         const item = producao[index];
         const [dia, mes, ano] = item.dataFormatada.split('/');
         
@@ -1718,11 +1752,15 @@
         
         document.getElementById('btn-cancel').style.display = "block";
         editandoIndex = index;
+        editandoFirebaseKey = key;
+        editandoAssinaturaOriginal = assinaturaRegistro(item);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function cancelarEdicao() {
         editandoIndex = -1;
+        editandoFirebaseKey = null;
+        editandoAssinaturaOriginal = null;
         limparFormulario();
         
         const btnAdd = document.getElementById('btn-add');
@@ -1732,18 +1770,21 @@
         document.getElementById('btn-cancel').style.display = "none";
     }
 
-    function excluirItem(index) {
+    function excluirItem(key) {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (confirm("Deseja realmente excluir este registro?")) {
-            producao.splice(index, 1);
-            if (editandoIndex === index) cancelarEdicao();
-            salvarDados();
-            renderizarTabela();
+        if (!firebaseEdicaoLiberada || !producaoRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
+        const index = producao.findIndex(item => item._firebaseKey === key);
+        if (index < 0) return;
+        if (confirm('Deseja realmente excluir este registro?')) {
+            producaoRef.child('items').child(key).remove().then(() => {
+                if (editandoFirebaseKey === key) cancelarEdicao();
+            }).catch(mostrarErroFirebase);
         }
     }
 
     function limparTudo() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada || !producaoRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const confirmacao = prompt('Para confirmar, digite APAGAR PRODUÇÃO. Um backup JSON será baixado antes da limpeza.');
         if (confirmacao !== 'APAGAR PRODUÇÃO') return;
         const backup = new Blob([JSON.stringify({ exportadoEm: new Date().toISOString(), producao }, null, 2)], { type: 'application/json;charset=utf-8' });
@@ -1756,9 +1797,7 @@
         linkBackup.remove();
         setTimeout(() => URL.revokeObjectURL(urlBackup), 1000);
         if (confirm('Backup solicitado. Confirma apagar TODOS os registros da produção?')) {
-            producao = [];
-            salvarDados();
-            renderizarTabela();
+            producaoRef.child('items').remove().catch(mostrarErroFirebase);
         }
     }
 
@@ -1776,6 +1815,7 @@
 
     function adicionarOperador() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         let nome = prompt("Digite o nome do novo operador:");
         if (nome && nome.trim() !== "") {
             nome = nome.trim().toUpperCase();
@@ -1796,6 +1836,7 @@
 
     function removerOperador() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const select = document.getElementById('in-responsavel');
         if (select.selectedIndex > 0) {
             if (confirm(`Remover o operador ${select.value} da lista?`)) {
@@ -1829,6 +1870,7 @@
 
     function importarExcel(event) {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada || !producaoRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const file = event.target.files[0];
         if (!file) return;
         const MAX_IMPORT_BYTES = 10 * 1024 * 1024;
@@ -1928,9 +1970,9 @@
 
                 // A importação sempre acrescenta; registros repetidos são ignorados, nunca substituem os dados.
                 if (registrosParaAdicionar.length > 0) {
-                    producao = producao.concat(registrosParaAdicionar);
-                    salvarDados();
-                    renderizarTabela();
+                    if (!firebaseEdicaoLiberada || !producaoRef) throw new Error('Sincronização ainda não pronta.');
+                    const gravacoes = registrosParaAdicionar.map(item => producaoRef.child('items').child(chaveTemporaria()).set(item));
+                    Promise.all(gravacoes).catch(mostrarErroFirebase);
                 }
 
                 if (duplicados > 0 && registrosParaAdicionar.length > 0) {
@@ -1962,7 +2004,9 @@
             alert("Não há registros para conferir.");
             return;
         }
+        if (!firebaseEdicaoLiberada || !producaoRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         let corrigidos = 0;
+        const atualizacoes = [];
         producao.forEach(item => {
             const qtdEmb = Number(item.qtdEmb);
             const totalEmb = Number(item.totalEmb);
@@ -1970,10 +2014,11 @@
             const totalCorreto = qtdEmb * totalEmb;
             if (Number(item.totalPecas) !== totalCorreto) {
                 item.totalPecas = totalCorreto;
+                if (item._firebaseKey) atualizacoes.push(producaoRef.child('items').child(item._firebaseKey).child('totalPecas').set(totalCorreto));
                 corrigidos++;
             }
         });
-        salvarDados();
+        Promise.all(atualizacoes).catch(mostrarErroFirebase);
         renderizarTabela();
         alert(corrigidos
             ? `Conferência concluída: ${corrigidos} registro(s) tiveram o total de peças atualizado. A planilha já pode ser exportada.`
