@@ -1755,6 +1755,9 @@
         document.getElementById('in-embalagem').value = "";
         document.getElementById('in-qtd-emb').value = "";
         document.getElementById('in-total-emb').value = "";
+        const responsavelLogin = String(localStorage.getItem('responsavel_login') || '').trim().toLocaleUpperCase('pt-BR');
+        const seletorResponsavel = document.getElementById('in-responsavel');
+        if (responsavelLogin && seletorResponsavel) seletorResponsavel.value = responsavelLogin;
         document.getElementById('in-produto').focus();
     }
 
