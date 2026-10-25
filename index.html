@@ -994,12 +994,16 @@
             }
             const payload = snapshot.val() || {};
             const items = payload.items || {};
+            const ordemRecebida = Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]);
+            const ordemCrescente = ordenarListaEstribos(ordemRecebida);
             aplicandoPadroesFirebase = true;
-            estribosPadroes = ordenarListaEstribos(Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]));
+            estribosPadroes = ordemCrescente;
             if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
             aplicandoPadroesFirebase = false;
             firebasePadroesPronto = true;
             renderizarEstribosPadroes();
+            // Normaliza também a ordem guardada na nuvem para não reverter ao recarregar.
+            if (JSON.stringify(ordemRecebida) !== JSON.stringify(ordemCrescente)) salvarPadroesFirebase();
         }, mostrarErroFirebase);
     }
 
@@ -1234,19 +1238,20 @@
     }
 
     function ordenarListaEstribos(lista) {
-        const tipo = nome => {
-            const texto = String(nome).trim().toLocaleUpperCase('pt-BR');
+        function chave(nome) {
+            const texto = String(nome || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
             let match = texto.match(/^(\d+)\s*[X×]\s*(\d+)$/);
-            if (match) return { grupo: 0, a: Number(match[1]), b: Number(match[2]), nome: texto };
+            if (match) return [0, Number(match[1]), Number(match[2]), texto];
             match = texto.match(/^RED\s*(\d+)$/);
-            if (match) return { grupo: 1, a: Number(match[1]), b: 0, nome: texto };
+            if (match) return [1, Number(match[1]), 0, texto];
             match = texto.match(/^HEXA?\s*(\d+)$/);
-            if (match) return { grupo: 2, a: Number(match[1]), b: 0, nome: texto };
-            return { grupo: 3, a: 0, b: 0, nome: texto };
-        };
+            if (match) return [2, Number(match[1]), 0, texto];
+            return [3, 0, 0, texto];
+        }
         return [...lista].sort((nomeA, nomeB) => {
-            const a = tipo(nomeA), b = tipo(nomeB);
-            return a.grupo - b.grupo || a.a - b.a || a.b - b.b || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
+            const a = chave(nomeA);
+            const b = chave(nomeB);
+            return a[0] - b[0] || a[1] - b[1] || a[2] - b[2] || a[3].localeCompare(b[3], 'pt-BR', { numeric: true });
         });
     }
 
