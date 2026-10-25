@@ -779,6 +779,43 @@
         body[data-theme="noite"] .btn-logout { color:#ffc0c9; background:#49303a; }
         body[data-theme="noite"] .table-responsive { scrollbar-color:#4b5d7a #1b2638; }
         body[data-theme="noite"] .theme-picker { background:rgba(10,17,30,.56); }
+
+        /* Brasil: verde, amarelo e azul da bandeira. */
+        body[data-theme="brasil"] {
+            --primary:#087a3b; --primary-hover:#05612e; --bg-color:#f2f8e9; --text-main:#173b27; --border:#c8dfbd;
+            --success:#078a45; --info:#1769aa; --warning:#e5b800; --danger:#d94445;
+            background:radial-gradient(ellipse at 8% 4%,rgba(0,156,59,.16),transparent 35%),radial-gradient(ellipse at 96% 18%,rgba(255,223,0,.20),transparent 32%),linear-gradient(145deg,#f5faeb 0%,#eef7df 48%,#f8fbf1 100%);
+        }
+        body[data-theme="brasil"] .header { background:linear-gradient(120deg,#006b35 0%,#07883e 52%,#e6bf00 100%); }
+        body[data-theme="brasil"] .card p, body[data-theme="brasil"] .table-header h3 { color:#087a3b; }
+        body[data-theme="brasil"] .chip { background:linear-gradient(145deg,#edf8d9,#d9efb5); border-color:#b8d98e; }
+        body[data-theme="brasil"] .btn-add { background:linear-gradient(135deg,#078a45,#05612e); }
+        body[data-theme="brasil"] .btn-import { background:linear-gradient(135deg,#2585c8,#1769aa); }
+        body[data-theme="brasil"] .btn-excel { background:linear-gradient(135deg,#e5c21a,#c69c00); color:#26351b; }
+        body[data-theme="brasil"] .table-header { background:linear-gradient(180deg,#fff,#f4f9e9); }
+        body[data-theme="brasil"] th { background:linear-gradient(180deg,#f1f8e4,#e3f0ca); color:#36583a; }
+        body[data-theme="brasil"] tbody tr:hover { background:#f1f8e7; }
+        body[data-theme="brasil"] .linha-total-geral { background:linear-gradient(100deg,#f6edb8,#e8e3a5); }
+        body[data-theme="brasil"] .theme-picker { background:rgba(0,93,45,.48); }
+
+        /* Palmeiras: verde e branco com detalhes dourados. */
+        body[data-theme="palmeiras"] {
+            --primary:#006437; --primary-hover:#004d2a; --bg-color:#edf6f0; --text-main:#17382a; --border:#c8dfd1;
+            --success:#008b50; --info:#247b62; --warning:#d3aa36; --danger:#d84b52;
+            background:radial-gradient(ellipse at 8% 4%,rgba(0,100,55,.15),transparent 35%),radial-gradient(ellipse at 96% 18%,rgba(201,225,210,.65),transparent 32%),linear-gradient(145deg,#f4faf6 0%,#e8f3ec 48%,#f7fbf8 100%);
+        }
+        body[data-theme="palmeiras"] .header { background:linear-gradient(120deg,#004d2a 0%,#007a42 58%,#1b9a61 100%); }
+        body[data-theme="palmeiras"] .card p, body[data-theme="palmeiras"] .table-header h3 { color:#006437; }
+        body[data-theme="palmeiras"] .chip { background:linear-gradient(145deg,#e9f6ed,#d4eadc); border-color:#b6d5c2; }
+        body[data-theme="palmeiras"] .btn-add { background:linear-gradient(135deg,#07834b,#00552f); }
+        body[data-theme="palmeiras"] .btn-import { background:linear-gradient(135deg,#28a16b,#087148); }
+        body[data-theme="palmeiras"] .btn-excel { background:linear-gradient(135deg,#168b50,#006437); }
+        body[data-theme="palmeiras"] .table-header { background:linear-gradient(180deg,#fff,#f0f8f3); }
+        body[data-theme="palmeiras"] th { background:linear-gradient(180deg,#f0f8f3,#dfefe5); color:#365d49; }
+        body[data-theme="palmeiras"] tbody tr:hover { background:#eff8f2; }
+        body[data-theme="palmeiras"] .linha-total-geral { background:linear-gradient(100deg,#dff0e5,#cce6d5); }
+        body[data-theme="palmeiras"] .theme-picker { background:rgba(0,69,37,.48); }
+        body[data-theme="palmeiras"] .header::after { background:rgba(255,255,255,.18); }
     </style>
 </head>
 <body>
@@ -824,6 +861,8 @@
                 <option value="verde">Verde industrial</option>
                 <option value="ambar">Âmbar oficina</option>
                 <option value="noite">Grafite noturno</option>
+                <option value="brasil">🇧🇷 Brasil</option>
+                <option value="palmeiras">🟢 Palmeiras FC</option>
             </select>
             <button class="btn-logout" onclick="sair()">Sair</button>
         </div>
@@ -979,7 +1018,7 @@
 
     // Preferência de tema fica salva localmente neste navegador.
     const seletorTema = document.getElementById('theme-picker');
-    const temasPermitidos = ['azul', 'verde', 'ambar', 'noite'];
+    const temasPermitidos = ['azul', 'verde', 'ambar', 'noite', 'brasil', 'palmeiras'];
     function aplicarTema(nomeTema) {
         const tema = temasPermitidos.includes(nomeTema) ? nomeTema : 'azul';
         document.body.dataset.theme = tema;
