@@ -493,6 +493,9 @@
         .btn-pdf:hover { background-color: #334155; }
         .btn-icon-square { width:48px; height:48px; min-width:48px; padding:0 !important; display:inline-flex; align-items:center; justify-content:center; border-radius:12px !important; font-size:23px !important; }
         .excel-icon { font-size:14px; line-height:1; }
+        .actions .btn-clear.btn-icon-square { flex:0 0 48px; width:48px; min-width:48px; height:48px; padding:0 !important; font-size:15px !important; }
+        .actions .btn-import, .actions .btn-excel { display:inline-flex; align-items:center; justify-content:center; gap:7px; }
+        .actions .btn-import .excel-icon, .actions .btn-excel .excel-icon { font-size:14px; }
         .btn-refresh-month { display:inline-flex; vertical-align:middle; align-items:center; justify-content:center; width:34px; height:34px; margin-left:8px; border:1px solid var(--border); border-radius:10px; background:linear-gradient(145deg,#fff,#edf2ff); color:var(--primary); font-size:19px; cursor:pointer; box-shadow:0 3px 0 rgba(36,70,200,.16),0 5px 10px rgba(36,70,200,.10); transition:transform .16s ease,box-shadow .16s ease; }
         .btn-refresh-month:hover { transform:translateY(-2px) rotate(18deg); box-shadow:0 5px 0 rgba(36,70,200,.14),0 8px 14px rgba(36,70,200,.14); }
         .btn-clear {
@@ -954,8 +957,8 @@
         
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
-        <button class="btn-import solo-admin" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
-        <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
+        <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> im Excel</button>
+        <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> ex Excel</button>
     </div>
 </div>
 
