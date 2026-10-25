@@ -540,17 +540,169 @@
         .auth-screen label { display:block; font-size:13px; font-weight:600; margin: 12px 0 5px; }
         .auth-screen input { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; }
         .auth-buttons { display:flex; gap:10px; margin-top:16px; }
-        .auth-buttons button { flex:1; }
         .auth-message { min-height:20px; margin-top:12px !important; color:var(--danger) !important; font-size:14px; }
         #app-container { display:none; }
         .btn-logout { background:#fee2e2; color:#b91c1c; border:0; border-radius:6px; padding:8px 12px; cursor:pointer; font-weight:bold; margin-top:8px; }
+    
+
+        /* Redesign visual: apenas aparência, sem alterar os comandos do app. */
+        :root {
+            --primary: #2446c8;
+            --primary-hover: #1738ad;
+            --bg-color: #eef3ff;
+            --text-main: #172554;
+            --border: #d8e2f4;
+            --success: #08a879;
+            --danger: #e3485c;
+            --warning: #f5a524;
+            --info: #168eea;
+            --surface: #ffffff;
+            --shadow-soft: 0 12px 30px rgba(37, 66, 139, .10);
+            --shadow-raised: 0 16px 34px rgba(37, 66, 139, .16);
+        }
+
+        body {
+            background:
+                radial-gradient(ellipse at 8% 4%, rgba(103, 149, 255, .18), transparent 35%),
+                radial-gradient(ellipse at 96% 18%, rgba(57, 210, 218, .13), transparent 32%),
+                linear-gradient(145deg, #f4f7ff 0%, #edf4ff 48%, #f7faff 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+        .container { max-width: 1380px; }
+
+        .header {
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            background: linear-gradient(120deg, #1839a8 0%, #315fe4 55%, #308de9 100%);
+            border: 1px solid rgba(255,255,255,.34);
+            border-radius: 18px;
+            padding: 25px 28px;
+            box-shadow: 0 16px 34px rgba(34, 72, 177, .24), inset 0 1px 0 rgba(255,255,255,.35);
+        }
+        .header::after {
+            content: "";
+            position: absolute;
+            width: 250px; height: 250px;
+            right: 14%; top: -175px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.13);
+            box-shadow: 100px 100px 0 25px rgba(255,255,255,.07);
+            pointer-events: none;
+        }
+        .header h1 { position: relative; z-index: 1; color:#fff; font-size: clamp(23px, 3vw, 30px); letter-spacing:.2px; }
+        .header p { position: relative; z-index:1; color:rgba(255,255,255,.84); margin-top:5px; }
+        #firebase-status { font-weight:600; }
+        .btn-logout { box-shadow: 0 4px 10px rgba(19,37,97,.16); }
+
+        .dashboard { gap:18px; }
+        .card {
+            position:relative;
+            overflow:hidden;
+            min-height:112px;
+            border:1px solid rgba(255,255,255,.92);
+            border-left:5px solid var(--primary);
+            border-radius:15px;
+            padding:20px 20px 17px;
+            box-shadow:var(--shadow-soft), inset 0 1px 0 #fff;
+            transition:transform .22s ease, box-shadow .22s ease;
+        }
+        .card::after {
+            content:""; position:absolute; width:105px; height:105px; right:-30px; bottom:-56px;
+            border-radius:50%; background:linear-gradient(135deg, rgba(74,119,255,.12), rgba(64,211,214,.06));
+        }
+        .card:hover { transform:translateY(-4px); box-shadow:var(--shadow-raised); }
+        .card h3 { letter-spacing:.7px; color:#7181a0; }
+        .card p { position:relative; z-index:1; margin-top:5px; font-size:29px; color:#2446c8; }
+
+        .form-section, .table-section {
+            border:1px solid rgba(255,255,255,.95);
+            border-radius:16px;
+            box-shadow:var(--shadow-soft), inset 0 1px 0 #fff;
+        }
+        .form-section { padding:23px; }
+        .padroes-section { border-bottom-color:#e5ebf7; }
+        .padroes-section h4 { color:#52658e; letter-spacing:.55px; }
+        .chip {
+            border:1px solid #cbd8ff;
+            background:linear-gradient(145deg, #edf2ff, #dfe8ff);
+            box-shadow:0 3px 0 #cad6fa, 0 5px 12px rgba(49,82,174,.08), inset 0 1px 0 rgba(255,255,255,.9);
+            transition:transform .16s ease, box-shadow .16s ease, background .16s ease;
+        }
+        .chip:hover { transform:translateY(-2px); background:linear-gradient(145deg,#f4f6ff,#dce6ff); box-shadow:0 5px 0 #c4d1f5,0 8px 15px rgba(49,82,174,.13); }
+        .add-pattern-box, .manage-box, .search-box {
+            box-shadow:0 3px 9px rgba(34,62,125,.07), inset 0 1px 0 #fff;
+        }
+        .input-group label { color:#536487; letter-spacing:.15px; }
+        .input-group input, .input-group select, .auth-screen input {
+            border:1px solid #d5def0;
+            border-radius:9px;
+            box-shadow:inset 0 2px 4px rgba(36,61,121,.035), 0 1px 0 #fff;
+            transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+        }
+        .input-group input:focus, .input-group select:focus, .auth-screen input:focus {
+            border-color:#6489f2;
+            box-shadow:0 0 0 4px rgba(73,112,231,.14), inset 0 1px 2px rgba(36,61,121,.03);
+        }
+
+        .btn-add, .btn-import, .btn-excel, .btn-pdf, .btn-clear, .btn-cancel {
+            position:relative;
+            border-radius:9px;
+            box-shadow:0 4px 0 rgba(22,45,112,.13), 0 8px 15px rgba(22,45,112,.11), inset 0 1px 0 rgba(255,255,255,.22);
+            transition:transform .16s ease, box-shadow .16s ease, filter .16s ease;
+        }
+        .btn-add { background:linear-gradient(135deg,#315de0,#2144c2); }
+        .btn-import { background:linear-gradient(135deg,#29a5f2,#167bd7); }
+        .btn-excel { background:linear-gradient(135deg,#16bc8a,#07936d); }
+        .btn-pdf { background:linear-gradient(135deg,#64748b,#3d4d65); }
+        .btn-clear { background:linear-gradient(135deg,#fff,#fff5f6); }
+        .btn-add:hover, .btn-import:hover, .btn-excel:hover, .btn-pdf:hover, .btn-clear:hover, .btn-cancel:hover {
+            transform:translateY(-2px); filter:brightness(1.035); box-shadow:0 6px 0 rgba(22,45,112,.12),0 12px 20px rgba(22,45,112,.15),inset 0 1px 0 rgba(255,255,255,.24);
+        }
+        .btn-add:active, .btn-import:active, .btn-excel:active, .btn-pdf:active, .btn-clear:active { transform:translateY(1px); box-shadow:0 2px 0 rgba(22,45,112,.12); }
+        .btn-icon { border-radius:8px; box-shadow:0 2px 0 #c4cede; }
+
+        .table-section { overflow:hidden; }
+        .table-header { padding:17px 20px; background:linear-gradient(180deg,#fff,#f7f9ff); }
+        .table-header h3 { color:#2446c8; font-size:19px; }
+        th { color:#4d5f84; background:linear-gradient(180deg,#f5f7ff,#eaf0fc); letter-spacing:.5px; }
+        td { color:#344465; }
+        tbody tr { transition:background-color .14s ease; }
+        tbody tr:hover { background:#f1f6ff; }
+        .linha-subtotal { background:linear-gradient(90deg,#f6f8ff,#eef3ff); }
+        .linha-total-geral { background:linear-gradient(100deg,#e7edff,#dce8ff); }
+        .btn-action { box-shadow:0 2px 0 rgba(42,59,106,.12); }
+
+        .actions { gap:12px; }
+        .auth-screen {
+            border:1px solid rgba(255,255,255,.95);
+            border-radius:18px;
+            box-shadow:0 20px 50px rgba(34,72,177,.16), inset 0 1px 0 #fff;
+        }
+        .auth-screen h2 { color:#2446c8; }
+        .auth-buttons { gap:12px; }
+        .auth-buttons button { flex:1; }
+
+        @media (max-width: 700px) {
+            body { padding:12px; }
+            .header { padding:19px; align-items:flex-start; gap:12px; }
+            .header > div:last-child { text-align:right !important; font-size:12px; }
+            .form-section { padding:16px; }
+            .table-header { padding:13px 15px; }
+            .actions > button { flex:1 1 145px; justify-content:center; padding:11px 12px; font-size:14px; }
+            .table-responsive { max-height:55vh; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+        }
     </style>
 </head>
 <body>
 
 <section class="auth-screen" id="auth-screen">
     <h2>Acesso ao Controle de Produção</h2>
-    <p>Entre com seu e-mail e senha ou crie sua conta.</p>
+    <p>Entre com seu e-mail e senha.</p>
     <form id="auth-form">
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="username" required>
@@ -558,10 +710,8 @@
         <input type="password" id="auth-password" autocomplete="current-password" minlength="6" required>
         <div class="auth-buttons">
             <button class="btn-add" type="submit">Entrar</button>
-            <button class="btn-import" type="button" id="create-account">Criar conta</button>
         </div>
     </form>
-    <button type="button" id="reset-password" style="margin-top:14px;border:0;background:none;color:#1e40af;cursor:pointer;text-decoration:underline">Esqueci minha senha</button>
     <p class="auth-message" id="auth-message" aria-live="polite"></p>
 </section>
 
@@ -768,30 +918,6 @@
         document.getElementById('auth-message').innerText = 'Entrando...';
         try { await firebaseAuth.signInWithEmailAndPassword(email, password); }
         catch (error) { mostrarErroLogin(error); }
-    });
-
-    document.getElementById('create-account').addEventListener('click', async () => {
-        const email = document.getElementById('auth-email').value.trim();
-        const password = document.getElementById('auth-password').value;
-        if (!email || !password) {
-            document.getElementById('auth-message').innerText = 'Preencha o e-mail e a senha (mínimo 6 caracteres) para criar a conta.';
-            return;
-        }
-        document.getElementById('auth-message').innerText = 'Criando conta...';
-        try { await firebaseAuth.createUserWithEmailAndPassword(email, password); }
-        catch (error) { mostrarErroLogin(error); }
-    });
-
-    document.getElementById('reset-password').addEventListener('click', async () => {
-        const email = document.getElementById('auth-email').value.trim();
-        if (!email) {
-            document.getElementById('auth-message').innerText = 'Digite seu e-mail para receber o link de redefinição.';
-            return;
-        }
-        try {
-            await firebaseAuth.sendPasswordResetEmail(email);
-            document.getElementById('auth-message').innerText = 'Enviamos um link de redefinição para seu e-mail.';
-        } catch (error) { mostrarErroLogin(error); }
     });
 
     function sair() { firebaseAuth.signOut(); }
@@ -1033,6 +1159,11 @@
         renderizarTabela();
     }
 
+    function escaparHtml(valor) {
+        const entidades = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+        return String(valor ?? '').replace(/[&<>"']/g, caractere => entidades[caractere]);
+    }
+
     // ==========================================
     // AUTOCOMPLETE E AUTOMAÇÃO DE AMARRADO
     // ==========================================
@@ -1053,7 +1184,10 @@
                 const div = document.createElement('div');
                 const parteNegrito = match.substring(0, valorDigitado.length);
                 const parteNormal = match.substring(valorDigitado.length);
-                div.innerHTML = `<strong>${parteNegrito}</strong>${parteNormal}`;
+                const strong = document.createElement('strong');
+                strong.textContent = parteNegrito;
+                div.appendChild(strong);
+                div.appendChild(document.createTextNode(parteNormal));
                 
                 div.addEventListener('click', function() {
                     inputProduto.value = match;
@@ -1110,16 +1244,18 @@
                 document.getElementById('in-bitola').focus();
             };
             
-            let htmlInterno = `<span>${nome}</span>`;
-
+            const label = document.createElement('span');
+            label.textContent = nome;
+            chip.appendChild(label);
             if (modoGerenciar) {
-                htmlInterno += `
-                    <button class="chip-edit" onclick="editarEstriboPadrao(event, '${nome}')" title="Renomear">✏️</button>
-                    <button class="chip-delete" onclick="excluirEstriboPadrao(event, '${nome}')" title="Apagar">×</button>
-                `;
+                const btnEditar = document.createElement('button');
+                btnEditar.className = 'chip-edit'; btnEditar.type = 'button'; btnEditar.title = 'Renomear'; btnEditar.textContent = '✏️';
+                btnEditar.addEventListener('click', event => editarEstriboPadrao(event, nome));
+                const btnExcluir = document.createElement('button');
+                btnExcluir.className = 'chip-delete'; btnExcluir.type = 'button'; btnExcluir.title = 'Apagar'; btnExcluir.textContent = '×';
+                btnExcluir.addEventListener('click', event => excluirEstriboPadrao(event, nome));
+                chip.append(btnEditar, btnExcluir);
             }
-
-            chip.innerHTML = htmlInterno;
             container.appendChild(chip);
         });
 
@@ -1243,7 +1379,7 @@
         const totalEmb = parseInt(document.getElementById('in-total-emb').value);
         const responsavel = document.getElementById('in-responsavel').value;
 
-        if (!data || !produto || !bitola || !embalagem || isNaN(qtdEmb) || isNaN(totalEmb) || !responsavel) {
+        if (!data || !produto || !bitola || !embalagem || !Number.isFinite(qtdEmb) || !Number.isFinite(totalEmb) || qtdEmb < 1 || totalEmb < 1 || !responsavel) {
             alert("⚠️ Por favor, preencha todos os campos corretamente.");
             return;
         }
@@ -1322,7 +1458,7 @@
                 const trSub = document.createElement('tr');
                 trSub.className = 'linha-subtotal';
                 trSub.innerHTML = `
-                    <td colspan="5" style="text-align: right;">Subtotal - ${lastResponsavel}:</td>
+                    <td colspan="5" style="text-align: right;">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
                     <td>${subtotalEmb.toLocaleString('pt-BR')}</td>
                     <td>${subtotalPecas.toLocaleString('pt-BR')}</td>
                     <td colspan="2"></td>
@@ -1346,14 +1482,14 @@
             }
 
             tr.innerHTML = `
-                <td>${item.dataFormatada}</td>
-                <td><strong>${item.produto}</strong></td>
-                <td>${item.bitola}</td>
-                <td>${item.embalagem}</td>
+                <td>${escaparHtml(item.dataFormatada)}</td>
+                <td><strong>${escaparHtml(item.produto)}</strong></td>
+                <td>${escaparHtml(item.bitola)}</td>
+                <td>${escaparHtml(item.embalagem)}</td>
                 <td>${item.qtdEmb.toLocaleString('pt-BR')}</td>
                 <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
                 <td><strong style="color: var(--primary);">${item.totalPecas.toLocaleString('pt-BR')}</strong></td>
-                <td>${item.responsavel}</td>
+                <td>${escaparHtml(item.responsavel)}</td>
                 <td>
                     <button class="btn-action btn-edit-row" onclick="editarItem(${item.originalIndex})">Editar</button>
                     <button class="btn-action btn-delete" onclick="excluirItem(${item.originalIndex})">X</button>
@@ -1366,7 +1502,7 @@
             const trSub = document.createElement('tr');
             trSub.className = 'linha-subtotal';
             trSub.innerHTML = `
-                <td colspan="5" style="text-align: right;">Subtotal - ${lastResponsavel}:</td>
+                <td colspan="5" style="text-align: right;">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
                 <td>${subtotalEmb.toLocaleString('pt-BR')}</td>
                 <td>${subtotalPecas.toLocaleString('pt-BR')}</td>
                 <td colspan="2"></td>
@@ -1632,7 +1768,7 @@
             if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
                 html += `
                     <tr>
-                        <td colspan="5" class="subtotal">Subtotal - ${lastResponsavel}:</td>
+                        <td colspan="5" class="subtotal">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
                         <td class="subtotal">${subtotalEmb.toLocaleString('pt-BR')}</td>
                         <td class="subtotal">${subtotalPecas.toLocaleString('pt-BR')}</td>
                         <td class="subtotal"></td>
@@ -1651,21 +1787,21 @@
 
             html += `
                 <tr>
-                    <td>${item.dataFormatada}</td>
-                    <td>${item.produto}</td>
-                    <td>${materialLimpo}</td>
-                    <td>${item.embalagem}</td>
+                    <td>${escaparHtml(item.dataFormatada)}</td>
+                    <td>${escaparHtml(item.produto)}</td>
+                    <td>${escaparHtml(materialLimpo)}</td>
+                    <td>${escaparHtml(item.embalagem)}</td>
                     <td>${item.qtdEmb.toLocaleString('pt-BR')}</td>
                     <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
                     <td>${item.totalPecas.toLocaleString('pt-BR')}</td>
-                    <td>${item.responsavel}</td>
+                    <td>${escaparHtml(item.responsavel)}</td>
                 </tr>`;
         });
 
         if (filtroAtual === "" && lastResponsavel !== null) {
             html += `
                 <tr>
-                    <td colspan="5" class="subtotal">Subtotal - ${lastResponsavel}:</td>
+                    <td colspan="5" class="subtotal">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
                     <td class="subtotal">${subtotalEmb.toLocaleString('pt-BR')}</td>
                     <td class="subtotal">${subtotalPecas.toLocaleString('pt-BR')}</td>
                     <td class="subtotal"></td>
