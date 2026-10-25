@@ -995,7 +995,7 @@
             const payload = snapshot.val() || {};
             const items = payload.items || {};
             aplicandoPadroesFirebase = true;
-            estribosPadroes = Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]);
+            estribosPadroes = ordenarListaEstribos(Object.keys(items).sort((a, b) => Number(a) - Number(b)).map(key => items[key]));
             if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
             aplicandoPadroesFirebase = false;
             firebasePadroesPronto = true;
@@ -1229,7 +1229,29 @@
         renderizarEstribosPadroes();
     }
 
+    function chaveDuplicadoPadrao(nome) {
+        return String(nome || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+    }
+
+    function ordenarListaEstribos(lista) {
+        const tipo = nome => {
+            const texto = String(nome).trim().toLocaleUpperCase('pt-BR');
+            let match = texto.match(/^(\d+)\s*[X×]\s*(\d+)$/);
+            if (match) return { grupo: 0, a: Number(match[1]), b: Number(match[2]), nome: texto };
+            match = texto.match(/^RED\s*(\d+)$/);
+            if (match) return { grupo: 1, a: Number(match[1]), b: 0, nome: texto };
+            match = texto.match(/^HEXA?\s*(\d+)$/);
+            if (match) return { grupo: 2, a: Number(match[1]), b: 0, nome: texto };
+            return { grupo: 3, a: 0, b: 0, nome: texto };
+        };
+        return [...lista].sort((nomeA, nomeB) => {
+            const a = tipo(nomeA), b = tipo(nomeB);
+            return a.grupo - b.grupo || a.a - b.a || a.b - b.b || a.nome.localeCompare(b.nome, 'pt-BR', { numeric: true });
+        });
+    }
+
     function renderizarEstribosPadroes() {
+        estribosPadroes = ordenarListaEstribos(estribosPadroes);
         const container = document.getElementById('chips-container');
         container.innerHTML = '';
 
@@ -1301,12 +1323,12 @@
         
         if (nome && nome.trim() !== '') {
             nome = nome.trim().toUpperCase();
-            if (!estribosPadroes.includes(nome)) {
-                estribosPadroes.push(nome);
+            if (!estribosPadroes.some(item => chaveDuplicadoPadrao(item) === chaveDuplicadoPadrao(nome))) {
+                estribosPadroes = ordenarListaEstribos([...estribosPadroes, nome]);
                 salvarPadroes();
                 renderizarEstribosPadroes();
             } else {
-                alert("Este estribo já está na lista de padrões!");
+                alert(`O padrão "${nome}" já está salvo na lista!`);
             }
         }
     }
@@ -1321,12 +1343,13 @@
         novoNome = novoNome.trim().toUpperCase();
         
         if (novoNome !== "" && novoNome !== nomeAntigo) {
-            if (estribosPadroes.includes(novoNome)) {
-                alert("Já existe um estribo com este nome na lista!");
+            if (estribosPadroes.some(item => chaveDuplicadoPadrao(item) === chaveDuplicadoPadrao(novoNome) && chaveDuplicadoPadrao(item) !== chaveDuplicadoPadrao(nomeAntigo))) {
+                alert(`O padrão "${novoNome}" já está salvo na lista!`);
                 return;
             }
             const index = estribosPadroes.indexOf(nomeAntigo);
             estribosPadroes[index] = novoNome;
+            estribosPadroes = ordenarListaEstribos(estribosPadroes);
             salvarPadroes();
             renderizarEstribosPadroes();
         }
@@ -1335,7 +1358,7 @@
     function excluirEstriboPadrao(event, nome) {
         event.stopPropagation();
         if (confirm(`Tem certeza que deseja APAGAR o padrão "${nome}"?`)) {
-            estribosPadroes = estribosPadroes.filter(item => item !== nome);
+            estribosPadroes = ordenarListaEstribos(estribosPadroes.filter(item => item !== nome));
             salvarPadroes();
             renderizarEstribosPadroes();
         }
