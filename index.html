@@ -857,7 +857,7 @@
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
         <button class="btn-import" onclick="document.getElementById('file-input').click()">📂 Importar Excel</button>
-        
+        <button class="btn-add" type="button" onclick="atualizarTotaisProducao()">🔄 Conferir/atualizar totais</button>
         <button class="btn-excel" onclick="exportarExcel()">📥 Baixar Planilha Excel</button>
     </div>
 </div>
@@ -1747,6 +1747,31 @@
         };
         reader.readAsArrayBuffer(file);
         event.target.value = '';
+    }
+
+    // Recalcula total de peças por registro antes de gerar a planilha.
+    // Fórmula usada: quantidade por embalagem × total de embalagens.
+    function atualizarTotaisProducao() {
+        if (producao.length === 0) {
+            alert("Não há registros para conferir.");
+            return;
+        }
+        let corrigidos = 0;
+        producao.forEach(item => {
+            const qtdEmb = Number(item.qtdEmb);
+            const totalEmb = Number(item.totalEmb);
+            if (!Number.isFinite(qtdEmb) || !Number.isFinite(totalEmb)) return;
+            const totalCorreto = qtdEmb * totalEmb;
+            if (Number(item.totalPecas) !== totalCorreto) {
+                item.totalPecas = totalCorreto;
+                corrigidos++;
+            }
+        });
+        salvarDados();
+        renderizarTabela();
+        alert(corrigidos
+            ? `Conferência concluída: ${corrigidos} registro(s) tiveram o total de peças atualizado. A planilha já pode ser exportada.`
+            : "Conferência concluída: os totais de peças já estavam corretos.");
     }
 
     // ==========================================
