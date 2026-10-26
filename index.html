@@ -816,6 +816,27 @@
         body[data-theme="palmeiras"] .linha-total-geral { background:linear-gradient(100deg,#dff0e5,#cce6d5); }
         body[data-theme="palmeiras"] .theme-picker { background:rgba(0,69,37,.48); }
         body[data-theme="palmeiras"] .header::after { background:rgba(255,255,255,.18); }
+
+        /* Navegação e controle mensal de bobinas consumidas. */
+        .tab-nav { display:flex; gap:10px; margin:0 0 18px; border-bottom:1px solid var(--border); }
+        .tab-button { padding:11px 18px; border:1px solid var(--border); border-bottom:0; border-radius:10px 10px 0 0; background:#f8fafc; color:var(--text-main); font-weight:700; cursor:pointer; }
+        .tab-button[aria-selected="true"] { color:var(--primary); background:#fff; box-shadow:0 -3px 0 var(--primary) inset; }
+        .tab-pane[hidden] { display:none !important; }
+        .material-panel { background:#fff; border:1px solid var(--border); border-radius:15px; padding:22px; box-shadow:var(--shadow-soft); margin-bottom:20px; }
+        .material-panel h2 { color:var(--primary); margin-bottom:8px; }
+        .material-help { color:#64748b; margin-bottom:18px; }
+        .material-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin:16px 0; }
+        .material-summary .card { min-height:auto; }
+        .material-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; align-items:end; }
+        .material-form .btn-add { min-height:42px; }
+        .material-status { min-height:20px; margin:10px 0; color:#64748b; }
+        @media(max-width:600px) { .tab-button { flex:1; padding:10px 8px; font-size:13px; } .material-panel { padding:15px; } }
+        @media print { .tab-nav { display:none !important; } }
+        body[data-theme="noite"] .tab-button { color:#d4dced; background:#243149; border-color:#354258; }
+        body[data-theme="noite"] .tab-button[aria-selected="true"] { color:#a9bdff; background:#1b2638; }
+        body[data-theme="noite"] .material-panel { color:#d4dced; background:#1b2638; border-color:#34435b; }
+        body[data-theme="noite"] .material-panel h2 { color:#a9bdff; }
+        body[data-theme="noite"] .material-help, body[data-theme="noite"] .material-status { color:#aab8d0; }
     </style>
 </head>
 <body>
@@ -871,6 +892,12 @@
     <!-- Painel de Resumo -->
     <div class="consulta-banner" id="consulta-banner">👁️ Acesso de consulta: você pode visualizar e exportar a produção, mas não alterá-la.</div>
 
+    <div class="tab-nav" role="tablist" aria-label="Seções do sistema">
+        <button class="tab-button" id="tab-button-producao" type="button" role="tab" aria-selected="true" aria-controls="tab-producao" onclick="selecionarAba('producao')">Produção</button>
+        <button class="tab-button" id="tab-button-material" type="button" role="tab" aria-selected="false" aria-controls="tab-material" onclick="selecionarAba('material')">Material e bobinas</button>
+    </div>
+
+    <section class="tab-pane" id="tab-producao" role="tabpanel" aria-labelledby="tab-button-producao">
     <div class="dashboard">
         <div class="card">
             <h3>Total de Peças</h3>
@@ -996,9 +1023,56 @@
         
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
-        <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> im Excel</button>
-        <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> ex Excel</button>
+        <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> Importar Excel</button>
+        <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
     </div>
+    </section>
+
+    <section class="tab-pane" id="tab-material" role="tabpanel" aria-labelledby="tab-button-material" hidden>
+        <div class="material-panel">
+            <h2>Consumo de material e bobinas</h2>
+            <p class="material-help">Ao começar uma bobina nova, registre a data, a bitola e o peso dela. O resumo mensal soma o peso das bobinas iniciadas em cada mês.</p>
+            <div class="material-form">
+                <div class="input-group">
+                    <label for="material-data">Data de início da bobina</label>
+                    <input type="date" id="material-data" required>
+                </div>
+                <div class="input-group">
+                    <label for="material-tipo">Bitola da bobina</label>
+                    <select id="material-tipo" required>
+                        <option value="">Selecione a bitola...</option>
+                        <option value="3.8mm">3,8 mm</option>
+                        <option value="4.2mm">4,2 mm</option>
+                        <option value="5.0mm">5,0 mm</option>
+                        <option value="6.0mm">6,0 mm</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="material-peso">Peso da bobina nova (kg)</label>
+                    <input type="number" id="material-peso" min="0.01" step="0.01" inputmode="decimal" placeholder="Ex.: 250" required>
+                </div>
+                <button class="btn-add" id="btn-registrar-material" type="button" onclick="registrarBobinaConsumida()">+ Registrar bobina nova</button>
+            </div>
+            <p class="material-status" id="material-status" aria-live="polite">Aguardando sincronização do material…</p>
+            <div class="input-group" style="max-width:240px; margin:12px 0;">
+                <label for="material-mes">Mês para consultar</label>
+                <input type="month" id="material-mes">
+            </div>
+            <div class="material-summary">
+                <div class="card"><h3>Kg de bobinas iniciadas no mês</h3><p id="material-total-kg">0,00 kg</p></div>
+                <div class="card"><h3>Bobinas iniciadas no mês</h3><p id="material-total-bobinas">0</p></div>
+            </div>
+            <div class="table-section">
+                <div class="table-header"><h3>Bobinas iniciadas no mês</h3></div>
+                <div class="table-responsive">
+                    <table aria-label="Bobinas iniciadas no mês">
+                        <thead><tr><th>Data</th><th>Material / bitola</th><th>Peso (kg)</th><th class="material-actions-col">Ações</th></tr></thead>
+                        <tbody id="material-corpo-tabela"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -1030,6 +1104,9 @@
     aplicarTema(temaSalvo);
     seletorTema.addEventListener('change', () => aplicarTema(seletorTema.value));
     let producaoRef = null;
+    let materialRef = null;
+    let materialPronto = false;
+    let materialConsumido = [];
     let padroesRef = null;
     let padroesLegadosRef = null;
     const EMAIL_ADMIN = 'arames@brasil.com';
@@ -1053,7 +1130,7 @@
         atualizarBloqueioEdicao();
         if (!avisoErroFirebaseExibido) {
             avisoErroFirebaseExibido = true;
-            alert('Não foi possível acessar o Firebase. Confira se o login por e-mail/senha está ativado e se as regras do Realtime Database permitem acesso ao caminho do seu usuário. Os dados continuam salvos neste navegador.');
+            alert('Não foi possível acessar o Firebase. Confira o login e as permissões do banco. Os lançamentos que não foram sincronizados não estão salvos; tente novamente quando a conexão voltar.');
         }
     }
 
@@ -1135,8 +1212,12 @@
         const app = document.getElementById('app-container');
         if (!user) {
             if (producaoRef) producaoRef.off();
+            if (materialRef) materialRef.off();
             if (padroesRef) padroesRef.off();
-            producaoRef = padroesRef = null;
+            producaoRef = materialRef = padroesRef = null;
+            materialPronto = false;
+            materialConsumido = [];
+            renderizarMaterial();
             firebaseProducaoPronto = firebasePadroesPronto = false;
             firebaseEdicaoLiberada = false;
             usuarioUidAtual = null;
@@ -1192,6 +1273,7 @@
 
         // Os dois usuários leem e trabalham sobre as mesmas referências.
         producaoRef = firebaseDb.ref('producao');
+        materialRef = firebaseDb.ref('consumoMaterial/items');
         padroesRef = firebaseDb.ref('estribosPadroes');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         firebaseProducaoPronto = firebasePadroesPronto = false;
@@ -1215,6 +1297,8 @@
             }
         }
         conectarFirebase();
+        conectarMaterialFirebase();
+        renderizarMaterial();
     });
 
     function atualizarBloqueioEdicao() {
@@ -1294,6 +1378,131 @@
             if (JSON.stringify(ordemRecebida) !== JSON.stringify(ordemCrescente)) salvarPadroesFirebase();
         }, mostrarErroFirebase);
     }
+
+    function selecionarAba(nome) {
+        const materialAtiva = nome === 'material';
+        document.getElementById('tab-producao').hidden = materialAtiva;
+        document.getElementById('tab-material').hidden = !materialAtiva;
+        document.getElementById('tab-button-producao').setAttribute('aria-selected', String(!materialAtiva));
+        document.getElementById('tab-button-material').setAttribute('aria-selected', String(materialAtiva));
+        if (materialAtiva) renderizarMaterial();
+    }
+
+    function conectarMaterialFirebase() {
+        if (!materialRef) return;
+        materialPronto = false;
+        document.getElementById('material-status').innerText = 'Carregando registros de consumo…';
+        materialRef.on('value', snapshot => {
+            const dados = snapshot.val() || {};
+            materialConsumido = Object.keys(dados).map(key => ({ ...dados[key], _firebaseKey: key }))
+                .filter(item => item.tipoRegistro === 'bobina_iniciada')
+                .sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+            materialPronto = true;
+            document.getElementById('material-status').innerText = 'Consumo sincronizado.';
+            renderizarMaterial();
+        }, error => {
+            console.error('Erro ao carregar consumo de material:', error);
+            materialPronto = false;
+            document.getElementById('material-status').innerText = 'Sem acesso ao histórico de consumo. Verifique as regras do Firebase para consumoMaterial.';
+            renderizarMaterial();
+        });
+    }
+
+    function renderizarMaterial() {
+        const dataInput = document.getElementById('material-data');
+        const mesInput = document.getElementById('material-mes');
+        if (!dataInput || !mesInput) return;
+        const agora = new Date();
+        const hojeLocal = new Date(agora.getTime() - agora.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+        if (!dataInput.value) dataInput.value = hojeLocal;
+        if (!mesInput.value) mesInput.value = hojeLocal.slice(0, 7);
+
+        const mesSelecionado = mesInput.value;
+        const registros = materialConsumido.filter(item => String(item.data || '').slice(0, 7) === mesSelecionado);
+        const totalKg = registros.reduce((soma, item) => soma + (Number(item.pesoKg) || 0), 0);
+        const formatoKg = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('material-total-kg').textContent = `${formatoKg.format(totalKg)} kg`;
+        document.getElementById('material-total-bobinas').textContent = registros.length.toLocaleString('pt-BR');
+
+        const tbody = document.getElementById('material-corpo-tabela');
+        tbody.replaceChildren();
+        registros.forEach(item => {
+            const tr = document.createElement('tr');
+            const dataPartes = String(item.data || '').split('-');
+            const dataBr = dataPartes.length === 3 ? `${dataPartes[2]}/${dataPartes[1]}/${dataPartes[0]}` : String(item.data || '');
+            [dataBr, item.material || '', `${formatoKg.format(Number(item.pesoKg) || 0)} kg`].forEach(texto => {
+                const td = document.createElement('td');
+                td.textContent = texto;
+                tr.appendChild(td);
+            });
+            const tdAcao = document.createElement('td');
+            if (usuarioEhAdmin && item._firebaseKey) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-action btn-delete';
+                btn.textContent = 'Excluir';
+                btn.addEventListener('click', () => excluirBobinaConsumida(item._firebaseKey));
+                tdAcao.appendChild(btn);
+            }
+            tr.appendChild(tdAcao);
+            tbody.appendChild(tr);
+        });
+        if (!registros.length) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 4;
+            td.textContent = materialPronto ? 'Nenhuma bobina iniciada neste mês.' : 'Aguardando acesso aos registros de material.';
+            td.style.textAlign = 'center';
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+        }
+
+        const btnRegistrar = document.getElementById('btn-registrar-material');
+        if (btnRegistrar) btnRegistrar.disabled = !usuarioEhAdmin || !materialPronto;
+        document.getElementById('material-data').disabled = !usuarioEhAdmin || !materialPronto;
+        document.getElementById('material-tipo').disabled = !usuarioEhAdmin || !materialPronto;
+        document.getElementById('material-peso').disabled = !usuarioEhAdmin || !materialPronto;
+        document.querySelectorAll('.material-actions-col').forEach(el => el.style.display = usuarioEhAdmin ? '' : 'none');
+        document.querySelectorAll('#material-corpo-tabela tr').forEach(tr => {
+            if (!usuarioEhAdmin) tr.lastElementChild.style.display = 'none';
+        });
+    }
+
+    function registrarBobinaConsumida() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!materialPronto || !materialRef) { alert('Aguarde a sincronização do histórico de material.'); return; }
+        const data = document.getElementById('material-data').value;
+        const material = document.getElementById('material-tipo').value;
+        const pesoTexto = document.getElementById('material-peso').value.trim().replace(',', '.');
+        const pesoKg = Number(pesoTexto);
+        if (!data || !['3.8mm', '4.2mm', '5.0mm', '6.0mm'].includes(material) || !Number.isFinite(pesoKg) || pesoKg <= 0) {
+            alert('Informe a data, selecione uma bitola e digite um peso em kg maior que zero.');
+            return;
+        }
+        const key = materialRef.push().key;
+        materialRef.child(key).set({ data, material, pesoKg, tipoRegistro: 'bobina_iniciada', criadoEm: new Date().toISOString() })
+            .then(() => {
+                document.getElementById('material-tipo').value = '';
+                document.getElementById('material-peso').value = '';
+                document.getElementById('material-status').innerText = 'Bobina nova registrada e sincronizada.';
+            })
+            .catch(error => {
+                console.error('Erro ao salvar bobina consumida:', error);
+                document.getElementById('material-status').innerText = 'Não foi possível gravar. Verifique as regras do Firebase para consumoMaterial.';
+                alert('A bobina nova não foi registrada. O Firebase recusou a gravação ou está indisponível.');
+            });
+    }
+
+    function excluirBobinaConsumida(key) {
+        if (!usuarioEhAdmin || !materialPronto || !materialRef) return;
+        if (!confirm('Excluir este registro de bobina consumida?')) return;
+        materialRef.child(key).remove().catch(error => {
+            console.error('Erro ao excluir registro de consumo:', error);
+            alert('Não foi possível excluir o registro. Verifique as regras do Firebase.');
+        });
+    }
+
+    document.getElementById('material-mes').addEventListener('change', renderizarMaterial);
 
     // Dados reais ficam no Firebase; nenhum registro de produção é embutido neste arquivo.
     const dadosIniciais = [];
@@ -1732,11 +1941,21 @@
                 <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
                 <td><strong style="color: var(--primary);">${item.totalPecas.toLocaleString('pt-BR')}</strong></td>
                 <td>${escaparHtml(item.responsavel)}</td>
-                <td>
-                    <button class="btn-action btn-edit-row" onclick="editarItem('${item._firebaseKey || ''}')">Editar</button>
-                    <button class="btn-action btn-delete" onclick="excluirItem('${item._firebaseKey || ''}')">X</button>
-                </td>
+                <td></td>
             `;
+            const celulaAcoes = tr.lastElementChild;
+            const btnEditar = document.createElement('button');
+            btnEditar.className = 'btn-action btn-edit-row';
+            btnEditar.type = 'button';
+            btnEditar.textContent = 'Editar';
+            btnEditar.addEventListener('click', () => editarItem(item._firebaseKey || ''));
+            const btnExcluir = document.createElement('button');
+            btnExcluir.className = 'btn-action btn-delete';
+            btnExcluir.type = 'button';
+            btnExcluir.textContent = 'Excluir';
+            btnExcluir.setAttribute('aria-label', 'Excluir registro');
+            btnExcluir.addEventListener('click', () => excluirItem(item._firebaseKey || ''));
+            celulaAcoes.append(btnEditar, btnExcluir);
             tbody.appendChild(tr);
         });
 
@@ -2073,53 +2292,23 @@
             return;
         }
 
-        let dadosExibicao = [];
-        producao.forEach(item => {
-            if (filtroAtual === "" || item.responsavel.includes(filtroAtual)) {
-                dadosExibicao.push(item);
-            }
-        });
+        const dadosExibicao = producao
+            .filter(item => filtroAtual === "" || String(item.responsavel || '').includes(filtroAtual))
+            .slice();
 
         if (filtroAtual === "") {
             dadosExibicao.sort((a, b) => {
-                if (a.responsavel !== b.responsavel) {
-                    return a.responsavel.localeCompare(b.responsavel);
-                }
+                if (a.responsavel !== b.responsavel) return a.responsavel.localeCompare(b.responsavel);
                 return producao.indexOf(b) - producao.indexOf(a);
             });
         } else {
             dadosExibicao.sort((a, b) => producao.indexOf(b) - producao.indexOf(a));
         }
 
-        let html = `
-        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-            <style>
-                table { border-collapse: collapse; font-family: Arial, sans-serif; }
-                th { background-color: #d9d9d9; color: black; padding: 8px; text-align: center; font-weight: bold; border: 1px solid #000; }
-                td { border: 1px solid #000; padding: 5px; text-align: center; }
-                .subtotal { font-weight: bold; background-color: #e2e8f0; text-align: right; }
-                .total-geral { font-weight: bold; background-color: #cbd5e1; text-align: right; font-size: 14px; }
-            </style>
-        </head>
-        <body>
-            <table>
-                <thead>
-                    <tr>
-                        <th>DATA</th>
-                        <th>ESTRIBO</th>
-                        <th>MATERIAL</th>
-                        <th>P,A,C</th>
-                        <th>Q POR PACOTE</th>
-                        <th>TOTAL PACOTE</th>
-                        <th>PEÇAS TOTAL</th>
-                        <th>RESPONSÁVEL</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
+        const linhas = [[
+            'DATA', 'ESTRIBO', 'MATERIAL', 'P,A,C',
+            'Q POR PACOTE', 'TOTAL PACOTE', 'PEÇAS TOTAL', 'RESPONSÁVEL'
+        ]];
         let totalPecasGeral = 0;
         let totalEmbGeral = 0;
         let lastResponsavel = null;
@@ -2128,73 +2317,44 @@
 
         dadosExibicao.forEach(item => {
             if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
-                html += `
-                    <tr>
-                        <td colspan="5" class="subtotal">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
-                        <td class="subtotal">${subtotalEmb}</td>
-                        <td class="subtotal">${subtotalPecas}</td>
-                        <td class="subtotal"></td>
-                    </tr>`;
+                linhas.push(['', '', '', '', `Subtotal - ${lastResponsavel}:`, subtotalEmb, subtotalPecas, '']);
                 subtotalPecas = 0;
                 subtotalEmb = 0;
             }
-
             lastResponsavel = item.responsavel;
-            subtotalPecas += item.totalPecas;
-            subtotalEmb += item.totalEmb;
-            totalPecasGeral += item.totalPecas;
-            totalEmbGeral += item.totalEmb;
-            
-            let materialLimpo = item.bitola.replace("mm", "").trim();
+            subtotalPecas += Number(item.totalPecas) || 0;
+            subtotalEmb += Number(item.totalEmb) || 0;
+            totalPecasGeral += Number(item.totalPecas) || 0;
+            totalEmbGeral += Number(item.totalEmb) || 0;
 
-            html += `
-                <tr>
-                    <td>${escaparCelulaExcel(item.dataFormatada)}</td>
-                    <td>${escaparCelulaExcel(item.produto)}</td>
-                    <td>${escaparCelulaExcel(materialLimpo)}</td>
-                    <td>${escaparCelulaExcel(item.embalagem)}</td>
-                    <td>${item.qtdEmb}</td>
-                    <td>${item.totalEmb}</td>
-                    <td>${item.totalPecas}</td>
-                    <td>${escaparCelulaExcel(item.responsavel)}</td>
-                </tr>`;
+            linhas.push([
+                item.dataFormatada,
+                item.produto,
+                String(item.bitola || '').replace(/mm/gi, '').trim(),
+                item.embalagem,
+                Number(item.qtdEmb) || 0,
+                Number(item.totalEmb) || 0,
+                Number(item.totalPecas) || 0,
+                item.responsavel
+            ]);
         });
 
         if (filtroAtual === "" && lastResponsavel !== null) {
-            html += `
-                <tr>
-                    <td colspan="5" class="subtotal">Subtotal - ${escaparHtml(lastResponsavel)}:</td>
-                    <td class="subtotal">${subtotalEmb}</td>
-                    <td class="subtotal">${subtotalPecas}</td>
-                    <td class="subtotal"></td>
-                </tr>`;
+            linhas.push(['', '', '', '', `Subtotal - ${lastResponsavel}:`, subtotalEmb, subtotalPecas, '']);
         }
+        linhas.push(['', '', '', '', 'TOTAL GERAL:', totalEmbGeral, totalPecasGeral, '']);
 
-        html += `
-                <tr>
-                    <td colspan="5" class="total-geral">TOTAL GERAL:</td>
-                    <td class="total-geral">${totalEmbGeral}</td>
-                    <td class="total-geral">${totalPecasGeral}</td>
-                    <td class="total-geral"></td>
-                </tr>
-        `;
+        const worksheet = XLSX.utils.aoa_to_sheet(linhas);
+        worksheet['!cols'] = [
+            { wch: 13 }, { wch: 20 }, { wch: 13 }, { wch: 18 },
+            { wch: 17 }, { wch: 16 }, { wch: 16 }, { wch: 20 }
+        ];
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Produção');
 
-        html += `</tbody></table></body></html>`;
-
-        const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        
         const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-        const sufixo = filtroAtual ? `_${filtroAtual}` : '';
-        
-        a.href = url;
-        a.download = `Producao_Estribos_${dataHoje}${sufixo}.xls`;
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        const sufixo = filtroAtual ? `_${filtroAtual.replace(/[^a-zA-Z0-9_-]/g, '_')}` : '';
+        XLSX.writeFile(workbook, `Producao_Estribos_${dataHoje}${sufixo}.xlsx`);
     }
 
     // Inicializa a tela e conecta a sincronização em nuvem.
