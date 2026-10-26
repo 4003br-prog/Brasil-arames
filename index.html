@@ -1862,6 +1862,24 @@
 
         const totalPecas = qtdEmb * totalEmb;
 
+        // Avisa sobre outro lançamento do mesmo produto/bitola e total no mesmo dia.
+        // A confirmação permite salvar mesmo quando a repetição é intencional.
+        const duplicadosDoDia = producao.filter(item => {
+            if (editandoFirebaseKey && item._firebaseKey === editandoFirebaseKey) return false;
+            const dataExistente = item.dataFormatada || '';
+            const produtoExistente = String(item.produto || '').trim().replace(/\\s+/g, ' ').toLocaleUpperCase('pt-BR');
+            const bitolaExistente = String(item.bitola || '').trim().toLocaleLowerCase('pt-BR');
+            const pecasExistentes = Number(item.totalPecas) || (Number(item.qtdEmb) * Number(item.totalEmb));
+            return dataExistente === formatarData(data)
+                && produtoExistente === produto.trim().replace(/\\s+/g, ' ').toLocaleUpperCase('pt-BR')
+                && bitolaExistente === bitola.trim().toLocaleLowerCase('pt-BR')
+                && pecasExistentes === totalPecas;
+        });
+        if (duplicadosDoDia.length > 0) {
+            const aviso = `Atenção: já existe ${duplicadosDoDia.length === 1 ? 'um lançamento' : `${duplicadosDoDia.length} lançamentos`} no mesmo dia para ${produto}, ${bitola}, com ${totalPecas.toLocaleString('pt-BR')} peças.\\n\\nQuer salvar mesmo assim?`;
+            if (!confirm(aviso)) return;
+        }
+
         const registro = {
             dataFormatada: formatarData(data),
             produto,
