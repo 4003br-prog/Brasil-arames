@@ -1963,12 +1963,7 @@
         const tbody = document.getElementById('corpo-tabela-bobinas');
         if (!tbody) return;
         tbody.innerHTML = '';
-        const chaveData = valor => {
-            const partes = String(valor || '').split('/');
-            if (partes.length !== 3) return '';
-            return `${partes[2]}-${String(partes[1]).padStart(2,'0')}-${String(partes[0]).padStart(2,'0')}`;
-        };
-        const dados = bobinas.filter(item => registroNoMes(item, filtroMesBobinas)).sort((a,b) => chaveData(b.dataFormatada).localeCompare(chaveData(a.dataFormatada)));
+        const dados = ordenarPorDataDesc(bobinas.filter(item => registroNoMes(item, filtroMesBobinas)));
         let somaKg = 0, somaPecas = 0;
         dados.forEach(item => {
             const kg = Number(item.kg) || 0, pecas = numeroSeguro(item.pecas);
@@ -2035,7 +2030,9 @@
     function dadosBobinasFiltrados() { return bobinas.filter(item => registroNoMes(item, filtroMesBobinas)); }
 
     function gerarArquivoRelatorio(tipo, formato) {
-        const dados = tipo === 'bobinas' ? dadosBobinasFiltrados() : producao.filter(item => registroNoMes(item, filtroMesAtual) && (filtroAtual === '' || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)));
+        const dados = tipo === 'bobinas'
+            ? ordenarPorDataDesc(dadosBobinasFiltrados())
+            : ordenarPorDataDesc(producao.filter(item => registroNoMes(item, filtroMesAtual) && (filtroAtual === '' || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual))));
         const titulo = tipo === 'bobinas' ? `Relatorio_Bobinas_${nomeMesArquivo(filtroMesBobinas)}` : `Relatorio_Producao_${nomeMesArquivo(filtroMesAtual)}`;
         if (!dados.length) throw new Error('Não há registros para o mês selecionado.');
         if (formato === 'xlsx') {
@@ -2169,6 +2166,19 @@
         return `${dia}/${mes}/${ano}`;
     }
 
+    function chaveDataRelatorio(valor) {
+        const partes = String(valor || '').split('/');
+        if (partes.length !== 3) return '';
+        return `${partes[2]}-${String(partes[1]).padStart(2,'0')}-${String(partes[0]).padStart(2,'0')}`;
+    }
+
+    function ordenarPorDataDesc(registros) {
+        return registros.sort((a, b) => {
+            const diferenca = chaveDataRelatorio(b.dataFormatada).localeCompare(chaveDataRelatorio(a.dataFormatada));
+            return diferenca || (Number(b.originalIndex ?? b._indiceOriginal ?? 0) - Number(a.originalIndex ?? a._indiceOriginal ?? 0));
+        });
+    }
+
     function registroNoMes(item, mes) {
         if (!mes) return true;
         const partes = String(item.dataFormatada || '').split('/');
@@ -2200,17 +2210,8 @@
             }
         });
 
-        // ORDENAÇÃO: Alfabética pelo operador, e Recentes no Topo dentro do grupo
-        if (filtroAtual === "") {
-            dadosExibicao.sort((a, b) => {
-                if (a.responsavel !== b.responsavel) {
-                    return String(a.responsavel || '').localeCompare(String(b.responsavel || ''), 'pt-BR');
-                }
-                return b.originalIndex - a.originalIndex;
-            });
-        } else {
-            dadosExibicao.sort((a, b) => b.originalIndex - a.originalIndex);
-        }
+        // Ordena por data do lançamento: mais recente primeiro; em empate, último registro primeiro.
+        ordenarPorDataDesc(dadosExibicao);
 
         let lastResponsavel = null;
         let subtotalPecas = 0;
@@ -2594,14 +2595,7 @@
             .map((item, indice) => ({ ...item, _indiceOriginal: indice }))
             .filter(item => (filtroAtual === "" || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)) && registroNoMes(item, filtroMesAtual));
 
-        if (filtroAtual === "") {
-            dadosExibicao.sort((a, b) => {
-                if (a.responsavel !== b.responsavel) return String(a.responsavel || '').localeCompare(String(b.responsavel || ''), 'pt-BR');
-                return b._indiceOriginal - a._indiceOriginal;
-            });
-        } else {
-            dadosExibicao.sort((a, b) => b._indiceOriginal - a._indiceOriginal);
-        }
+        ordenarPorDataDesc(dadosExibicao);
 
         if (!dadosExibicao.length) { alert('Não há registros para o mês e os filtros selecionados.'); return; }
 
