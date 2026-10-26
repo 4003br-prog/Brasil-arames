@@ -367,6 +367,14 @@
         body[data-theme="noite"] .tab-app, body[data-theme="noite"] .bobinas-form, body[data-theme="noite"] .bobinas-section { background:#1b2638; color:#e4eaf5; border-color:#34435b; }
         body[data-theme="noite"] .tab-app[aria-selected="true"] { background:var(--primary); }
         .whatsapp-share { background:#168b55 !important; color:#fff !important; border:0 !important; }
+        .config-section { background:#fff; padding:22px; border-radius:16px; box-shadow:var(--shadow-soft); margin-bottom:20px; }
+        .config-section h2 { color:var(--primary); margin-bottom:8px; }
+        .config-section > p { color:#64748b; margin-bottom:16px; }
+        .config-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:15px; align-items:end; }
+        .config-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+        .config-password { max-width:460px; margin-top:18px; }
+        #config-page[hidden] { display:none !important; }
+        body[data-theme="noite"] .config-section { background:#1b2638; color:#e4eaf5; }
 
         .mes-filtro input { padding:7px 9px; border:1px solid var(--border); border-radius:8px; color:var(--text-main); background:#fff; }
         body[data-theme="noite"] .mes-filtro input { color:#e4eaf5; background:#121c2b; border-color:#3b4a63; }
@@ -528,15 +536,6 @@
         }
         .btn-clear:hover { background-color: #fee2e2; }
 
-        /* --- ANIMAÇÃO DE LINHA NOVA --- */
-        @keyframes highlightNew {
-            0% { background-color: #bbf7d0; }
-            100% { background-color: transparent; }
-        }
-        .row-new td {
-            animation: highlightNew 3s ease-out;
-        }
-
         /* --- IMPRESSÃO PDF --- */
         @media print {
             body { background: #fff; padding: 0; }
@@ -554,7 +553,6 @@
             body.impressao-producao #print-title-bobinas { display:none !important; }
             .linha-subtotal td { font-weight: bold; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
             .linha-total-geral td { font-weight: bold; background-color: #e2e8f0 !important; font-size: 15px; -webkit-print-color-adjust: exact; }
-            .row-new td { animation: none; }
         }
         .print-title { display: none; }
 
@@ -567,16 +565,21 @@
         .auth-screen h2 { color: var(--primary); margin-bottom: 8px; }
         .auth-screen p { color: #64748b; margin-bottom: 18px; }
         .auth-screen label { display:block; font-size:13px; font-weight:600; margin: 12px 0 5px; }
-        .auth-screen input, .auth-name-row select { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; background:#fff; }
-        .auth-name-row { display:flex; gap:8px; }
-        .auth-name-row .btn-icon { min-width:44px; }
+        .auth-screen input { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; background:#fff; }
         .consulta-banner { display:none; margin:0 0 18px; padding:13px 16px; border-radius:12px; color:#1e40af; background:linear-gradient(110deg,#e6efff,#effbff); border:1px solid #cbdcff; box-shadow:0 5px 14px rgba(37,66,139,.08); font-weight:600; }
-        body.solo-consulta .consulta-banner { display:block; }
+        body.solo-consulta .consulta-banner,
+        body.somente-producao .consulta-banner { display:block; }
         body.solo-consulta #production-form-section,
         body.solo-consulta .solo-admin,
         body.solo-consulta #bobinas-page .solo-admin,
         body.solo-consulta #col-acoes { display:none !important; }
         body.solo-consulta th:last-child, body.solo-consulta td:last-child { display:none !important; }
+        body.somente-consulta-basica .export-access,
+        body.somente-producao .export-access,
+        body.somente-producao .solo-admin,
+        body.somente-producao .add-pattern-box,
+        body.somente-producao .manage-box { display:none !important; }
+        body.somente-producao th:last-child, body.somente-producao td:last-child { display:none !important; }
         .auth-buttons { display:flex; gap:10px; margin-top:16px; }
         .auth-message { min-height:20px; margin-top:12px !important; color:var(--danger) !important; font-size:14px; }
         #app-container { display:none; }
@@ -794,8 +797,8 @@
         body[data-theme="noite"] .linha-total-geral { background:linear-gradient(100deg,#2b3b5a,#263d52); }
         body[data-theme="noite"] .chip { color:#c6d2ff; border-color:#455782; background:linear-gradient(145deg,#2a3854,#25324b); box-shadow:0 3px 0 #202b42,0 5px 12px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.06); }
         body[data-theme="noite"] .add-pattern-box, body[data-theme="noite"] .manage-box, body[data-theme="noite"] .search-box { background:#243149; border-color:#45536c; color:#d7e0f2; box-shadow:0 3px 9px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04); }
-        body[data-theme="noite"] .input-group input, body[data-theme="noite"] .input-group select, body[data-theme="noite"] .auth-screen input, body[data-theme="noite"] .auth-name-row select { color:#e4eaf5; background:#121c2b; border-color:#3b4a63; box-shadow:inset 0 2px 4px rgba(0,0,0,.18); }
-        body[data-theme="noite"] .input-group select option, body[data-theme="noite"] .auth-name-row select option { color:#e4eaf5; background:#121c2b; }
+        body[data-theme="noite"] .input-group input, body[data-theme="noite"] .input-group select, body[data-theme="noite"] .auth-screen input { color:#e4eaf5; background:#121c2b; border-color:#3b4a63; box-shadow:inset 0 2px 4px rgba(0,0,0,.18); }
+        body[data-theme="noite"] .input-group select option { color:#e4eaf5; background:#121c2b; }
         body[data-theme="noite"] .autocomplete-items, body[data-theme="noite"] .autocomplete-items div { color:#e4eaf5; background:#1b2638; border-color:#354258; }
         body[data-theme="noite"] .autocomplete-items div:hover { background:#2b3a54; }
         body[data-theme="noite"] .consulta-banner { color:#c5d5ff; background:linear-gradient(110deg,#263856,#1c3847); border-color:#415a7b; }
@@ -847,18 +850,8 @@
 
 <section class="auth-screen" id="auth-screen">
     <h2>Acesso ao Controle de Produção</h2>
-    <p>As permissões reais são controladas pelas regras do Firebase. Administrador: selecione o responsável.</p>
+    <p>Entre com seu e-mail e senha autorizados. O responsável é selecionado no controle de produção.</p>
     <form id="auth-form">
-        <label for="auth-operator-name">Nome de quem vai lançar a produção</label>
-        <div class="auth-name-row">
-            <select id="auth-operator-name">
-                <option value="">Selecione seu nome...</option>
-                <option value="FERNANDO">FERNANDO</option>
-                <option value="ÂNGELO">ÂNGELO</option>
-                <option value="GENIVAL">GENIVAL</option>
-            </select>
-            <button class="btn-icon" type="button" id="add-login-name" title="Adicionar nome">+</button>
-        </div>
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="username" required>
         <label for="auth-password">Senha</label>
@@ -894,11 +887,12 @@
     </div>
 
     <!-- Painel de Resumo -->
-    <div class="consulta-banner" id="consulta-banner">👁️ Acesso de consulta: você pode visualizar e exportar a produção, mas não alterá-la.</div>
+    <div class="consulta-banner" id="consulta-banner">👁️ Esta conta pode lançar produção como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.</div>
 
     <div class="tabs-app" role="tablist" aria-label="Seções do controle">
         <button type="button" class="tab-app" id="tab-producao" role="tab" aria-selected="true" aria-controls="producao-page" onclick="selecionarAba('producao')">Produção de estribos</button>
         <button type="button" class="tab-app" id="tab-bobinas" role="tab" aria-selected="false" aria-controls="bobinas-page" onclick="selecionarAba('bobinas')">Bobinas</button>
+        <button type="button" class="tab-app" id="tab-configuracoes" role="tab" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden>Configurações</button>
     </div>
 
     <div id="producao-page" role="tabpanel" aria-labelledby="tab-producao">
@@ -970,12 +964,11 @@
                 <div class="input-with-buttons">
                     <select id="in-responsavel" required>
                         <option value="">Selecione...</option>
-                        <option value="FERNANDO" selected>FERNANDO</option>
-                        <option value="ÂNGELO">ÂNGELO</option>
+                        <option value="FERNANDO">FERNANDO</option>
+                        <option value="ÂNGELO" selected>ÂNGELO</option>
                         <option value="GENIVAL">GENIVAL</option>
                     </select>
-                    <button type="button" class="btn-icon" onclick="adicionarOperador()" title="Adicionar Operador">+</button>
-                    <button type="button" class="btn-icon" onclick="removerOperador()" title="Remover Operador Selecionado">-</button>
+                    <span id="responsavel-fixo-ajuda" class="solo-admin" style="align-self:center;font-size:12px;color:#64748b">Gerencie a lista em Configurações</span>
                 </div>
             </div>
             <button class="btn-add" id="btn-add" onclick="adicionarRegistro()">+ Adicionar</button>
@@ -1032,10 +1025,10 @@
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
         <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> Importar Excel</button>
-        <button class="btn-pdf" type="button" onclick="window.print()" title="Imprimir ou salvar em PDF">Imprimir / PDF</button>
-        <button class="btn-pdf whatsapp-share" type="button" onclick="compartilharRelatorio('producao','pdf')">Compartilhar PDF no WhatsApp</button>
-        <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
-        <button class="btn-excel whatsapp-share" type="button" onclick="compartilharRelatorio('producao','xlsx')">Compartilhar Excel no WhatsApp</button>
+        <button class="btn-pdf export-access" type="button" onclick="imprimirRelatorio()" title="Imprimir ou salvar em PDF">Imprimir / PDF</button>
+        <button class="btn-pdf whatsapp-share export-access" type="button" onclick="compartilharRelatorio('producao','pdf')">Compartilhar PDF no WhatsApp</button>
+        <button class="btn-excel export-access" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
+        <button class="btn-excel whatsapp-share export-access" type="button" onclick="compartilharRelatorio('producao','xlsx')">Compartilhar Excel no WhatsApp</button>
     </div>
     </div><!-- /producao-page -->
 
@@ -1067,17 +1060,37 @@
                 <tbody id="corpo-tabela-bobinas"></tbody>
             </table></div>
             <div class="bobinas-actions">
-                <button class="btn-excel" type="button" onclick="exportarBobinasExcel()">Exportar bobinas Excel</button>
-                <button class="btn-pdf" type="button" onclick="compartilharRelatorio('bobinas','pdf')">Compartilhar PDF no WhatsApp</button>
-                <button class="btn-excel whatsapp-share" type="button" onclick="compartilharRelatorio('bobinas','xlsx')">Compartilhar Excel no WhatsApp</button>
+                <button class="btn-excel export-access" type="button" onclick="exportarBobinasExcel()">Exportar bobinas Excel</button>
+                <button class="btn-pdf export-access" type="button" onclick="compartilharRelatorio('bobinas','pdf')">Compartilhar PDF no WhatsApp</button>
+                <button class="btn-excel whatsapp-share export-access" type="button" onclick="compartilharRelatorio('bobinas','xlsx')">Compartilhar Excel no WhatsApp</button>
             </div>
+        </div>
+    </section>
+
+    <section id="config-page" role="tabpanel" aria-labelledby="tab-configuracoes" hidden>
+        <div class="config-section">
+            <h2>Configurações do administrador</h2>
+            <p>Somente fernandolisboa.br@gmail.com pode alterar esta lista. A senha da conta é confirmada a cada mudança. ÂNGELO e GENIVAL também podem ser removidos aqui. A alteração do responsável ativo vale para novos lançamentos; o histórico permanece.</p>
+            <div class="config-grid">
+                <div class="input-group"><label for="config-novo-responsavel">Adicionar responsável</label><input type="text" id="config-novo-responsavel" maxlength="80" placeholder="Nome do responsável"></div>
+                <button class="btn-add" id="config-btn-adicionar" type="button" onclick="configAdicionarResponsavel()">Adicionar à lista</button>
+                <div class="input-group"><label for="config-remover-responsavel">Remover responsável</label><select id="config-remover-responsavel"></select></div>
+                <button class="btn-clear" id="config-btn-remover" type="button" onclick="configRemoverResponsavel()">Remover selecionado</button>
+                <div class="input-group"><label for="config-responsavel-ativo">Responsável para novos lançamentos</label><select id="config-responsavel-ativo"></select></div>
+                <button class="btn-add" id="config-btn-ativo" type="button" onclick="configDefinirResponsavelAtivo()">Trocar responsável ativo</button>
+            </div>
+            <div class="input-group config-password">
+                <label for="config-senha-atual">Senha atual do administrador (confirmada pelo Firebase)</label>
+                <input type="password" id="config-senha-atual" autocomplete="current-password" placeholder="Digite sua senha para confirmar cada alteração">
+            </div>
+            <p class="auth-message" id="config-message" aria-live="polite"></p>
         </div>
     </section>
 </div>
 
 <script>
     // Configuração pública do Firebase Web: NÃO é controle de acesso.
-    // Proteja /producao, /estribosPadroes e /operadores com regras do Realtime Database.
+    // Proteja /producao, /estribosPadroes, /operadores, /bobinas e /configuracao com regras do Realtime Database.
     // Regras do Firebase precisam ser configuradas no Console e não podem ser impostas por este HTML.
     const firebaseConfig = {
         apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
@@ -1109,19 +1122,30 @@
     let padroesRef = null;
     let padroesLegadosRef = null;
     let operadoresRef = null;
+    let configuracaoRef = null;
     let bobinasRef = null;
     let bobinas = [];
     let filtroMesBobinas = '';
+    let responsavelAtivoFirebase = '';
+    let responsavelAtivoRecebidoFirebase = false;
     let nomesOperadoresFirebase = [];
     let operadoresFirebaseSnapshot = {};
-    const EMAIL_ADMIN = 'arames@brasil.com';
-    const EMAIL_CONSULTA = 'arames@confere.com';
+    const CHAVE_OPERADORES_REMOVIDOS = 'nomes_responsaveis_removidos';
+    let migracaoOperadoresEmAndamento = false;
+    const EMAIL_ADMIN = 'fernandolisboa.br@gmail.com';
+    const EMAIL_EXPORTADOR = 'arames@confere.com';
+    const EMAIL_PRODUCAO = 'arames@brasil.com';
+    const OPERADORES_PRODUCAO = ['ÂNGELO', 'GENIVAL'];
     let usuarioEhAdmin = false;
+    let usuarioPodeExportar = false;
+    let usuarioPodeLancarProducao = false;
+    let usuarioAtualFirebase = null;
     let acessoNegado = false;
     let firebaseProducaoPronto = false;
     let firebasePadroesPronto = false;
+    let firebaseOperadoresPronto = false;
+    let firebaseConfiguracaoPronta = false;
     let firebaseEdicaoLiberada = false;
-    let aplicandoProducaoFirebase = false;
     let aplicandoPadroesFirebase = false;
     let avisoErroFirebaseExibido = false;
     let usuarioUidAtual = null;
@@ -1154,67 +1178,42 @@
         document.getElementById('auth-message').innerText = mensagens[error.code] || 'Não foi possível concluir. Confira a configuração de Authentication no Firebase.';
     }
 
-    const loginNameSelect = document.getElementById('auth-operator-name');
     const standardOperatorNames = ['FERNANDO', 'ÂNGELO', 'GENIVAL'];
 
-    function carregarNomesLogin() {
-        let nomesSalvos = [];
-        try { nomesSalvos = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
-        const nomes = [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase, ...(Array.isArray(nomesSalvos) ? nomesSalvos : [])]
-            .map(nome => String(nome).trim().toLocaleUpperCase('pt-BR')).filter(Boolean))];
-        const selecionado = loginNameSelect.value || localStorage.getItem('responsavel_login') || '';
-        loginNameSelect.innerHTML = '<option value="">Selecione seu nome...</option>';
-        nomes.forEach(nome => {
-            const option = document.createElement('option');
-            option.value = nome;
-            option.textContent = nome;
-            loginNameSelect.appendChild(option);
-        });
-        if (nomes.includes(selecionado)) loginNameSelect.value = selecionado;
+    function lerListaLocal(chave) {
+        try {
+            const valor = JSON.parse(localStorage.getItem(chave) || '[]');
+            return Array.isArray(valor) ? valor.map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(Boolean) : [];
+        } catch (_) { return []; }
     }
 
-    carregarNomesLogin();
+    function salvarListaLocal(chave, lista) {
+        try { localStorage.setItem(chave, JSON.stringify([...new Set(lista)])); return true; }
+        catch (_) { return false; }
+    }
+
+    function nomesOperadoresAtivos() {
+        const removidosLocal = new Set(lerListaLocal(CHAVE_OPERADORES_REMOVIDOS));
+        const removidosNuvem = new Set(Object.values(operadoresFirebaseSnapshot || {}).filter(item => item && item.ativo === false).map(item => String(item.nome || '').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')));
+        return [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase, ...lerListaLocal('nomes_responsaveis')]
+            .map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(nome => nome && !removidosLocal.has(nome) && !removidosNuvem.has(nome)))];
+    }
+
     function sincronizarOperadoresNaTela() {
         const select = document.getElementById('in-responsavel');
         const atual = select.value;
-        let nomesLocais = [];
-        try { nomesLocais = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
-        const nomeLogin = String(localStorage.getItem('responsavel_login') || '').trim();
-        const nomes = [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase, ...(Array.isArray(nomesLocais) ? nomesLocais : []), nomeLogin].map(nome => String(nome).trim().toLocaleUpperCase('pt-BR')).filter(Boolean))];
-        select.innerHTML = '';
+        const nomes = usuarioEhAdmin ? nomesOperadoresAtivos() : usuarioPodeLancarProducao ? OPERADORES_PRODUCAO : nomesOperadoresAtivos();
+        select.replaceChildren();
         const vazio = document.createElement('option'); vazio.value = ''; vazio.textContent = 'Selecione...'; select.appendChild(vazio);
         nomes.forEach(nome => { const option = document.createElement('option'); option.value = nome; option.textContent = nome; select.appendChild(option); });
         if (atual && nomes.includes(atual.toLocaleUpperCase('pt-BR'))) select.value = atual.toLocaleUpperCase('pt-BR');
-        carregarNomesLogin();
+        atualizarSeletoresConfiguracoes();
     }
-    document.getElementById('add-login-name').addEventListener('click', () => {
-        const novoNome = prompt('Digite o nome para adicionar à lista:');
-        if (!novoNome || !novoNome.trim()) return;
-        const nome = novoNome.trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
-        let nomesSalvos = [];
-        try { nomesSalvos = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
-        if ([...standardOperatorNames, ...(Array.isArray(nomesSalvos) ? nomesSalvos : [])]
-            .some(item => String(item).trim().toLocaleUpperCase('pt-BR') === nome)) {
-            alert(`O nome "${nome}" já está na lista.`);
-            return;
-        }
-        nomesSalvos.push(nome);
-        localStorage.setItem('nomes_responsaveis', JSON.stringify(nomesSalvos));
-        carregarNomesLogin();
-        loginNameSelect.value = nome;
-    });
 
     document.getElementById('auth-form').addEventListener('submit', async event => {
         event.preventDefault();
-        const nomeResponsavel = document.getElementById('auth-operator-name').value.trim().toLocaleUpperCase('pt-BR');
         const email = document.getElementById('auth-email').value.trim().toLowerCase();
         const password = document.getElementById('auth-password').value;
-        if (email === EMAIL_ADMIN && !nomeResponsavel) {
-            document.getElementById('auth-message').innerText = 'Selecione o responsável pela produção para entrar como administrador.';
-            return;
-        }
-        if (email === EMAIL_ADMIN && nomeResponsavel) localStorage.setItem('responsavel_login', nomeResponsavel);
-        else localStorage.removeItem('responsavel_login');
         document.getElementById('auth-message').innerText = 'Entrando...';
         try { await firebaseAuth.signInWithEmailAndPassword(email, password); }
         catch (error) { mostrarErroLogin(error); }
@@ -1232,19 +1231,28 @@
             if (producaoRef) producaoRef.off();
             if (padroesRef) padroesRef.off();
             if (operadoresRef) operadoresRef.off();
+            if (configuracaoRef) configuracaoRef.off();
             if (bobinasRef) bobinasRef.off();
-            producaoRef = padroesRef = operadoresRef = bobinasRef = null;
+            producaoRef = padroesRef = operadoresRef = configuracaoRef = bobinasRef = null;
             bobinas = [];
             nomesOperadoresFirebase = [];
             operadoresFirebaseSnapshot = {};
-            firebaseProducaoPronto = firebasePadroesPronto = false;
+            firebaseProducaoPronto = firebasePadroesPronto = firebaseOperadoresPronto = firebaseConfiguracaoPronta = false;
+            responsavelAtivoFirebase = '';
+            responsavelAtivoRecebidoFirebase = false;
             firebaseEdicaoLiberada = false;
             usuarioUidAtual = null;
+            usuarioAtualFirebase = null;
             usuarioEhAdmin = false;
+            usuarioPodeExportar = false;
+            usuarioPodeLancarProducao = false;
+            document.body.classList.remove('solo-consulta', 'somente-consulta-basica', 'somente-producao');
+            document.getElementById('tab-configuracoes').hidden = true;
+            document.getElementById('config-page').hidden = true;
+            selecionarAba('producao');
             document.body.classList.remove('solo-consulta');
             const responsavelSelect = document.getElementById('in-responsavel');
-            if (responsavelSelect) responsavelSelect.disabled = false;
-            document.querySelectorAll('.input-with-buttons .btn-icon').forEach(botao => botao.disabled = false);
+            if (responsavelSelect) { responsavelSelect.disabled = false; responsavelSelect.title = ''; }
             app.style.display = 'none';
             authScreen.style.display = 'block';
             if (!acessoNegado) document.getElementById('auth-message').innerText = '';
@@ -1253,7 +1261,7 @@
         }
 
         const email = String(user.email || '').trim().toLowerCase();
-        if (email !== EMAIL_ADMIN && email !== EMAIL_CONSULTA) {
+        if (email !== EMAIL_ADMIN && email !== EMAIL_EXPORTADOR && email !== EMAIL_PRODUCAO) {
             acessoNegado = true;
             document.getElementById('auth-message').innerText = 'Esta conta não está autorizada a acessar o sistema.';
             await firebaseAuth.signOut();
@@ -1261,28 +1269,25 @@
         }
 
         usuarioEhAdmin = email === EMAIL_ADMIN;
+        usuarioPodeExportar = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
+        usuarioPodeLancarProducao = usuarioEhAdmin || email === EMAIL_PRODUCAO;
+        document.body.classList.toggle('somente-consulta-basica', email === EMAIL_EXPORTADOR);
+        document.body.classList.toggle('somente-producao', email === EMAIL_PRODUCAO);
+        usuarioAtualFirebase = user;
         usuarioUidAtual = user.uid;
-        document.body.classList.toggle('solo-consulta', !usuarioEhAdmin);
+        document.body.classList.toggle('solo-consulta', email === EMAIL_EXPORTADOR);
         authScreen.style.display = 'none';
         app.style.display = 'block';
         firebaseEdicaoLiberada = false;
         atualizarBloqueioEdicao();
-        const nomeResponsavelLogin = String(localStorage.getItem('responsavel_login') || '').trim().toLocaleUpperCase('pt-BR');
-        document.getElementById('user-email').innerText = (user.email || '') + (usuarioEhAdmin ? ' • Administrador' : ' • Consulta') + (nomeResponsavelLogin ? ' • ' + nomeResponsavelLogin : '');
-        const seletorResponsavel = document.getElementById('in-responsavel');
-        if (nomeResponsavelLogin && seletorResponsavel) {
-            let opcaoResponsavel = Array.from(seletorResponsavel.options).find(opcao => opcao.value.toLocaleUpperCase('pt-BR') === nomeResponsavelLogin);
-            if (!opcaoResponsavel) {
-                opcaoResponsavel = document.createElement('option');
-                opcaoResponsavel.value = nomeResponsavelLogin;
-                opcaoResponsavel.textContent = nomeResponsavelLogin;
-                seletorResponsavel.appendChild(opcaoResponsavel);
-            }
-            seletorResponsavel.value = nomeResponsavelLogin;
-            seletorResponsavel.disabled = true;
-            document.querySelectorAll('.input-with-buttons .btn-icon').forEach(botao => botao.disabled = true);
-            document.getElementById('in-responsavel').title = 'Responsável definido no login';
-        }
+        const nomeResponsavelLogin = usuarioEhAdmin ? 'FERNANDO' : '';
+        const textoPapel = usuarioEhAdmin ? ' • Administrador' : email === EMAIL_EXPORTADOR ? ' • Consulta e exportação' : ' • Produção (Ângelo/Genival)';
+        document.getElementById('user-email').innerText = (user.email || '') + textoPapel + (nomeResponsavelLogin ? ' • Produção: ' + nomeResponsavelLogin : '');
+        document.getElementById('consulta-banner').textContent = email === EMAIL_EXPORTADOR
+            ? '👁️ Consulta e exportação: esta conta pode visualizar e exportar PDF/Excel, mas não alterar os dados.'
+            : '👷 Produção: esta conta pode lançar como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.';
+        document.querySelectorAll('.export-access').forEach(el => el.hidden = !usuarioPodeExportar);
+        atualizarAcessoConfiguracoes();
 
         producao = dadosIniciais.map(item => ({ ...item }));
         let padroesLocalUsuario = null;
@@ -1296,6 +1301,34 @@
         padroesRef = firebaseDb.ref('estribosPadroes');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         operadoresRef = firebaseDb.ref('operadores');
+        configuracaoRef = firebaseDb.ref('configuracao');
+        configuracaoRef.child('responsavelAtivo').on('value', snapshot => {
+            responsavelAtivoRecebidoFirebase = true;
+            const valor = String(snapshot.val() || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+            responsavelAtivoFirebase = valor;
+            firebaseConfiguracaoPronta = false;
+            if (!valor) {
+                if (usuarioEhAdmin && firebaseOperadoresPronto && nomesOperadoresAtivos().includes('FERNANDO')) {
+                    configuracaoRef.child('responsavelAtivo').set('FERNANDO').catch(error => console.warn('Não foi possível definir responsável ativo padrão.', error));
+                }
+                atualizarEstadoSincronizacao();
+                return;
+            }
+            if (!firebaseOperadoresPronto) { atualizarEstadoSincronizacao(); return; }
+            if (nomesOperadoresAtivos().includes(valor)) {
+                aplicarResponsavelAtivoCompartilhado(valor);
+                firebaseConfiguracaoPronta = true;
+            } else if (usuarioEhAdmin && nomesOperadoresAtivos().includes('FERNANDO')) {
+                responsavelAtivoFirebase = '';
+                configuracaoRef.child('responsavelAtivo').set('FERNANDO').catch(error => console.warn('Não foi possível corrigir o responsável ativo.', error));
+            }
+            atualizarEstadoSincronizacao();
+        }, error => {
+            responsavelAtivoRecebidoFirebase = false;
+            firebaseConfiguracaoPronta = false;
+            atualizarEstadoSincronizacao();
+            console.warn('Não foi possível carregar o responsável ativo compartilhado.', error);
+        });
         bobinasRef = firebaseDb.ref('bobinas/items');
         bobinasRef.on('value', snapshot => {
             const items = snapshot.val() || {};
@@ -1304,19 +1337,49 @@
         }, mostrarErroFirebase);
         operadoresRef.on('value', snapshot => {
             operadoresFirebaseSnapshot = snapshot.val() || {};
-            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).map(item => String((item && item.nome) || '').trim()).filter(Boolean);
+            const removidos = new Set(lerListaLocal(CHAVE_OPERADORES_REMOVIDOS));
+            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).filter(item => item && item.ativo !== false).map(item => String(item.nome || '').trim()).filter(nome => nome && !removidos.has(nome.toLocaleUpperCase('pt-BR')));
             sincronizarOperadoresNaTela();
-            if (usuarioEhAdmin) {
-                let locais = [];
-                try { locais = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
-                if (Array.isArray(locais)) {
-                    const existentes = new Set(nomesOperadoresFirebase.map(nome => nome.toLocaleUpperCase('pt-BR')));
-                    const migrar = [...new Set(locais.map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(Boolean))].filter(nome => !existentes.has(nome));
-                    if (migrar.length) Promise.all(migrar.map(nome => operadoresRef.push({ nome }))).catch(mostrarErroFirebase);
+            if (usuarioPodeLancarProducao && !usuarioEhAdmin) {
+                let nomeProducao = 'ÂNGELO';
+                try {
+                    const salvo = localStorage.getItem('responsavel_producao_arames');
+                    if (OPERADORES_PRODUCAO.includes(salvo)) nomeProducao = salvo;
+                } catch (_) {}
+                const seletor = document.getElementById('in-responsavel');
+                if (Array.from(seletor.options).some(opcao => opcao.value === nomeProducao)) seletor.value = nomeProducao;
+            }
+            firebaseOperadoresPronto = true;
+            if (responsavelAtivoRecebidoFirebase) {
+                if (responsavelAtivoFirebase && nomesOperadoresAtivos().includes(responsavelAtivoFirebase)) {
+                    aplicarResponsavelAtivoCompartilhado(responsavelAtivoFirebase);
+                    firebaseConfiguracaoPronta = true;
+                } else if (usuarioEhAdmin && nomesOperadoresAtivos().includes('FERNANDO')) {
+                    firebaseConfiguracaoPronta = false;
+                    responsavelAtivoFirebase = '';
+                    configuracaoRef.child('responsavelAtivo').set('FERNANDO').catch(error => console.warn('Não foi possível corrigir o responsável ativo.', error));
                 }
             }
-        }, mostrarErroFirebase);
-        firebaseProducaoPronto = firebasePadroesPronto = false;
+            atualizarEstadoSincronizacao();
+            if (usuarioEhAdmin && !migracaoOperadoresEmAndamento) {
+                const locais = lerListaLocal('nomes_responsaveis');
+                const existentes = new Set(Object.values(operadoresFirebaseSnapshot).map(item => String((item && item.nome) || '').trim().toLocaleUpperCase('pt-BR')));
+                const migrar = [...new Set(locais)].filter(nome => !existentes.has(nome) && !removidos.has(nome));
+                if (migrar.length) {
+                    migracaoOperadoresEmAndamento = true;
+                    Promise.all(migrar.map(nome => operadoresRef.push({ nome })))
+                        .catch(error => console.warn('Lista de responsáveis mantida localmente; migração Firebase pendente.', error))
+                        .finally(() => { migracaoOperadoresEmAndamento = false; });
+                }
+            }
+        }, error => {
+            firebaseOperadoresPronto = false;
+            atualizarEstadoSincronizacao();
+            console.warn('Leitura da lista compartilhada indisponível; edição bloqueada até a sincronização.', error);
+        });
+        firebaseProducaoPronto = firebasePadroesPronto = firebaseOperadoresPronto = firebaseConfiguracaoPronta = false;
+        responsavelAtivoFirebase = '';
+        responsavelAtivoRecebidoFirebase = false;
 
         // Não restaura produção do cache antigo nem migra automaticamente dados privados.
         // Se produção estiver vazia no Firebase, a confirmação de vazio é mostrada; não se apaga histórico local.
@@ -1339,14 +1402,24 @@
         conectarFirebase();
     });
 
+    function atualizarEstadoSincronizacao() {
+        const basePronta = firebaseProducaoPronto && firebasePadroesPronto && firebaseOperadoresPronto;
+        firebaseEdicaoLiberada = basePronta && (!usuarioEhAdmin || firebaseConfiguracaoPronta);
+        atualizarBloqueioEdicao();
+    }
+
     function atualizarBloqueioEdicao() {
-        const bloqueado = !firebaseEdicaoLiberada || !usuarioEhAdmin;
+        const bloqueado = !firebaseEdicaoLiberada || !usuarioPodeLancarProducao;
         document.querySelectorAll('.solo-admin').forEach(el => {
-            if ('disabled' in el) el.disabled = bloqueado;
+            if ('disabled' in el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
-        ['btn-add', 'btn-cancel', 'in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel', 'bobina-data', 'bobina-nome', 'bobina-kg', 'bobina-pecas', 'bobina-responsavel', 'btn-salvar-bobina'].forEach(id => {
+        ['btn-add', 'in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
+        });
+        ['btn-cancel', 'bobina-data', 'bobina-nome', 'bobina-kg', 'bobina-pecas', 'bobina-responsavel', 'btn-salvar-bobina', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
         const status = document.getElementById('firebase-status');
         if (status && !firebaseEdicaoLiberada) status.innerText = 'Carregando dados do Firebase…';
@@ -1362,11 +1435,6 @@
         return JSON.stringify(copia);
     }
 
-    function salvarProducaoFirebase() {
-        // Não há gravação em massa da lista; cada CRUD atualiza um registro pela chave.
-        return Promise.resolve();
-    }
-
     function salvarPadroesFirebase() {
         if (!usuarioEhAdmin || !padroesRef) return;
         const items = {};
@@ -1378,15 +1446,12 @@
         producaoRef.on('value', snapshot => {
             const payload = snapshot.val() || {};
             const items = payload.items || {};
-            aplicandoProducaoFirebase = true;
             producao = Object.keys(items).map(key => ({ ...items[key], _firebaseKey: key }));
             producao.forEach(item => {
                 if (!item.responsavel || item.responsavel === 'IMPORTADO' || String(item.responsavel).trim() === '') item.responsavel = 'FERNANDO';
             });
-            aplicandoProducaoFirebase = false;
             firebaseProducaoPronto = true;
-            firebaseEdicaoLiberada = firebaseProducaoPronto && firebasePadroesPronto;
-            atualizarBloqueioEdicao();
+            atualizarEstadoSincronizacao();
             document.getElementById('firebase-status').innerText = snapshot.exists() ? 'Sincronizado com Firebase' : 'Banco vazio; pronto para iniciar';
             renderizarTabela();
         }, mostrarErroFirebase);
@@ -1394,8 +1459,7 @@
         padroesRef.on('value', snapshot => {
             if (!snapshot.exists()) {
                 firebasePadroesPronto = true;
-                firebaseEdicaoLiberada = firebaseProducaoPronto && firebasePadroesPronto;
-                atualizarBloqueioEdicao();
+                atualizarEstadoSincronizacao();
                 estribosPadroes = [...padroesIniciaisFirebase];
                 renderizarEstribosPadroes();
                 return;
@@ -1409,8 +1473,7 @@
             if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
             aplicandoPadroesFirebase = false;
             firebasePadroesPronto = true;
-            firebaseEdicaoLiberada = firebaseProducaoPronto && firebasePadroesPronto;
-            atualizarBloqueioEdicao();
+            atualizarEstadoSincronizacao();
             renderizarEstribosPadroes();
             // Normaliza também a ordem guardada na nuvem para não reverter ao recarregar.
             if (JSON.stringify(ordemRecebida) !== JSON.stringify(ordemCrescente)) salvarPadroesFirebase();
@@ -1429,7 +1492,6 @@
         }
     });
 
-    let editandoIndex = -1;
     let editandoFirebaseKey = null;
     let editandoAssinaturaOriginal = null;
     let filtroAtual = ""; 
@@ -1455,6 +1517,11 @@
     document.getElementById('bobina-data').valueAsDate = new Date();
     document.getElementById('in-data').valueAsDate = new Date();
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
+    document.getElementById('in-responsavel').addEventListener('change', event => {
+        if (usuarioPodeLancarProducao && !usuarioEhAdmin && OPERADORES_PRODUCAO.includes(event.target.value)) {
+            try { localStorage.setItem('responsavel_producao_arames', event.target.value); } catch (_) {}
+        }
+    });
 
     function salvarPadroes() {
         if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
@@ -1745,12 +1812,151 @@
         }, 1000);
     }
 
+    function usuarioEhAdminFernando() {
+        return usuarioEhAdmin && String((usuarioAtualFirebase && usuarioAtualFirebase.email) || '').trim().toLowerCase() === EMAIL_ADMIN;
+    }
+
+    function aplicarResponsavelAtivoCompartilhado(nome) {
+        const ativo = String(nome || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+        if (!ativo || !nomesOperadoresAtivos().includes(ativo)) return false;
+        responsavelAtivoFirebase = ativo;
+        if (usuarioEhAdmin) {
+            try { localStorage.setItem('responsavel_login', ativo); } catch (_) {}
+            sincronizarResponsavelAtivo(ativo);
+        }
+        return true;
+    }
+
+    function atualizarAcessoConfiguracoes() {
+        const liberado = usuarioEhAdminFernando();
+        const tab = document.getElementById('tab-configuracoes');
+        if (tab) tab.hidden = !liberado;
+        if (!liberado && document.getElementById('config-page')) {
+            document.getElementById('config-page').hidden = true;
+            if (document.getElementById('tab-producao')) selecionarAba('producao');
+        }
+        atualizarSeletoresConfiguracoes();
+    }
+
+    function atualizarSeletoresConfiguracoes() {
+        const nomes = nomesOperadoresAtivos();
+        const selectRemover = document.getElementById('config-remover-responsavel');
+        const selectAtivo = document.getElementById('config-responsavel-ativo');
+        if (!selectRemover || !selectAtivo) return;
+        const valorRemover = selectRemover.value;
+        const atual = String(responsavelAtivoFirebase || 'FERNANDO').trim().toLocaleUpperCase('pt-BR');
+        selectRemover.replaceChildren();
+        const opcaoInicial = document.createElement('option'); opcaoInicial.value = ''; opcaoInicial.textContent = 'Selecione um responsável'; selectRemover.appendChild(opcaoInicial);
+        nomes.filter(nome => nome !== 'FERNANDO').forEach(nome => { const o=document.createElement('option'); o.value=nome; o.textContent=nome; selectRemover.appendChild(o); });
+        if (nomes.includes(valorRemover)) selectRemover.value = valorRemover;
+        selectAtivo.replaceChildren();
+        nomes.forEach(nome => { const o=document.createElement('option'); o.value=nome; o.textContent=nome; selectAtivo.appendChild(o); });
+        if (nomes.includes(atual)) selectAtivo.value=atual;
+    }
+
+    async function confirmarSenhaAdministrador() {
+        if (!usuarioEhAdminFernando() || !usuarioAtualFirebase || !firebase.auth.EmailAuthProvider) throw new Error('Configurações exclusivas da conta administradora.');
+        const campo = document.getElementById('config-senha-atual');
+        const senha = campo.value;
+        if (!senha) { campo.focus(); throw new Error('Digite a senha atual do administrador para confirmar.'); }
+        try {
+            const credencial = firebase.auth.EmailAuthProvider.credential(usuarioAtualFirebase.email, senha);
+            await usuarioAtualFirebase.reauthenticateWithCredential(credencial);
+            campo.value = '';
+        } catch (error) {
+            campo.value = '';
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-login-credentials') throw new Error('Senha atual incorreta. Nenhuma alteração foi feita.');
+            throw new Error(error.message || 'Não foi possível confirmar a senha do administrador.');
+        }
+    }
+
+    async function configAdicionarResponsavel() {
+        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Entre com a conta administradora e aguarde a sincronização.'); return; }
+        const campo=document.getElementById('config-novo-responsavel');
+        const nome=campo.value.trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
+        if (!nome) { campo.focus(); alert('Digite o nome do responsável.'); return; }
+        if (nomesOperadoresAtivos().includes(nome)) { alert(`“${nome}” já existe na lista.`); return; }
+        try {
+            await confirmarSenhaAdministrador();
+            if (!operadoresRef) throw new Error('A lista de responsáveis ainda não sincronizou com o Firebase.');
+            const registroNuvem=Object.entries(operadoresFirebaseSnapshot).find(([,item])=>String((item&&item.nome)||'').trim().toLocaleUpperCase('pt-BR')===nome);
+            if (registroNuvem) await operadoresRef.child(registroNuvem[0]).update({nome,ativo:true});
+            else await operadoresRef.push({nome,ativo:true});
+            const novosLocais=lerListaLocal('nomes_responsaveis').filter(item=>item!==nome);
+            salvarListaLocal('nomes_responsaveis',[...novosLocais,nome]);
+            salvarListaLocal(CHAVE_OPERADORES_REMOVIDOS,lerListaLocal(CHAVE_OPERADORES_REMOVIDOS).filter(item=>item!==nome));
+            nomesOperadoresFirebase=[...new Set([...nomesOperadoresFirebase,nome])];
+            sincronizarOperadoresNaTela(); atualizarSeletoresConfiguracoes();
+            campo.value=''; document.getElementById('config-message').textContent=`${nome} foi adicionado à lista.`;
+        } catch(error) { document.getElementById('config-message').textContent=error.message; alert(error.message); }
+    }
+
+    async function configRemoverResponsavel() {
+        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Entre com a conta administradora e aguarde a sincronização.'); return; }
+        const nome=document.getElementById('config-remover-responsavel').value;
+        if (!nome) { alert('Selecione um responsável para remover.'); return; }
+        if (nome === 'FERNANDO') { alert('FERNANDO é a conta administrativa padrão e não pode ser removido.'); return; }
+        if (!confirm(`Remover ${nome} da lista de responsáveis? Os lançamentos antigos continuarão no histórico.`)) return;
+        try {
+            await confirmarSenhaAdministrador();
+            if (!operadoresRef) throw new Error('A lista de responsáveis ainda não sincronizou com o Firebase.');
+            const eraAtivo = responsavelAtivoFirebase.toLocaleUpperCase('pt-BR') === nome;
+            if (eraAtivo) {
+                if (!configuracaoRef) throw new Error('Configuração compartilhada ainda não sincronizou com o Firebase.');
+                await configuracaoRef.child('responsavelAtivo').set('FERNANDO');
+                responsavelAtivoFirebase = 'FERNANDO';
+                try { localStorage.setItem('responsavel_login','FERNANDO'); } catch (_) {}
+            }
+            const registros=Object.entries(operadoresFirebaseSnapshot).filter(([,item])=>String((item&&item.nome)||'').trim().toLocaleUpperCase('pt-BR')===nome);
+            await Promise.all(registros.map(([key,item])=>operadoresRef.child(key).update({nome:item.nome,ativo:false})));
+            salvarListaLocal('nomes_responsaveis',lerListaLocal('nomes_responsaveis').filter(item=>item!==nome));
+            salvarListaLocal(CHAVE_OPERADORES_REMOVIDOS,[...lerListaLocal(CHAVE_OPERADORES_REMOVIDOS),nome]);
+            nomesOperadoresFirebase=nomesOperadoresFirebase.filter(item=>item.toLocaleUpperCase('pt-BR')!==nome);
+            if (eraAtivo) sincronizarResponsavelAtivo('FERNANDO');
+            sincronizarOperadoresNaTela(); atualizarSeletoresConfiguracoes();
+            document.getElementById('config-message').textContent=`${nome} foi removido da lista. O histórico foi mantido.`;
+        } catch(error) { document.getElementById('config-message').textContent=error.message; alert(error.message); }
+    }
+
+    async function configDefinirResponsavelAtivo() {
+        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Entre com a conta administradora e aguarde a sincronização.'); return; }
+        const novo=document.getElementById('config-responsavel-ativo').value;
+        if (!novo || !nomesOperadoresAtivos().includes(novo)) { alert('Selecione um responsável válido.'); return; }
+        if (novo===responsavelAtivoFirebase) { alert(`${novo} já está como responsável ativo.`); return; }
+        if (!confirm(`Trocar o responsável ativo para ${novo}? A mudança valerá para os próximos lançamentos e não altera o histórico.`)) return;
+        try {
+            await confirmarSenhaAdministrador();
+            if (!configuracaoRef) throw new Error('Configuração compartilhada ainda não sincronizou com o Firebase.');
+            await configuracaoRef.child('responsavelAtivo').set(novo);
+            responsavelAtivoFirebase=novo;
+            try { localStorage.setItem('responsavel_login',novo); } catch (_) {}
+            sincronizarResponsavelAtivo(novo);
+            atualizarAcessoConfiguracoes();
+            document.getElementById('config-message').textContent=`Responsável ativo alterado para ${novo}. A troca vale para os próximos lançamentos.`;
+        } catch(error) { document.getElementById('config-message').textContent=error.message; alert(error.message); }
+    }
+
+    function sincronizarResponsavelAtivo(nome) {
+        const select=document.getElementById('in-responsavel');
+        if (!Array.from(select.options).some(o=>o.value===nome)) { const o=document.createElement('option'); o.value=nome; o.textContent=nome; select.appendChild(o); }
+        select.value=nome;
+        select.disabled=true;
+        select.title=`Responsável ativo: ${nome}. Alteração disponível nas Configurações da conta administradora.`;
+        document.getElementById('user-email').innerText=`${(usuarioAtualFirebase && usuarioAtualFirebase.email) || EMAIL_ADMIN} • Administrador • ${nome}`;
+        atualizarSeletoresConfiguracoes();
+    }
+
     function selecionarAba(aba) {
+        if (aba === 'configuracoes' && !usuarioEhAdminFernando()) { aba = 'producao'; }
         const bobinasAtiva = aba === 'bobinas';
-        document.getElementById('producao-page').hidden = bobinasAtiva;
+        const configAtiva = aba === 'configuracoes';
+        document.getElementById('producao-page').hidden = bobinasAtiva || configAtiva;
         document.getElementById('bobinas-page').hidden = !bobinasAtiva;
-        document.getElementById('tab-producao').setAttribute('aria-selected', String(!bobinasAtiva));
+        document.getElementById('config-page').hidden = !configAtiva;
+        document.getElementById('tab-producao').setAttribute('aria-selected', String(!bobinasAtiva && !configAtiva));
         document.getElementById('tab-bobinas').setAttribute('aria-selected', String(bobinasAtiva));
+        document.getElementById('tab-configuracoes').setAttribute('aria-selected', String(configAtiva));
+        if (configAtiva) { atualizarSeletoresConfiguracoes(); document.getElementById('config-novo-responsavel').focus(); }
     }
 
     function renderizarBobinas() {
@@ -1802,7 +2008,7 @@
         const kg = Number(kgTexto);
         const pecas = Number(pecasInput.value);
         if (!/^\d+(?:[.,]\d{1,3})?$/.test(kgInput.value.trim()) || !Number.isFinite(kg) || kg <= 0 || !Number.isSafeInteger(pecas) || pecas < 0) { alert('Informe o peso em kg (até 3 casas decimais) e uma quantidade inteira válida de peças.'); return; }
-        const registro = { dataFormatada: formatarData(data.value), nome: nome.value.trim(), kg, pecas, responsavel: (responsavelInput.value.trim() || localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR') };
+        const registro = { dataFormatada: formatarData(data.value), nome: nome.value.trim(), kg, pecas, responsavel: ((usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value) || responsavelInput.value.trim() || '').trim().toLocaleUpperCase('pt-BR') };
         try {
             await bobinasRef.push(registro);
             nome.value = ''; kgInput.value = ''; pecasInput.value = '';
@@ -1820,11 +2026,15 @@
         catch (error) { mostrarErroFirebase(error); }
     }
 
+    function imprimirRelatorio() {
+        if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
+        window.print();
+    }
+
     function nomeMesArquivo(mes) { return String(mes || mesLocalAtual()).replace('-', '_'); }
     function dadosBobinasFiltrados() { return bobinas.filter(item => registroNoMes(item, filtroMesBobinas)); }
 
     function gerarArquivoRelatorio(tipo, formato) {
-        const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
         const dados = tipo === 'bobinas' ? dadosBobinasFiltrados() : producao.filter(item => registroNoMes(item, filtroMesAtual) && (filtroAtual === '' || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)));
         const titulo = tipo === 'bobinas' ? `Relatorio_Bobinas_${nomeMesArquivo(filtroMesBobinas)}` : `Relatorio_Producao_${nomeMesArquivo(filtroMesAtual)}`;
         if (!dados.length) throw new Error('Não há registros para o mês selecionado.');
@@ -1865,6 +2075,7 @@
     }
 
     async function compartilharRelatorio(tipo, formato) {
+        if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar ou compartilhar relatórios.'); return; }
         try {
             const arquivo = gerarArquivoRelatorio(tipo, formato);
             const file = new File([arquivo.blob], arquivo.filename, { type: arquivo.mime });
@@ -1886,6 +2097,7 @@
     }
 
     function exportarBobinasExcel() {
+        if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
         try {
             const arquivo = gerarArquivoRelatorio('bobinas','xlsx');
             const url=URL.createObjectURL(arquivo.blob); const a=document.createElement('a'); a.href=url; a.download=arquivo.filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1500);
@@ -1893,7 +2105,7 @@
     }
 
     function adicionarRegistro() {
-        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!usuarioPodeLancarProducao) { alert('Esta conta não tem permissão para lançar produção.'); return; }
         if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const data = document.getElementById('in-data').value;
         const produto = document.getElementById('in-produto').value.trim().toUpperCase();
@@ -1902,7 +2114,8 @@
         const qtdEmb = Number(document.getElementById('in-qtd-emb').value);
         const totalEmb = Number(document.getElementById('in-total-emb').value);
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
-        const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value);
+        const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
+        if (!usuarioEhAdmin && !OPERADORES_PRODUCAO.includes(responsavel)) { alert('A conta de produção só pode lançar como ÂNGELO ou GENIVAL.'); return; }
 
         const camposObrigatorios = ['in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'];
         const campoInvalido = camposObrigatorios.map(id => document.getElementById(id)).find(campo => !campo.checkValidity());
@@ -2043,6 +2256,7 @@
                 <td></td>
             `;
             const celulaAcoes = tr.lastElementChild;
+            if (usuarioEhAdmin) {
             const btnEditar = document.createElement('button');
             btnEditar.className = 'btn-action btn-edit-row';
             btnEditar.type = 'button';
@@ -2056,6 +2270,7 @@
             btnExcluir.setAttribute('aria-label', `Excluir registro de ${item.produto || 'produto'} de ${item.responsavel || 'responsável'}`);
             btnExcluir.addEventListener('click', () => excluirItem(item._firebaseKey || ''));
             celulaAcoes.append(btnEditar, btnExcluir);
+            }
             tbody.appendChild(tr);
         });
 
@@ -2109,14 +2324,12 @@
         btnAdd.style.backgroundColor = "var(--warning)";
         
         document.getElementById('btn-cancel').style.display = "block";
-        editandoIndex = index;
         editandoFirebaseKey = key;
         editandoAssinaturaOriginal = assinaturaRegistro(item);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function cancelarEdicao() {
-        editandoIndex = -1;
         editandoFirebaseKey = null;
         editandoAssinaturaOriginal = null;
         limparFormulario();
@@ -2163,37 +2376,10 @@
         document.getElementById('in-embalagem').value = "";
         document.getElementById('in-qtd-emb').value = "";
         document.getElementById('in-total-emb').value = "";
-        const responsavelLogin = String(localStorage.getItem('responsavel_login') || '').trim().toLocaleUpperCase('pt-BR');
+        const responsavelLogin = String(responsavelAtivoFirebase || '').trim().toLocaleUpperCase('pt-BR');
         const seletorResponsavel = document.getElementById('in-responsavel');
         if (responsavelLogin && seletorResponsavel) seletorResponsavel.value = responsavelLogin;
         document.getElementById('in-produto').focus();
-    }
-
-    async function adicionarOperador() {
-        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!firebaseEdicaoLiberada || !operadoresRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
-        let nome = prompt('Digite o nome do novo operador:');
-        if (!nome || !nome.trim()) return;
-        nome = nome.trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
-        if ([...new Set([...standardOperatorNames, ...nomesOperadoresFirebase])].some(item => String(item).trim().toLocaleUpperCase('pt-BR') === nome)) {
-            alert('Este operador já está na lista!'); return;
-        }
-        try { await operadoresRef.push({ nome }); }
-        catch (error) { mostrarErroFirebase(error); alert('Não foi possível salvar o operador compartilhado.'); }
-    }
-
-    async function removerOperador() {
-        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!firebaseEdicaoLiberada || !operadoresRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
-        const select = document.getElementById('in-responsavel');
-        const nome = select.value;
-        if (!nome) { alert('Selecione um operador válido para remover.'); return; }
-        if (standardOperatorNames.includes(nome)) { alert('Os operadores padrão não podem ser removidos.'); return; }
-        const registro = Object.entries(operadoresFirebaseSnapshot).find(([, item]) => String((item && item.nome) || '').trim().toLocaleUpperCase('pt-BR') === nome.toLocaleUpperCase('pt-BR'));
-        if (!registro) { alert('Esse operador não está salvo na lista compartilhada.'); return; }
-        if (!confirm(`Remover o operador ${nome} da lista compartilhada? Os registros antigos não serão apagados.`)) return;
-        try { await operadoresRef.child(registro[0]).remove(); }
-        catch (error) { mostrarErroFirebase(error); alert('Não foi possível remover o operador.'); }
     }
 
     // ==========================================
@@ -2262,7 +2448,7 @@
             const json = jsonOriginal.map(row => Object.fromEntries(Object.entries(mapaColunas).map(([campo, coluna]) => [campo, row[coluna]])));
             if (json.length > MAX_IMPORT_ROWS) throw new Error('A planilha excede 20.000 linhas.');
 
-            let responsavelImportacao = String(localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR');
+            let responsavelImportacao = String(responsavelAtivoFirebase || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR');
             if (!responsavelImportacao) responsavelImportacao = "NÃO INFORMADO";
             
             const novosDados = [];
@@ -2398,6 +2584,7 @@
     // EXPORTAR EXCEL
     // ==========================================
     function exportarExcel() {
+        if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
         if (producao.length === 0) {
             alert("Não há dados para exportar!");
             return;
