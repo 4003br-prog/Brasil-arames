@@ -816,31 +816,6 @@
         body[data-theme="palmeiras"] .linha-total-geral { background:linear-gradient(100deg,#dff0e5,#cce6d5); }
         body[data-theme="palmeiras"] .theme-picker { background:rgba(0,69,37,.48); }
         body[data-theme="palmeiras"] .header::after { background:rgba(255,255,255,.18); }
-
-        /* Navegação e controle mensal de bobinas consumidas. */
-        .tab-nav { display:flex; gap:10px; margin:0 0 18px; border-bottom:1px solid var(--border); }
-        .tab-button { padding:11px 18px; border:1px solid var(--border); border-bottom:0; border-radius:10px 10px 0 0; background:#f8fafc; color:var(--text-main); font-weight:700; cursor:pointer; }
-        .tab-button[aria-selected="true"] { color:var(--primary); background:#fff; box-shadow:0 -3px 0 var(--primary) inset; }
-        .tab-pane[hidden] { display:none !important; }
-        .material-panel { background:#fff; border:1px solid var(--border); border-radius:15px; padding:22px; box-shadow:var(--shadow-soft); margin-bottom:20px; }
-        .material-panel h2 { color:var(--primary); margin-bottom:8px; }
-        .material-help { color:#64748b; margin-bottom:18px; }
-        .material-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin:16px 0; }
-        .material-summary .card { min-height:auto; }
-        .material-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; align-items:end; }
-        .material-form .btn-add { min-height:42px; }
-        .material-status { min-height:20px; margin:10px 0; color:#64748b; }
-        .subtab-nav { margin-top:4px; }
-        .subtab-pane[hidden] { display:none !important; }
-        .month-production-picker { max-width:240px; margin:0 0 15px; }
-        .daily-materials-value { font-size:19px !important; line-height:1.3; }
-        @media(max-width:600px) { .tab-button { flex:1; padding:10px 8px; font-size:13px; } .material-panel { padding:15px; } .daily-materials-value { font-size:16px !important; } }
-        @media print { .tab-nav { display:none !important; } }
-        body[data-theme="noite"] .tab-button { color:#d4dced; background:#243149; border-color:#354258; }
-        body[data-theme="noite"] .tab-button[aria-selected="true"] { color:#a9bdff; background:#1b2638; }
-        body[data-theme="noite"] .material-panel { color:#d4dced; background:#1b2638; border-color:#34435b; }
-        body[data-theme="noite"] .material-panel h2 { color:#a9bdff; }
-        body[data-theme="noite"] .material-help, body[data-theme="noite"] .material-status { color:#aab8d0; }
     </style>
 </head>
 <body>
@@ -896,17 +871,17 @@
     <!-- Painel de Resumo -->
     <div class="consulta-banner" id="consulta-banner">👁️ Acesso de consulta: você pode visualizar e exportar a produção, mas não alterá-la.</div>
 
-    <div class="tab-nav" role="tablist" aria-label="Seções do sistema">
-        <button class="tab-button" id="tab-button-producao" type="button" role="tab" aria-selected="true" aria-controls="tab-producao" onclick="selecionarAba('producao')">Produção</button>
-        <button class="tab-button" id="tab-button-material" type="button" role="tab" aria-selected="false" aria-controls="tab-material" onclick="selecionarAba('material')">Material e bobinas</button>
+    <div class="dashboard">
+        <div class="card">
+            <h3>Total de Peças</h3>
+            <p id="kpi-pecas">0</p>
+        </div>
+        <div class="card" style="border-left-color: var(--warning);">
+            <h3>Total de Embalagens</h3>
+            <p id="kpi-embalagens">0</p>
+        </div>
     </div>
 
-    <section class="tab-pane" id="tab-producao" role="tabpanel" aria-labelledby="tab-button-producao">
-    <div class="tab-nav subtab-nav" role="tablist" aria-label="Produção diária e mensal">
-        <button class="tab-button" id="subtab-button-dia" type="button" role="tab" aria-selected="true" aria-controls="subtab-dia" onclick="selecionarSubAba('dia')">Produção do dia</button>
-        <button class="tab-button" id="subtab-button-mes" type="button" role="tab" aria-selected="false" aria-controls="subtab-mes" onclick="selecionarSubAba('mes')">Totais do mês</button>
-    </div>
-    <section class="subtab-pane" id="subtab-dia" role="tabpanel" aria-labelledby="subtab-button-dia">
     <!-- Formulário -->
     <div class="form-section" id="production-form-section">
         
@@ -977,23 +952,6 @@
         </div>
     </div>
 
-    <div class="dashboard daily-dashboard">
-        <div class="card"><h3>Peças produzidas no dia</h3><p id="dia-kpi-pecas">0</p></div>
-        <div class="card"><h3>Pacotes / embalagens do dia</h3><p id="dia-kpi-embalagens">0</p></div>
-        <div class="card"><h3>Peças por bitola no dia</h3><p id="dia-kpi-materiais" class="daily-materials-value">Nenhuma</p></div>
-    </div>
-    </section>
-
-    <section class="subtab-pane" id="subtab-mes" role="tabpanel" aria-labelledby="subtab-button-mes" hidden>
-    <div class="input-group month-production-picker">
-        <label for="producao-mes">Mês para consultar</label>
-        <input type="month" id="producao-mes">
-    </div>
-    <div class="dashboard">
-        <div class="card"><h3>Total de Peças no Mês</h3><p id="kpi-pecas">0</p></div>
-        <div class="card" style="border-left-color: var(--warning);"><h3>Total de Embalagens no Mês</h3><p id="kpi-embalagens">0</p></div>
-    </div>
-
     <!-- Tabela -->
     <h1 class="print-title" id="print-title">Relatório de Produção</h1>
     
@@ -1041,61 +999,6 @@
         <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> Importar Excel</button>
         <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
     </div>
-    </section>
-    </section>
-
-    <section class="tab-pane" id="tab-material" role="tabpanel" aria-labelledby="tab-button-material" hidden>
-        <div class="material-panel">
-            <h2>Consumo de material e bobinas</h2>
-            <p class="material-help">Ao começar uma bobina nova, registre a data, a bitola e o peso dela. O resumo mensal soma o peso das bobinas iniciadas em cada mês.</p>
-            <div class="material-form">
-                <div class="input-group">
-                    <label for="material-data">Data de início da bobina</label>
-                    <input type="date" id="material-data" required>
-                </div>
-                <div class="input-group">
-                    <label for="material-tipo">Bitola da bobina</label>
-                    <select id="material-tipo" required>
-                        <option value="">Selecione a bitola...</option>
-                        <option value="3.8mm">3,8 mm</option>
-                        <option value="4.2mm">4,2 mm</option>
-                        <option value="5.0mm">5,0 mm</option>
-                        <option value="6.0mm">6,0 mm</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="material-peso">Peso da bobina nova (kg)</label>
-                    <input type="number" id="material-peso" min="0.01" step="0.01" inputmode="decimal" placeholder="Ex.: 250" required>
-                </div>
-                <div class="input-group">
-                    <label for="material-fornecedor">Fornecedor</label>
-                    <input type="text" id="material-fornecedor" maxlength="100" placeholder="Nome do fornecedor" required>
-                </div>
-                <button class="btn-add" id="btn-registrar-material" type="button" onclick="registrarBobinaConsumida()">+ Registrar bobina nova</button>
-            </div>
-            <p class="material-status" id="material-status" aria-live="polite">Aguardando sincronização do material…</p>
-            <div style="display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:12px 0;">
-                <div class="input-group" style="max-width:240px;">
-                    <label for="material-mes">Mês para consultar</label>
-                    <input type="month" id="material-mes">
-                </div>
-                <button class="btn-import" type="button" onclick="enviarResumoMaterialWhatsApp()">Enviar resumo pelo WhatsApp</button>
-            </div>
-            <div class="material-summary">
-                <div class="card"><h3>Kg de bobinas iniciadas no mês</h3><p id="material-total-kg">0,00 kg</p></div>
-                <div class="card"><h3>Bobinas iniciadas no mês</h3><p id="material-total-bobinas">0</p></div>
-            </div>
-            <div class="table-section">
-                <div class="table-header"><h3>Bobinas iniciadas no mês</h3></div>
-                <div class="table-responsive">
-                    <table aria-label="Bobinas iniciadas no mês">
-                        <thead><tr><th>Data</th><th>Material / bitola</th><th>Peso (kg)</th><th>Fornecedor</th><th class="material-actions-col">Ações</th></tr></thead>
-                        <tbody id="material-corpo-tabela"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
 
 <script>
@@ -1127,9 +1030,6 @@
     aplicarTema(temaSalvo);
     seletorTema.addEventListener('change', () => aplicarTema(seletorTema.value));
     let producaoRef = null;
-    let materialRef = null;
-    let materialPronto = false;
-    let materialConsumido = [];
     let padroesRef = null;
     let padroesLegadosRef = null;
     const EMAIL_ADMIN = 'arames@brasil.com';
@@ -1235,12 +1135,8 @@
         const app = document.getElementById('app-container');
         if (!user) {
             if (producaoRef) producaoRef.off();
-            if (materialRef) materialRef.off();
             if (padroesRef) padroesRef.off();
-            producaoRef = materialRef = padroesRef = null;
-            materialPronto = false;
-            materialConsumido = [];
-            renderizarMaterial();
+            producaoRef = padroesRef = null;
             firebaseProducaoPronto = firebasePadroesPronto = false;
             firebaseEdicaoLiberada = false;
             usuarioUidAtual = null;
@@ -1296,7 +1192,6 @@
 
         // Os dois usuários leem e trabalham sobre as mesmas referências.
         producaoRef = firebaseDb.ref('producao');
-        materialRef = firebaseDb.ref('consumoMaterial/items');
         padroesRef = firebaseDb.ref('estribosPadroes');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         firebaseProducaoPronto = firebasePadroesPronto = false;
@@ -1320,8 +1215,6 @@
             }
         }
         conectarFirebase();
-        conectarMaterialFirebase();
-        renderizarMaterial();
     });
 
     function atualizarBloqueioEdicao() {
@@ -1402,160 +1295,6 @@
         }, mostrarErroFirebase);
     }
 
-    function selecionarAba(nome) {
-        const materialAtiva = nome === 'material';
-        document.getElementById('tab-producao').hidden = materialAtiva;
-        document.getElementById('tab-material').hidden = !materialAtiva;
-        document.getElementById('tab-button-producao').setAttribute('aria-selected', String(!materialAtiva));
-        document.getElementById('tab-button-material').setAttribute('aria-selected', String(materialAtiva));
-        if (materialAtiva) renderizarMaterial();
-    }
-
-    function conectarMaterialFirebase() {
-        if (!materialRef) return;
-        materialPronto = false;
-        document.getElementById('material-status').innerText = 'Carregando registros de consumo…';
-        materialRef.on('value', snapshot => {
-            const dados = snapshot.val() || {};
-            materialConsumido = Object.keys(dados).map(key => ({ ...dados[key], _firebaseKey: key }))
-                .filter(item => item.tipoRegistro === 'bobina_iniciada')
-                .sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
-            materialPronto = true;
-            document.getElementById('material-status').innerText = 'Consumo sincronizado.';
-            renderizarMaterial();
-        }, error => {
-            console.error('Erro ao carregar consumo de material:', error);
-            materialPronto = false;
-            document.getElementById('material-status').innerText = 'Sem acesso ao histórico de consumo. Verifique as regras do Firebase para consumoMaterial.';
-            renderizarMaterial();
-        });
-    }
-
-    function renderizarMaterial() {
-        const dataInput = document.getElementById('material-data');
-        const mesInput = document.getElementById('material-mes');
-        if (!dataInput || !mesInput) return;
-        const agora = new Date();
-        const hojeLocal = new Date(agora.getTime() - agora.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-        if (!dataInput.value) dataInput.value = hojeLocal;
-        if (!mesInput.value) mesInput.value = hojeLocal.slice(0, 7);
-
-        const mesSelecionado = mesInput.value;
-        const registros = materialConsumido.filter(item => String(item.data || '').slice(0, 7) === mesSelecionado);
-        const totalKg = registros.reduce((soma, item) => soma + (Number(item.pesoKg) || 0), 0);
-        const formatoKg = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        document.getElementById('material-total-kg').textContent = `${formatoKg.format(totalKg)} kg`;
-        document.getElementById('material-total-bobinas').textContent = registros.length.toLocaleString('pt-BR');
-
-        const tbody = document.getElementById('material-corpo-tabela');
-        tbody.replaceChildren();
-        registros.forEach(item => {
-            const tr = document.createElement('tr');
-            const dataPartes = String(item.data || '').split('-');
-            const dataBr = dataPartes.length === 3 ? `${dataPartes[2]}/${dataPartes[1]}/${dataPartes[0]}` : String(item.data || '');
-            [dataBr, item.material || '', `${formatoKg.format(Number(item.pesoKg) || 0)} kg`, item.fornecedor || '—'].forEach(texto => {
-                const td = document.createElement('td');
-                td.textContent = texto;
-                tr.appendChild(td);
-            });
-            const tdAcao = document.createElement('td');
-            if (usuarioEhAdmin && item._firebaseKey) {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'btn-action btn-delete';
-                btn.textContent = 'Excluir';
-                btn.addEventListener('click', () => excluirBobinaConsumida(item._firebaseKey));
-                tdAcao.appendChild(btn);
-            }
-            tr.appendChild(tdAcao);
-            tbody.appendChild(tr);
-        });
-        if (!registros.length) {
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            td.colSpan = 5;
-            td.textContent = materialPronto ? 'Nenhuma bobina iniciada neste mês.' : 'Aguardando acesso aos registros de material.';
-            td.style.textAlign = 'center';
-            tr.appendChild(td);
-            tbody.appendChild(tr);
-        }
-
-        const btnRegistrar = document.getElementById('btn-registrar-material');
-        if (btnRegistrar) btnRegistrar.disabled = !usuarioEhAdmin || !materialPronto;
-        document.getElementById('material-data').disabled = !usuarioEhAdmin || !materialPronto;
-        document.getElementById('material-tipo').disabled = !usuarioEhAdmin || !materialPronto;
-        document.getElementById('material-peso').disabled = !usuarioEhAdmin || !materialPronto;
-        document.getElementById('material-fornecedor').disabled = !usuarioEhAdmin || !materialPronto;
-        document.querySelectorAll('.material-actions-col').forEach(el => el.style.display = usuarioEhAdmin ? '' : 'none');
-        document.querySelectorAll('#material-corpo-tabela tr').forEach(tr => {
-            if (!usuarioEhAdmin) tr.lastElementChild.style.display = 'none';
-        });
-    }
-
-    function registrarBobinaConsumida() {
-        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!materialPronto || !materialRef) { alert('Aguarde a sincronização do histórico de material.'); return; }
-        const data = document.getElementById('material-data').value;
-        const material = document.getElementById('material-tipo').value;
-        const pesoTexto = document.getElementById('material-peso').value.trim().replace(',', '.');
-        const pesoKg = Number(pesoTexto);
-        const fornecedor = document.getElementById('material-fornecedor').value.trim();
-        if (!data || !['3.8mm', '4.2mm', '5.0mm', '6.0mm'].includes(material) || !Number.isFinite(pesoKg) || pesoKg <= 0 || !fornecedor || fornecedor.length > 100) {
-            alert('Informe a data, selecione a bitola, digite um peso positivo e preencha o fornecedor.');
-            return;
-        }
-        const key = materialRef.push().key;
-        materialRef.child(key).set({ data, material, pesoKg, fornecedor, tipoRegistro: 'bobina_iniciada', criadoEm: new Date().toISOString() })
-            .then(() => {
-                document.getElementById('material-tipo').value = '';
-                document.getElementById('material-peso').value = '';
-                document.getElementById('material-fornecedor').value = '';
-                document.getElementById('material-status').innerText = 'Bobina nova registrada e sincronizada.';
-            })
-            .catch(error => {
-                console.error('Erro ao salvar bobina consumida:', error);
-                document.getElementById('material-status').innerText = 'Não foi possível gravar. Verifique as regras do Firebase para consumoMaterial.';
-                alert('A bobina nova não foi registrada. O Firebase recusou a gravação ou está indisponível.');
-            });
-    }
-
-    function excluirBobinaConsumida(key) {
-        if (!usuarioEhAdmin || !materialPronto || !materialRef) return;
-        if (!confirm('Excluir este registro de bobina consumida?')) return;
-        materialRef.child(key).remove().catch(error => {
-            console.error('Erro ao excluir registro de consumo:', error);
-            alert('Não foi possível excluir o registro. Verifique as regras do Firebase.');
-        });
-    }
-
-    function enviarResumoMaterialWhatsApp() {
-        const mes = document.getElementById('material-mes').value;
-        if (!mes) { alert('Escolha o mês que deseja compartilhar.'); return; }
-        const registros = materialConsumido.filter(item => String(item.data || '').slice(0, 7) === mes);
-        if (!registros.length) { alert('Não há bobinas registradas nesse mês para compartilhar.'); return; }
-        const totalKg = registros.reduce((soma, item) => soma + (Number(item.pesoKg) || 0), 0);
-        const formatoKg = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        const [ano, numeroMes] = mes.split('-');
-        const nomeMes = new Date(Number(ano), Number(numeroMes) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-        const linhasBobinas = registros
-            .slice()
-            .sort((a, b) => String(a.data || '').localeCompare(String(b.data || '')))
-            .map(item => {
-                const partesData = String(item.data || '').split('-');
-                const dataBr = partesData.length === 3 ? `${partesData[2]}/${partesData[1]}/${partesData[0]}` : String(item.data || '');
-                return `• ${dataBr} — ${item.material || 'Bitola não informada'} — ${formatoKg.format(Number(item.pesoKg) || 0)} kg — Fornecedor: ${item.fornecedor || 'não informado'}`;
-            });
-        const mensagem = [
-            `*Resumo de bobinas — ${nomeMes}*`,
-            `Total: *${formatoKg.format(totalKg)} kg* em *${registros.length} bobina(s)*`,
-            '',
-            ...linhasBobinas
-        ].join('\\n');
-        window.open(`https://wa.me/?text=${encodeURIComponent(mensagem)}`, '_blank', 'noopener,noreferrer');
-    }
-
-    document.getElementById('material-mes').addEventListener('change', renderizarMaterial);
-
     // Dados reais ficam no Firebase; nenhum registro de produção é embutido neste arquivo.
     const dadosIniciais = [];
 
@@ -1579,43 +1318,7 @@
     let estribosPadroes = (() => { try { return JSON.parse(localStorage.getItem('estribosPadroes') || 'null') || [...padroesIniciaisFirebase]; } catch (_) { return [...padroesIniciaisFirebase]; } })();
 
     document.getElementById('in-data').valueAsDate = new Date();
-    const hojeLocalISO = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    document.getElementById('producao-mes').value = hojeLocalISO.slice(0, 7);
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
-    document.getElementById('in-data').addEventListener('change', atualizarResumoDia);
-    document.getElementById('producao-mes').addEventListener('change', renderizarTabela);
-
-    function selecionarSubAba(nome) {
-        const mesAtivo = nome === 'mes';
-        document.getElementById('subtab-dia').hidden = mesAtivo;
-        document.getElementById('subtab-mes').hidden = !mesAtivo;
-        document.getElementById('subtab-button-dia').setAttribute('aria-selected', String(!mesAtivo));
-        document.getElementById('subtab-button-mes').setAttribute('aria-selected', String(mesAtivo));
-        if (mesAtivo) renderizarTabela();
-        else atualizarResumoDia();
-    }
-
-    function dataRegistroISO(item) {
-        const partes = String(item.dataFormatada || '').split('/');
-        return partes.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : '';
-    }
-
-    function atualizarResumoDia() {
-        const dataSelecionada = document.getElementById('in-data').value;
-        const registrosDia = producao.filter(item => dataRegistroISO(item) === dataSelecionada);
-        const pecas = registrosDia.reduce((soma, item) => soma + (Number(item.totalPecas) || 0), 0);
-        const embalagens = registrosDia.reduce((soma, item) => soma + (Number(item.totalEmb) || 0), 0);
-        const pecasPorBitola = new Map();
-        registrosDia.forEach(item => {
-            const bitola = String(item.bitola || 'Sem bitola').trim();
-            pecasPorBitola.set(bitola, (pecasPorBitola.get(bitola) || 0) + (Number(item.totalPecas) || 0));
-        });
-        document.getElementById('dia-kpi-pecas').textContent = pecas.toLocaleString('pt-BR');
-        document.getElementById('dia-kpi-embalagens').textContent = embalagens.toLocaleString('pt-BR');
-        document.getElementById('dia-kpi-materiais').textContent = pecasPorBitola.size
-            ? [...pecasPorBitola].map(([bitola, quantidade]) => `${bitola}: ${quantidade.toLocaleString('pt-BR')}`).join(' • ')
-            : 'Nenhuma';
-    }
 
     function salvarPadroes() {
         if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
@@ -1914,24 +1617,6 @@
 
         const totalPecas = qtdEmb * totalEmb;
 
-        // Avisa sobre outro lançamento do mesmo produto/bitola e total no mesmo dia.
-        // A confirmação permite salvar mesmo quando a repetição é intencional.
-        const duplicadosDoDia = producao.filter(item => {
-            if (editandoFirebaseKey && item._firebaseKey === editandoFirebaseKey) return false;
-            const dataExistente = item.dataFormatada || '';
-            const produtoExistente = String(item.produto || '').trim().replace(/\\s+/g, ' ').toLocaleUpperCase('pt-BR');
-            const bitolaExistente = String(item.bitola || '').trim().toLocaleLowerCase('pt-BR');
-            const pecasExistentes = Number(item.totalPecas) || (Number(item.qtdEmb) * Number(item.totalEmb));
-            return dataExistente === formatarData(data)
-                && produtoExistente === produto.trim().replace(/\\s+/g, ' ').toLocaleUpperCase('pt-BR')
-                && bitolaExistente === bitola.trim().toLocaleLowerCase('pt-BR')
-                && pecasExistentes === totalPecas;
-        });
-        if (duplicadosDoDia.length > 0) {
-            const aviso = `Atenção: já existe ${duplicadosDoDia.length === 1 ? 'um lançamento' : `${duplicadosDoDia.length} lançamentos`} no mesmo dia para ${produto}, ${bitola}, com ${totalPecas.toLocaleString('pt-BR')} peças.\\n\\nQuer salvar mesmo assim?`;
-            if (!confirm(aviso)) return;
-        }
-
         const registro = {
             dataFormatada: formatarData(data),
             produto,
@@ -1981,15 +1666,15 @@
         let somaEmbGeral = 0;
 
         const printTitle = document.getElementById('print-title');
-        const mesSelecionado = document.getElementById('producao-mes').value;
-        const [anoRelatorio, numeroMesRelatorio] = mesSelecionado.split('-');
-        const mesLegivel = mesSelecionado ? new Date(Number(anoRelatorio), Number(numeroMesRelatorio) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : 'mês selecionado';
-        printTitle.innerText = `Relatório de Produção — ${mesLegivel}${filtroAtual ? ` — ${filtroAtual}` : ''}`;
+        if (filtroAtual !== "") {
+            printTitle.innerText = `Relatório de Produção - ${filtroAtual}`;
+        } else {
+            printTitle.innerText = `Relatório de Produção Geral`;
+        }
 
         let dadosExibicao = [];
         producao.forEach((item, index) => {
-            const pertenceAoMes = dataRegistroISO(item).slice(0, 7) === mesSelecionado;
-            if (pertenceAoMes && (filtroAtual === "" || String(item.responsavel || '').includes(filtroAtual))) {
+            if (filtroAtual === "" || item.responsavel.includes(filtroAtual)) {
                 dadosExibicao.push({ ...item, originalIndex: index });
             }
         });
@@ -2093,7 +1778,6 @@
 
         document.getElementById('kpi-pecas').innerText = somaPecasGeral.toLocaleString('pt-BR');
         document.getElementById('kpi-embalagens').innerText = somaEmbGeral.toLocaleString('pt-BR');
-        atualizarResumoDia();
     }
 
     function editarItem(key) {
@@ -2399,10 +2083,8 @@
             return;
         }
 
-        const mesSelecionado = document.getElementById('producao-mes').value;
         const dadosExibicao = producao
-            .filter(item => dataRegistroISO(item).slice(0, 7) === mesSelecionado &&
-                (filtroAtual === "" || String(item.responsavel || '').includes(filtroAtual)))
+            .filter(item => filtroAtual === "" || String(item.responsavel || '').includes(filtroAtual))
             .slice();
 
         if (filtroAtual === "") {
