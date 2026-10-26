@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <!-- Biblioteca para Importar e Ler Excel -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
     
     <style>
         :root {
@@ -353,6 +354,22 @@
         }
 
         .table-header h3 { font-size: 18px; color: var(--primary); }
+        .mes-filtro { display:flex; align-items:center; gap:7px; font-size:13px; color:#536487; }
+        .tabs-app { display:flex; gap:10px; margin:0 0 16px; }
+        .tab-app { border:1px solid var(--border); border-radius:10px; padding:11px 18px; background:#fff; color:var(--primary); font-weight:700; cursor:pointer; box-shadow:var(--shadow-soft); }
+        .tab-app[aria-selected="true"] { color:#fff; background:var(--primary); border-color:var(--primary); }
+        .bobinas-dashboard { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:0 0 18px; }
+        .bobinas-form, .bobinas-section { background:#fff; padding:20px; border-radius:16px; box-shadow:var(--shadow-soft),inset 0 1px 0 #fff; margin-bottom:18px; }
+        .bobinas-section h3 { color:var(--primary); }
+        .bobinas-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+        .bobina-delete { border:0; border-radius:6px; padding:6px 10px; background:#fee2e2; color:#b91c1c; font-weight:700; cursor:pointer; }
+        #bobinas-page[hidden], #producao-page[hidden] { display:none !important; }
+        body[data-theme="noite"] .tab-app, body[data-theme="noite"] .bobinas-form, body[data-theme="noite"] .bobinas-section { background:#1b2638; color:#e4eaf5; border-color:#34435b; }
+        body[data-theme="noite"] .tab-app[aria-selected="true"] { background:var(--primary); }
+        .whatsapp-share { background:#168b55 !important; color:#fff !important; border:0 !important; }
+
+        .mes-filtro input { padding:7px 9px; border:1px solid var(--border); border-radius:8px; color:var(--text-main); background:#fff; }
+        body[data-theme="noite"] .mes-filtro input { color:#e4eaf5; background:#121c2b; border-color:#3b4a63; }
 
         /* --- LUPA EXPANSÍVEL --- */
         .search-box {
@@ -523,13 +540,18 @@
         /* --- IMPRESSÃO PDF --- */
         @media print {
             body { background: #fff; padding: 0; }
-            .header, .dashboard, .form-section, .actions, .btn-action, .table-header, th:last-child, td:last-child { display: none !important; }
+            .header, .dashboard, .form-section, .actions, .btn-action, .table-header, th:last-child, td:last-child, .tabs-app, .bobinas-form, .bobinas-actions, .bobinas-dashboard { display: none !important; }
+            #bobinas-page[hidden], #producao-page[hidden] { display:none !important; }
             .table-section { box-shadow: none; }
             .table-responsive { max-height: none; overflow: visible; }
             th { background: #f1f5f9 !important; color: #000 !important; -webkit-print-color-adjust: exact; position: static; }
             table, th, td { border: 1px solid #000; }
             h1.print-title { display: block !important; font-size: 20px; margin-bottom: 15px; text-align: center; }
-            
+            body.impressao-bobinas #producao-page { display:none !important; }
+            body.impressao-bobinas #print-title { display:none !important; }
+            body.impressao-bobinas #print-title-bobinas { display:block !important; }
+            body.impressao-producao #bobinas-page { display:none !important; }
+            body.impressao-producao #print-title-bobinas { display:none !important; }
             .linha-subtotal td { font-weight: bold; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
             .linha-total-geral td { font-weight: bold; background-color: #e2e8f0 !important; font-size: 15px; -webkit-print-color-adjust: exact; }
             .row-new td { animation: none; }
@@ -552,6 +574,7 @@
         body.solo-consulta .consulta-banner { display:block; }
         body.solo-consulta #production-form-section,
         body.solo-consulta .solo-admin,
+        body.solo-consulta #bobinas-page .solo-admin,
         body.solo-consulta #col-acoes { display:none !important; }
         body.solo-consulta th:last-child, body.solo-consulta td:last-child { display:none !important; }
         .auth-buttons { display:flex; gap:10px; margin-top:16px; }
@@ -700,6 +723,8 @@
         .auth-buttons button { flex:1; }
 
         @media (max-width: 700px) {
+            .table-header { flex-wrap:wrap; gap:10px; }
+            .mes-filtro { order:3; }
             body { padding:12px; }
             .header { padding:19px; align-items:flex-start; gap:12px; }
             .header > div:last-child { text-align:right !important; font-size:12px; }
@@ -871,6 +896,12 @@
     <!-- Painel de Resumo -->
     <div class="consulta-banner" id="consulta-banner">👁️ Acesso de consulta: você pode visualizar e exportar a produção, mas não alterá-la.</div>
 
+    <div class="tabs-app" role="tablist" aria-label="Seções do controle">
+        <button type="button" class="tab-app" id="tab-producao" role="tab" aria-selected="true" aria-controls="producao-page" onclick="selecionarAba('producao')">Produção de estribos</button>
+        <button type="button" class="tab-app" id="tab-bobinas" role="tab" aria-selected="false" aria-controls="bobinas-page" onclick="selecionarAba('bobinas')">Bobinas</button>
+    </div>
+
+    <div id="producao-page" role="tabpanel" aria-labelledby="tab-producao">
     <div class="dashboard">
         <div class="card">
             <h3>Total de Peças</h3>
@@ -895,19 +926,19 @@
 
         <div class="form-grid">
             <div class="input-group">
-                <label>Data</label>
+                <label for="in-data">Data</label>
                 <input type="date" id="in-data" required>
             </div>
             
             <!-- Campo de Produto com AUTOCOMPLETE -->
             <div class="input-group autocomplete-wrapper">
-                <label>Estribo / Produto</label>
+                <label for="in-produto">Estribo / Produto</label>
                 <input type="text" id="in-produto" placeholder="Ex: RED 15" autocomplete="off" required>
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>
 
             <div class="input-group">
-                <label>Bitola</label>
+                <label for="in-bitola">Bitola</label>
                 <select id="in-bitola" required>
                     <option value="">Selecione...</option>
                     <option value="3.8mm">3.8mm</option>
@@ -917,7 +948,7 @@
                 </select>
             </div>
             <div class="input-group">
-                <label>Embalagem</label>
+                <label for="in-embalagem">Embalagem</label>
                 <select id="in-embalagem" onchange="automatizarPreenchimento()" required>
                     <option value="">Selecione...</option>
                     <option value="PACOTE">PACOTE</option>
@@ -927,15 +958,15 @@
                 </select>
             </div>
             <div class="input-group">
-                <label>Qtd. na Embalagem</label>
+                <label for="in-qtd-emb">Qtd. na Embalagem</label>
                 <input type="number" id="in-qtd-emb" min="1" step="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ex: 100" required>
             </div>
             <div class="input-group">
-                <label>Total de Embalagens</label>
+                <label for="in-total-emb">Total de Embalagens</label>
                 <input type="number" id="in-total-emb" min="1" step="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Ex: 5" required>
             </div>
             <div class="input-group">
-                <label>Responsável</label>
+                <label for="in-responsavel">Responsável</label>
                 <div class="input-with-buttons">
                     <select id="in-responsavel" required>
                         <option value="">Selecione...</option>
@@ -958,12 +989,16 @@
     <div class="table-section">
         <!-- Cabeçalho da Tabela com a Lupa de Busca -->
         <div class="table-header">
-            <h3>Produção do Mês <button class="btn-refresh-month solo-admin" type="button" onclick="atualizarTotaisProducao()" title="Conferir e atualizar os totais" aria-label="Conferir e atualizar os totais">⟳</button></h3>
+            <h3><span id="titulo-producao-mes">Produção do mês</span> <button class="btn-refresh-month solo-admin" type="button" onclick="atualizarTotaisProducao()" title="Conferir e atualizar os totais" aria-label="Conferir e atualizar os totais">⟳</button></h3>
             
+            <div class="mes-filtro">
+                <label for="filtro-mes">Mês:</label>
+                <input type="month" id="filtro-mes" aria-label="Filtrar produção por mês">
+            </div>
             <!-- LUPA -->
-            <div class="search-box" id="search-box" onclick="expandirBusca()">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="busca-responsavel" placeholder="Buscar operador..." oninput="filtrarPorResponsavel()" onblur="recolherBusca()">
+            <div class="search-box" id="search-box" onclick="expandirBusca()" role="search">
+                <span class="search-icon" aria-hidden="true">🔍</span>
+                <input type="text" id="busca-responsavel" aria-label="Buscar produção pelo nome do operador" placeholder="Buscar operador..." oninput="filtrarPorResponsavel()" onblur="recolherBusca()">
             </div>
             
         </div>
@@ -972,15 +1007,15 @@
             <table id="tabela">
                 <thead>
                     <tr>
-                        <th>Data</th>
-                        <th>Estribo/Produto</th>
-                        <th>Bitola</th>
-                        <th>Embalagem</th>
-                        <th>Qtd. Emb.</th>
-                        <th>Total Emb.</th>
-                        <th>Total Peças</th>
-                        <th>Responsável</th>
-                        <th id="col-acoes">Ações</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Estribo/Produto</th>
+                        <th scope="col">Bitola</th>
+                        <th scope="col">Embalagem</th>
+                        <th scope="col">Qtd. Emb.</th>
+                        <th scope="col">Total Emb.</th>
+                        <th scope="col">Total Peças</th>
+                        <th scope="col">Responsável</th>
+                        <th scope="col" id="col-acoes">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="corpo-tabela">
@@ -997,12 +1032,53 @@
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
         <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> Importar Excel</button>
+        <button class="btn-pdf" type="button" onclick="window.print()" title="Imprimir ou salvar em PDF">Imprimir / PDF</button>
+        <button class="btn-pdf whatsapp-share" type="button" onclick="compartilharRelatorio('producao','pdf')">Compartilhar PDF no WhatsApp</button>
         <button class="btn-excel" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
+        <button class="btn-excel whatsapp-share" type="button" onclick="compartilharRelatorio('producao','xlsx')">Compartilhar Excel no WhatsApp</button>
     </div>
+    </div><!-- /producao-page -->
+
+    <section id="bobinas-page" role="tabpanel" aria-labelledby="tab-bobinas" hidden>
+        <h1 class="print-title" id="print-title-bobinas">Controle mensal de bobinas</h1>
+        <div class="bobinas-dashboard">
+            <div class="card"><h3>Bobinas no mês</h3><p id="kpi-bobinas-qtd">0</p></div>
+            <div class="card"><h3>Quilos usados no mês</h3><p id="kpi-bobinas-kg">0 kg</p></div>
+            <div class="card"><h3>Peças produzidas no mês</h3><p id="kpi-bobinas-pecas">0</p></div>
+        </div>
+        <div class="bobinas-form solo-admin">
+            <h3 style="margin-bottom:14px;color:var(--primary)">Lançar bobina utilizada</h3>
+            <div class="form-grid">
+                <div class="input-group"><label for="bobina-data">Data</label><input type="date" id="bobina-data" required></div>
+                <div class="input-group"><label for="bobina-nome">Bobina / identificação</label><input type="text" id="bobina-nome" maxlength="80" placeholder="Ex.: Bobina 4,2 mm — lote 018" required></div>
+                <div class="input-group"><label for="bobina-kg">Peso utilizado (kg)</label><input type="text" id="bobina-kg" inputmode="decimal" placeholder="Ex.: 25,5" aria-describedby="bobina-kg-ajuda" required><small id="bobina-kg-ajuda">Aceita vírgula ou ponto decimal (até 3 casas).</small></div>
+                <div class="input-group"><label for="bobina-pecas">Peças produzidas</label><input type="number" id="bobina-pecas" min="0" step="1" inputmode="numeric" placeholder="Ex.: 1200" required></div>
+                <div class="input-group"><label for="bobina-responsavel">Responsável</label><input type="text" id="bobina-responsavel" maxlength="80" placeholder="Nome do operador"></div>
+                <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Registrar bobina</button>
+            </div>
+        </div>
+        <div class="bobinas-section">
+            <div class="table-header" style="padding:0 0 14px;border:0;flex-wrap:wrap;gap:10px">
+                <h3>Controle mensal de bobinas</h3>
+                <div class="mes-filtro"><label for="filtro-mes-bobinas">Mês:</label><input type="month" id="filtro-mes-bobinas" aria-label="Filtrar bobinas por mês"></div>
+            </div>
+            <div class="table-responsive"><table id="tabela-bobinas">
+                <thead><tr><th scope="col">Data</th><th scope="col">Bobina</th><th scope="col">Kg usados</th><th scope="col">Peças</th><th scope="col">Responsável</th><th scope="col" class="solo-admin">Ações</th></tr></thead>
+                <tbody id="corpo-tabela-bobinas"></tbody>
+            </table></div>
+            <div class="bobinas-actions">
+                <button class="btn-excel" type="button" onclick="exportarBobinasExcel()">Exportar bobinas Excel</button>
+                <button class="btn-pdf" type="button" onclick="compartilharRelatorio('bobinas','pdf')">Compartilhar PDF no WhatsApp</button>
+                <button class="btn-excel whatsapp-share" type="button" onclick="compartilharRelatorio('bobinas','xlsx')">Compartilhar Excel no WhatsApp</button>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
-    // Configuração Web do Firebase (não use aqui a chave de service account/Admin SDK).
+    // Configuração pública do Firebase Web: NÃO é controle de acesso.
+    // Proteja /producao, /estribosPadroes e /operadores com regras do Realtime Database.
+    // Regras do Firebase precisam ser configuradas no Console e não podem ser impostas por este HTML.
     const firebaseConfig = {
         apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
         authDomain: "controle---estoque.firebaseapp.com",
@@ -1032,6 +1108,12 @@
     let producaoRef = null;
     let padroesRef = null;
     let padroesLegadosRef = null;
+    let operadoresRef = null;
+    let bobinasRef = null;
+    let bobinas = [];
+    let filtroMesBobinas = '';
+    let nomesOperadoresFirebase = [];
+    let operadoresFirebaseSnapshot = {};
     const EMAIL_ADMIN = 'arames@brasil.com';
     const EMAIL_CONSULTA = 'arames@confere.com';
     let usuarioEhAdmin = false;
@@ -1078,7 +1160,7 @@
     function carregarNomesLogin() {
         let nomesSalvos = [];
         try { nomesSalvos = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
-        const nomes = [...new Set([...standardOperatorNames, ...(Array.isArray(nomesSalvos) ? nomesSalvos : [])]
+        const nomes = [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase, ...(Array.isArray(nomesSalvos) ? nomesSalvos : [])]
             .map(nome => String(nome).trim().toLocaleUpperCase('pt-BR')).filter(Boolean))];
         const selecionado = loginNameSelect.value || localStorage.getItem('responsavel_login') || '';
         loginNameSelect.innerHTML = '<option value="">Selecione seu nome...</option>';
@@ -1092,6 +1174,19 @@
     }
 
     carregarNomesLogin();
+    function sincronizarOperadoresNaTela() {
+        const select = document.getElementById('in-responsavel');
+        const atual = select.value;
+        let nomesLocais = [];
+        try { nomesLocais = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
+        const nomeLogin = String(localStorage.getItem('responsavel_login') || '').trim();
+        const nomes = [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase, ...(Array.isArray(nomesLocais) ? nomesLocais : []), nomeLogin].map(nome => String(nome).trim().toLocaleUpperCase('pt-BR')).filter(Boolean))];
+        select.innerHTML = '';
+        const vazio = document.createElement('option'); vazio.value = ''; vazio.textContent = 'Selecione...'; select.appendChild(vazio);
+        nomes.forEach(nome => { const option = document.createElement('option'); option.value = nome; option.textContent = nome; select.appendChild(option); });
+        if (atual && nomes.includes(atual.toLocaleUpperCase('pt-BR'))) select.value = atual.toLocaleUpperCase('pt-BR');
+        carregarNomesLogin();
+    }
     document.getElementById('add-login-name').addEventListener('click', () => {
         const novoNome = prompt('Digite o nome para adicionar à lista:');
         if (!novoNome || !novoNome.trim()) return;
@@ -1136,7 +1231,12 @@
         if (!user) {
             if (producaoRef) producaoRef.off();
             if (padroesRef) padroesRef.off();
-            producaoRef = padroesRef = null;
+            if (operadoresRef) operadoresRef.off();
+            if (bobinasRef) bobinasRef.off();
+            producaoRef = padroesRef = operadoresRef = bobinasRef = null;
+            bobinas = [];
+            nomesOperadoresFirebase = [];
+            operadoresFirebaseSnapshot = {};
             firebaseProducaoPronto = firebasePadroesPronto = false;
             firebaseEdicaoLiberada = false;
             usuarioUidAtual = null;
@@ -1185,8 +1285,9 @@
         }
 
         producao = dadosIniciais.map(item => ({ ...item }));
-        const padroesLocalUsuario = localStorage.getItem('estribosPadroes_' + user.uid);
-        estribosPadroes = padroesLocalUsuario ? JSON.parse(padroesLocalUsuario) : [...padroesIniciaisFirebase];
+        let padroesLocalUsuario = null;
+        try { padroesLocalUsuario = JSON.parse(localStorage.getItem('estribosPadroes_' + user.uid) || 'null'); } catch (_) {}
+        estribosPadroes = Array.isArray(padroesLocalUsuario) ? padroesLocalUsuario : [...padroesIniciaisFirebase];
         renderizarTabela();
         renderizarEstribosPadroes();
 
@@ -1194,6 +1295,27 @@
         producaoRef = firebaseDb.ref('producao');
         padroesRef = firebaseDb.ref('estribosPadroes');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
+        operadoresRef = firebaseDb.ref('operadores');
+        bobinasRef = firebaseDb.ref('bobinas/items');
+        bobinasRef.on('value', snapshot => {
+            const items = snapshot.val() || {};
+            bobinas = Object.keys(items).map(key => ({ ...items[key], _firebaseKey: key }));
+            renderizarBobinas();
+        }, mostrarErroFirebase);
+        operadoresRef.on('value', snapshot => {
+            operadoresFirebaseSnapshot = snapshot.val() || {};
+            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).map(item => String((item && item.nome) || '').trim()).filter(Boolean);
+            sincronizarOperadoresNaTela();
+            if (usuarioEhAdmin) {
+                let locais = [];
+                try { locais = JSON.parse(localStorage.getItem('nomes_responsaveis') || '[]'); } catch (_) {}
+                if (Array.isArray(locais)) {
+                    const existentes = new Set(nomesOperadoresFirebase.map(nome => nome.toLocaleUpperCase('pt-BR')));
+                    const migrar = [...new Set(locais.map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(Boolean))].filter(nome => !existentes.has(nome));
+                    if (migrar.length) Promise.all(migrar.map(nome => operadoresRef.push({ nome }))).catch(mostrarErroFirebase);
+                }
+            }
+        }, mostrarErroFirebase);
         firebaseProducaoPronto = firebasePadroesPronto = false;
 
         // Não restaura produção do cache antigo nem migra automaticamente dados privados.
@@ -1222,7 +1344,7 @@
         document.querySelectorAll('.solo-admin').forEach(el => {
             if ('disabled' in el) el.disabled = bloqueado;
         });
-        ['btn-add', 'btn-cancel', 'in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'].forEach(id => {
+        ['btn-add', 'btn-cancel', 'in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel', 'bobina-data', 'bobina-nome', 'bobina-kg', 'bobina-pecas', 'bobina-responsavel', 'btn-salvar-bobina'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
@@ -1307,16 +1429,30 @@
         }
     });
 
-    let idContador = 1;
     let editandoIndex = -1;
     let editandoFirebaseKey = null;
     let editandoAssinaturaOriginal = null;
     let filtroAtual = ""; 
     let modoGerenciar = false;
-    let ultimoAdicionadoIndex = -1;
+    let filtroMesAtual = '';
 
     let estribosPadroes = (() => { try { return JSON.parse(localStorage.getItem('estribosPadroes') || 'null') || [...padroesIniciaisFirebase]; } catch (_) { return [...padroesIniciaisFirebase]; } })();
 
+    function mesLocalAtual() {
+        const agora = new Date();
+        return `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`;
+    }
+    const campoFiltroMes = document.getElementById('filtro-mes');
+    campoFiltroMes.value = mesLocalAtual();
+    filtroMesAtual = campoFiltroMes.value;
+    campoFiltroMes.addEventListener('change', () => { filtroMesAtual = campoFiltroMes.value; renderizarTabela(); });
+    window.addEventListener('beforeprint', () => document.body.classList.add(document.getElementById('bobinas-page').hidden ? 'impressao-producao' : 'impressao-bobinas'));
+    window.addEventListener('afterprint', () => document.body.classList.remove('impressao-producao', 'impressao-bobinas'));
+    const campoFiltroMesBobinas = document.getElementById('filtro-mes-bobinas');
+    campoFiltroMesBobinas.value = mesLocalAtual();
+    filtroMesBobinas = campoFiltroMesBobinas.value;
+    campoFiltroMesBobinas.addEventListener('change', () => { filtroMesBobinas = campoFiltroMesBobinas.value; renderizarBobinas(); });
+    document.getElementById('bobina-data').valueAsDate = new Date();
     document.getElementById('in-data').valueAsDate = new Date();
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
 
@@ -1354,9 +1490,8 @@
 
     // Neutraliza células textuais interpretáveis como fórmulas por planilhas.
     function escaparCelulaExcel(valor) {
-        let texto = String(valor ?? '');
-        if (/^[\s\u0000-\u001f]*[=+\-@]/.test(texto)) texto = "'" + texto;
-        return escaparHtml(texto);
+        const texto = String(valor ?? '');
+        return /^[\s\u0000-\u001f]*[=+\-@]/.test(texto) ? "'" + texto : texto;
     }
 
     // ==========================================
@@ -1366,7 +1501,7 @@
     const listaAutocomplete = document.getElementById('autocomplete-list');
 
     inputProduto.addEventListener('input', function() {
-        const valorDigitado = this.value.toUpperCase();
+        const valorDigitado = this.value.toLocaleUpperCase('pt-BR');
         closeAllLists(); 
         
         if (!valorDigitado) { return false; }
@@ -1454,18 +1589,25 @@
         estribosPadroes.forEach(nome => {
             const chip = document.createElement('div');
             chip.className = 'chip';
-            
-            chip.onclick = () => {
+            chip.setAttribute('role', modoGerenciar ? 'group' : 'button');
+            if (!modoGerenciar) {
+                chip.tabIndex = 0;
+                chip.setAttribute('aria-label', `Preencher formulário com ${nome}`);
+            }
+            const selecionarChip = () => {
                 if (modoGerenciar) return;
                 document.getElementById('in-produto').value = nome;
                 aplicarAutomacaoAmaciado(nome); 
                 document.getElementById('in-bitola').focus();
             };
+            chip.onclick = () => { if (!modoGerenciar) selecionarChip(); };
+            chip.onkeydown = event => { if (!modoGerenciar && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); selecionarChip(); } };
             
             const label = document.createElement('span');
             label.textContent = nome;
             chip.appendChild(label);
             if (modoGerenciar) {
+                chip.setAttribute('aria-label', `Padrão ${nome}; use os botões para editar ou excluir`);
                 const btnEditar = document.createElement('button');
                 btnEditar.className = 'chip-edit'; btnEditar.type = 'button'; btnEditar.title = 'Renomear'; btnEditar.textContent = '✏️';
                 btnEditar.addEventListener('click', event => editarEstriboPadrao(event, nome));
@@ -1481,6 +1623,8 @@
         const btnAdd = document.createElement('div');
         btnAdd.className = 'add-pattern-box';
         btnAdd.id = 'btn-add-pattern';
+        btnAdd.setAttribute('role', 'button'); btnAdd.tabIndex = 0; btnAdd.setAttribute('aria-label', 'Salvar padrão atual');
+        btnAdd.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnAdd.click(); } };
         btnAdd.onclick = (e) => {
             e.stopPropagation();
             const box = document.getElementById('btn-add-pattern');
@@ -1501,6 +1645,8 @@
         // BOTÃO GERENCIAR EXPANSÍVEL
         const btnGerenciar = document.createElement('div');
         btnGerenciar.className = modoGerenciar ? 'manage-box active' : 'manage-box';
+        btnGerenciar.setAttribute('role', 'button'); btnGerenciar.tabIndex = 0; btnGerenciar.setAttribute('aria-label', modoGerenciar ? 'Concluir gerenciamento de padrões' : 'Gerenciar padrões');
+        btnGerenciar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnGerenciar.click(); } };
         btnGerenciar.onclick = (e) => {
             e.stopPropagation();
             toggleModoGerenciar();
@@ -1515,7 +1661,6 @@
 
     function adicionarNovoEstriboPadrao() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const valorAtual = document.getElementById('in-produto').value.trim().toUpperCase();
         let nome = prompt("Digite o nome do novo Estribo Padrão:", valorAtual);
@@ -1534,7 +1679,6 @@
 
     function editarEstriboPadrao(event, nomeAntigo) {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         event.stopPropagation(); 
         
@@ -1560,7 +1704,6 @@
     function excluirEstriboPadrao(event, nome) {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
-        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         event.stopPropagation();
         if (confirm(`Tem certeza que deseja APAGAR o padrão "${nome}"?`)) {
             estribosPadroes = ordenarListaEstribos(estribosPadroes.filter(item => item !== nome));
@@ -1578,6 +1721,10 @@
         const inputQtdEmb = document.getElementById('in-qtd-emb');
         const inputBitola = document.getElementById('in-bitola');
 
+        if (!['M. LIVRE', 'CAIXA'].includes(embalagem)) {
+            inputQtdEmb.value = '';
+            inputBitola.value = '';
+        }
         if (embalagem === 'M. LIVRE') {
             inputQtdEmb.value = 100;
             inputBitola.value = "4.2mm";
@@ -1598,6 +1745,153 @@
         }, 1000);
     }
 
+    function selecionarAba(aba) {
+        const bobinasAtiva = aba === 'bobinas';
+        document.getElementById('producao-page').hidden = bobinasAtiva;
+        document.getElementById('bobinas-page').hidden = !bobinasAtiva;
+        document.getElementById('tab-producao').setAttribute('aria-selected', String(!bobinasAtiva));
+        document.getElementById('tab-bobinas').setAttribute('aria-selected', String(bobinasAtiva));
+    }
+
+    function renderizarBobinas() {
+        const tbody = document.getElementById('corpo-tabela-bobinas');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        const chaveData = valor => {
+            const partes = String(valor || '').split('/');
+            if (partes.length !== 3) return '';
+            return `${partes[2]}-${String(partes[1]).padStart(2,'0')}-${String(partes[0]).padStart(2,'0')}`;
+        };
+        const dados = bobinas.filter(item => registroNoMes(item, filtroMesBobinas)).sort((a,b) => chaveData(b.dataFormatada).localeCompare(chaveData(a.dataFormatada)));
+        let somaKg = 0, somaPecas = 0;
+        dados.forEach(item => {
+            const kg = Number(item.kg) || 0, pecas = numeroSeguro(item.pecas);
+            somaKg += kg; somaPecas += pecas;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${escaparHtml(item.dataFormatada)}</td><td>${escaparHtml(item.nome)}</td><td>${kg.toLocaleString('pt-BR',{minimumFractionDigits:0, maximumFractionDigits:3})}</td><td>${pecas.toLocaleString('pt-BR')}</td><td>${escaparHtml(item.responsavel || '')}</td><td class="solo-admin"></td>`;
+            if (usuarioEhAdmin) {
+                const btn = document.createElement('button');
+                btn.type = 'button'; btn.className = 'bobina-delete'; btn.textContent = 'Excluir';
+                btn.setAttribute('aria-label', `Excluir lançamento da bobina ${item.nome || ''}`);
+                btn.addEventListener('click', () => excluirBobina(item._firebaseKey));
+                tr.lastElementChild.appendChild(btn);
+            }
+            tbody.appendChild(tr);
+        });
+        if (!dados.length) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:18px">Nenhuma bobina lançada neste mês.</td></tr>';
+        const kgFormatado = somaKg.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:3});
+        document.getElementById('kpi-bobinas-qtd').textContent = dados.length.toLocaleString('pt-BR');
+        document.getElementById('kpi-bobinas-kg').textContent = `${kgFormatado} kg`;
+        document.getElementById('kpi-bobinas-pecas').textContent = somaPecas.toLocaleString('pt-BR');
+        const [ano,mes] = String(filtroMesBobinas || '').split('-');
+        const mesRotulo = ano && mes ? new Date(Number(ano),Number(mes)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) : 'todos os meses';
+        document.getElementById('print-title-bobinas').textContent = `Controle mensal de bobinas — ${mesRotulo}`;
+        atualizarBloqueioEdicao();
+    }
+
+    async function salvarBobina() {
+        if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
+        if (!firebaseEdicaoLiberada || !bobinasRef) { alert('Aguarde a sincronização com o Firebase.'); return; }
+        const data = document.getElementById('bobina-data');
+        const nome = document.getElementById('bobina-nome');
+        const kgInput = document.getElementById('bobina-kg');
+        const pecasInput = document.getElementById('bobina-pecas');
+        const responsavelInput = document.getElementById('bobina-responsavel');
+        for (const campo of [data,nome,kgInput,pecasInput]) { if (!campo.checkValidity()) { campo.reportValidity(); return; } }
+        const kgTexto = kgInput.value.trim().replace(',','.');
+        const kg = Number(kgTexto);
+        const pecas = Number(pecasInput.value);
+        if (!/^\d+(?:[.,]\d{1,3})?$/.test(kgInput.value.trim()) || !Number.isFinite(kg) || kg <= 0 || !Number.isSafeInteger(pecas) || pecas < 0) { alert('Informe o peso em kg (até 3 casas decimais) e uma quantidade inteira válida de peças.'); return; }
+        const registro = { dataFormatada: formatarData(data.value), nome: nome.value.trim(), kg, pecas, responsavel: (responsavelInput.value.trim() || localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR') };
+        try {
+            await bobinasRef.push(registro);
+            nome.value = ''; kgInput.value = ''; pecasInput.value = '';
+            responsavelInput.value = '';
+            data.valueAsDate = new Date();
+            alert('Bobina registrada.');
+        } catch (error) { mostrarErroFirebase(error); }
+    }
+
+    async function excluirBobina(key) {
+        if (!usuarioEhAdmin || !firebaseEdicaoLiberada || !bobinasRef) return;
+        const item = bobinas.find(registro => registro._firebaseKey === key);
+        if (!item || !confirm(`Excluir o lançamento da bobina “${item.nome}” de ${item.dataFormatada}?`)) return;
+        try { await bobinasRef.child(key).remove(); }
+        catch (error) { mostrarErroFirebase(error); }
+    }
+
+    function nomeMesArquivo(mes) { return String(mes || mesLocalAtual()).replace('-', '_'); }
+    function dadosBobinasFiltrados() { return bobinas.filter(item => registroNoMes(item, filtroMesBobinas)); }
+
+    function gerarArquivoRelatorio(tipo, formato) {
+        const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g,'-');
+        const dados = tipo === 'bobinas' ? dadosBobinasFiltrados() : producao.filter(item => registroNoMes(item, filtroMesAtual) && (filtroAtual === '' || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)));
+        const titulo = tipo === 'bobinas' ? `Relatorio_Bobinas_${nomeMesArquivo(filtroMesBobinas)}` : `Relatorio_Producao_${nomeMesArquivo(filtroMesAtual)}`;
+        if (!dados.length) throw new Error('Não há registros para o mês selecionado.');
+        if (formato === 'xlsx') {
+            const somaBobinasKg = dados.reduce((a,x)=>a+(Number(x.kg)||0),0);
+            const somaBobinasPecas = dados.reduce((a,x)=>a+(Number(x.pecas)||0),0);
+            const somaProducaoEmb = dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0);
+            const somaProducaoPecas = dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0);
+            const linhas = tipo === 'bobinas'
+                ? [['DATA','BOBINA','KG USADOS','PEÇAS PRODUZIDAS','RESPONSÁVEL'], ...dados.map(x => [x.dataFormatada, escaparCelulaExcel(x.nome), Number(x.kg)||0, Number(x.pecas)||0, escaparCelulaExcel(x.responsavel)]), ['', 'TOTAL DO MÊS', somaBobinasKg, somaBobinasPecas, '']]
+                : [['DATA','ESTRIBO','BITOLA','EMBALAGEM','QTD. EMB.','TOTAL EMB.','TOTAL PEÇAS','RESPONSÁVEL'], ...dados.map(x => [x.dataFormatada, escaparCelulaExcel(x.produto), escaparCelulaExcel(x.bitola), escaparCelulaExcel(x.embalagem), Number(x.qtdEmb)||0, Number(x.totalEmb)||0, Number(x.totalPecas)||0, escaparCelulaExcel(x.responsavel)]), ['', '', '', '', 'TOTAL DO MÊS', somaProducaoEmb, somaProducaoPecas, '']];
+            const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,tipo === 'bobinas' ? 'Bobinas' : 'Produção');
+            return { blob: new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}), filename: `${titulo}.xlsx`, mime:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' };
+        }
+        if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('Biblioteca PDF não carregou. Confira sua conexão e tente novamente.');
+        const pdf = new window.jspdf.jsPDF({orientation:'landscape'});
+        pdf.setFontSize(16); pdf.text(tipo === 'bobinas' ? 'Controle mensal de bobinas' : 'Relatório mensal de produção', 14, 16);
+        const mesRelatorio = tipo === 'bobinas' ? filtroMesBobinas : filtroMesAtual;
+        pdf.setFontSize(10); pdf.text(`Mês: ${mesRelatorio || 'Todos'}`, 14, 22);
+        pdf.setFontSize(9);
+        const colunas = tipo === 'bobinas' ? ['Data','Bobina','Kg usados','Peças','Responsável'] : ['Data','Estribo','Bitola','Embalagem','Qtd/emb.','Total emb.','Peças','Responsável'];
+        const linhas = dados.map(x => tipo === 'bobinas' ? [x.dataFormatada,x.nome,String(x.kg),String(x.pecas),x.responsavel || ''] : [x.dataFormatada,x.produto,x.bitola,x.embalagem,String(x.qtdEmb),String(x.totalEmb),String(x.totalPecas),x.responsavel || '']);
+        const larguras = tipo === 'bobinas' ? [27,80,34,30,80] : [24,48,20,30,22,22,22,48];
+        let y=26; const x0=14; let rowH=9;
+        const linhaTabela = (cells, bold=false) => {
+            let x=x0; pdf.setFont(undefined,bold?'bold':'normal');
+            cells.forEach((cell,i) => { pdf.rect(x,y,larguras[i],rowH); const txt=pdf.splitTextToSize(String(cell ?? ''),larguras[i]-3); pdf.text(txt.slice(0,2),x+1.5,y+5); x+=larguras[i]; });
+            y+=rowH; if(y>185){pdf.addPage();y=15;}
+        };
+        y=30;
+        linhaTabela(colunas,true); linhas.forEach(l => linhaTabela(l));
+        if (tipo === 'bobinas') {
+            linhaTabela(['TOTAL', '', `${dados.reduce((a,x)=>a+(Number(x.kg)||0),0).toLocaleString('pt-BR')} kg`, dados.reduce((a,x)=>a+(Number(x.pecas)||0),0).toLocaleString('pt-BR'), ''],true);
+        } else {
+            linhaTabela(['TOTAL DO MÊS','','','','',dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0).toLocaleString('pt-BR'),dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0).toLocaleString('pt-BR'),''],true);
+        }
+        return { blob: pdf.output('blob'), filename: `${titulo}.pdf`, mime:'application/pdf' };
+    }
+
+    async function compartilharRelatorio(tipo, formato) {
+        try {
+            const arquivo = gerarArquivoRelatorio(tipo, formato);
+            const file = new File([arquivo.blob], arquivo.filename, { type: arquivo.mime });
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: arquivo.filename, text: 'Relatório do controle de produção.' });
+                return;
+            }
+            const url = URL.createObjectURL(arquivo.blob);
+            const a = document.createElement('a'); a.href=url; a.download=arquivo.filename; document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+            const mesCompartilhado = tipo === 'bobinas' ? filtroMesBobinas : filtroMesAtual;
+            const mensagem = encodeURIComponent(`Relatório ${tipo === 'bobinas' ? 'de bobinas' : 'de produção'} (${mesCompartilhado || 'todos os meses'}) — anexe o arquivo baixado nesta conversa.`);
+            window.open(`https://wa.me/?text=${mensagem}`, '_blank', 'noopener');
+            alert('Arquivo baixado. O WhatsApp foi aberto; anexe o arquivo baixado à conversa ou grupo desejado.');
+        } catch (error) {
+            if (error && error.name === 'AbortError') return;
+            alert(error.message || 'Não foi possível preparar o relatório para compartilhamento.');
+        }
+    }
+
+    function exportarBobinasExcel() {
+        try {
+            const arquivo = gerarArquivoRelatorio('bobinas','xlsx');
+            const url=URL.createObjectURL(arquivo.blob); const a=document.createElement('a'); a.href=url; a.download=arquivo.filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1500);
+        } catch (error) { alert(error.message); }
+    }
+
     function adicionarRegistro() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
@@ -1605,17 +1899,21 @@
         const produto = document.getElementById('in-produto').value.trim().toUpperCase();
         const bitola = document.getElementById('in-bitola').value;
         const embalagem = document.getElementById('in-embalagem').value;
-        const qtdEmb = parseInt(document.getElementById('in-qtd-emb').value);
-        const totalEmb = parseInt(document.getElementById('in-total-emb').value);
+        const qtdEmb = Number(document.getElementById('in-qtd-emb').value);
+        const totalEmb = Number(document.getElementById('in-total-emb').value);
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
         const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value);
 
-        if (!data || !produto || !bitola || !embalagem || !Number.isFinite(qtdEmb) || !Number.isFinite(totalEmb) || qtdEmb < 1 || totalEmb < 1 || !responsavel) {
-            alert("⚠️ Por favor, preencha todos os campos corretamente.");
+        const camposObrigatorios = ['in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'];
+        const campoInvalido = camposObrigatorios.map(id => document.getElementById(id)).find(campo => !campo.checkValidity());
+        if (campoInvalido) { campoInvalido.reportValidity(); return; }
+        if (!data || !produto || !bitola || !embalagem || !Number.isSafeInteger(qtdEmb) || !Number.isSafeInteger(totalEmb) || qtdEmb < 1 || totalEmb < 1 || !responsavel) {
+            alert('Informe quantidades inteiras positivas e preencha todos os campos obrigatórios.');
             return;
         }
 
         const totalPecas = qtdEmb * totalEmb;
+        if (!Number.isSafeInteger(totalPecas)) { alert('O total de peças ultrapassa o limite numérico seguro.'); return; }
 
         const registro = {
             dataFormatada: formatarData(data),
@@ -1658,6 +1956,17 @@
         return `${dia}/${mes}/${ano}`;
     }
 
+    function registroNoMes(item, mes) {
+        if (!mes) return true;
+        const partes = String(item.dataFormatada || '').split('/');
+        return partes.length === 3 && `${partes[2]}-${String(partes[1]).padStart(2, '0')}` === mes;
+    }
+
+    function numeroSeguro(valor) {
+        const numero = Number(valor);
+        return Number.isSafeInteger(numero) && numero >= 0 ? numero : 0;
+    }
+
     function renderizarTabela() {
         const tbody = document.getElementById('corpo-tabela');
         tbody.innerHTML = "";
@@ -1666,15 +1975,14 @@
         let somaEmbGeral = 0;
 
         const printTitle = document.getElementById('print-title');
-        if (filtroAtual !== "") {
-            printTitle.innerText = `Relatório de Produção - ${filtroAtual}`;
-        } else {
-            printTitle.innerText = `Relatório de Produção Geral`;
-        }
+        const [anoFiltro, mesFiltro] = (filtroMesAtual || '').split('-');
+        const rotuloMes = anoFiltro && mesFiltro ? new Date(Number(anoFiltro), Number(mesFiltro) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : 'todos os meses';
+        document.getElementById('titulo-producao-mes').textContent = `Produção — ${rotuloMes}`;
+        printTitle.innerText = `Relatório de Produção — ${rotuloMes}${filtroAtual ? ` — ${filtroAtual}` : ''}`;
 
         let dadosExibicao = [];
         producao.forEach((item, index) => {
-            if (filtroAtual === "" || item.responsavel.includes(filtroAtual)) {
+            if ((filtroAtual === "" || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)) && registroNoMes(item, filtroMesAtual)) {
                 dadosExibicao.push({ ...item, originalIndex: index });
             }
         });
@@ -1683,7 +1991,7 @@
         if (filtroAtual === "") {
             dadosExibicao.sort((a, b) => {
                 if (a.responsavel !== b.responsavel) {
-                    return a.responsavel.localeCompare(b.responsavel);
+                    return String(a.responsavel || '').localeCompare(String(b.responsavel || ''), 'pt-BR');
                 }
                 return b.originalIndex - a.originalIndex;
             });
@@ -1712,25 +2020,25 @@
             }
 
             lastResponsavel = item.responsavel;
-            subtotalPecas += item.totalPecas;
-            subtotalEmb += item.totalEmb;
-            somaPecasGeral += item.totalPecas;
-            somaEmbGeral += item.totalEmb;
+            const totalPecasItem = numeroSeguro(item.totalPecas);
+            const totalEmbItem = numeroSeguro(item.totalEmb);
+            const qtdEmbItem = numeroSeguro(item.qtdEmb);
+            subtotalPecas += totalPecasItem;
+            subtotalEmb += totalEmbItem;
+            somaPecasGeral += totalPecasItem;
+            somaEmbGeral += totalEmbItem;
 
             const tr = document.createElement('tr');
             
-            if (item.originalIndex === ultimoAdicionadoIndex) {
-                tr.className = 'row-new';
-            }
-
+            
             tr.innerHTML = `
                 <td>${escaparHtml(item.dataFormatada)}</td>
                 <td><strong>${escaparHtml(item.produto)}</strong></td>
                 <td>${escaparHtml(item.bitola)}</td>
                 <td>${escaparHtml(item.embalagem)}</td>
-                <td>${item.qtdEmb.toLocaleString('pt-BR')}</td>
-                <td>${item.totalEmb.toLocaleString('pt-BR')}</td>
-                <td><strong style="color: var(--primary);">${item.totalPecas.toLocaleString('pt-BR')}</strong></td>
+                <td>${qtdEmbItem.toLocaleString('pt-BR')}</td>
+                <td>${totalEmbItem.toLocaleString('pt-BR')}</td>
+                <td><strong style="color: var(--primary);">${totalPecasItem.toLocaleString('pt-BR')}</strong></td>
                 <td>${escaparHtml(item.responsavel)}</td>
                 <td></td>
             `;
@@ -1739,12 +2047,13 @@
             btnEditar.className = 'btn-action btn-edit-row';
             btnEditar.type = 'button';
             btnEditar.textContent = 'Editar';
+            btnEditar.setAttribute('aria-label', `Editar registro de ${item.produto || 'produto'} de ${item.responsavel || 'responsável'}`);
             btnEditar.addEventListener('click', () => editarItem(item._firebaseKey || ''));
             const btnExcluir = document.createElement('button');
             btnExcluir.className = 'btn-action btn-delete';
             btnExcluir.type = 'button';
             btnExcluir.textContent = 'Excluir';
-            btnExcluir.setAttribute('aria-label', 'Excluir registro');
+            btnExcluir.setAttribute('aria-label', `Excluir registro de ${item.produto || 'produto'} de ${item.responsavel || 'responsável'}`);
             btnExcluir.addEventListener('click', () => excluirItem(item._firebaseKey || ''));
             celulaAcoes.append(btnEditar, btnExcluir);
             tbody.appendChild(tr);
@@ -1831,11 +2140,10 @@
         }
     }
 
-    function limparTudo() {
+    async function limparTudo() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (!firebaseEdicaoLiberada || !producaoRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
-        const confirmacao = prompt('Para confirmar, digite APAGAR PRODUÇÃO. Um backup JSON será baixado antes da limpeza.');
-        if (confirmacao !== 'APAGAR PRODUÇÃO') return;
+        if (!confirm(`Tem certeza que quer apagar TODOS os ${producao.length} registros de produção? Um backup JSON será baixado antes da exclusão.`)) return;
         const backup = new Blob([JSON.stringify({ exportadoEm: new Date().toISOString(), producao }, null, 2)], { type: 'application/json;charset=utf-8' });
         const urlBackup = URL.createObjectURL(backup);
         const linkBackup = document.createElement('a');
@@ -1844,10 +2152,9 @@
         document.body.appendChild(linkBackup);
         linkBackup.click();
         linkBackup.remove();
-        setTimeout(() => URL.revokeObjectURL(urlBackup), 1000);
-        if (confirm('Backup solicitado. Confirma apagar TODOS os registros da produção?')) {
-            producaoRef.child('items').remove().catch(mostrarErroFirebase);
-        }
+        setTimeout(() => URL.revokeObjectURL(urlBackup), 60000);
+        try { await producaoRef.child('items').remove(); alert('Produção apagada no Firebase.'); }
+        catch (error) { mostrarErroFirebase(error); }
     }
 
     function limparFormulario() {
@@ -1862,38 +2169,31 @@
         document.getElementById('in-produto').focus();
     }
 
-    function adicionarOperador() {
+    async function adicionarOperador() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
-        let nome = prompt("Digite o nome do novo operador:");
-        if (nome && nome.trim() !== "") {
-            nome = nome.trim().toUpperCase();
-            const select = document.getElementById('in-responsavel');
-            for(let i = 0; i < select.options.length; i++) {
-                if(select.options[i].value === nome) {
-                    alert("Este operador já está na lista!");
-                    return;
-                }
-            }
-            const option = document.createElement('option');
-            option.value = nome;
-            option.text = nome;
-            select.appendChild(option);
-            select.value = nome;
+        if (!firebaseEdicaoLiberada || !operadoresRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
+        let nome = prompt('Digite o nome do novo operador:');
+        if (!nome || !nome.trim()) return;
+        nome = nome.trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+        if ([...new Set([...standardOperatorNames, ...nomesOperadoresFirebase])].some(item => String(item).trim().toLocaleUpperCase('pt-BR') === nome)) {
+            alert('Este operador já está na lista!'); return;
         }
+        try { await operadoresRef.push({ nome }); }
+        catch (error) { mostrarErroFirebase(error); alert('Não foi possível salvar o operador compartilhado.'); }
     }
 
-    function removerOperador() {
+    async function removerOperador() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
+        if (!firebaseEdicaoLiberada || !operadoresRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
         const select = document.getElementById('in-responsavel');
-        if (select.selectedIndex > 0) {
-            if (confirm(`Remover o operador ${select.value} da lista?`)) {
-                select.remove(select.selectedIndex);
-            }
-        } else {
-            alert("Selecione um operador válido para remover.");
-        }
+        const nome = select.value;
+        if (!nome) { alert('Selecione um operador válido para remover.'); return; }
+        if (standardOperatorNames.includes(nome)) { alert('Os operadores padrão não podem ser removidos.'); return; }
+        const registro = Object.entries(operadoresFirebaseSnapshot).find(([, item]) => String((item && item.nome) || '').trim().toLocaleUpperCase('pt-BR') === nome.toLocaleUpperCase('pt-BR'));
+        if (!registro) { alert('Esse operador não está salvo na lista compartilhada.'); return; }
+        if (!confirm(`Remover o operador ${nome} da lista compartilhada? Os registros antigos não serão apagados.`)) return;
+        try { await operadoresRef.child(registro[0]).remove(); }
+        catch (error) { mostrarErroFirebase(error); alert('Não foi possível remover o operador.'); }
     }
 
     // ==========================================
@@ -1914,7 +2214,7 @@
             texto = texto.replace(/\./g, '').replace(',', '.');
         }
         const numero = Number(texto);
-        return Number.isFinite(numero) ? numero : 0;
+        return Number.isFinite(numero) ? numero : Number.NaN;
     }
 
     function importarExcel(event) {
@@ -1931,14 +2231,35 @@
         }
 
         const reader = new FileReader();
-        reader.onload = function(e) {
+        const inputArquivo = event.target;
+        inputArquivo.disabled = true;
+        reader.onload = async function(e) {
+          let gravados = 0;
           try {
             const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+            const workbook = XLSX.read(data, {type: 'array', cellDates: true, cellFormula: false, cellHTML: false, cellText: false});
             const firstSheetName = workbook.SheetNames[0];
             if (!firstSheetName) throw new Error('A planilha não contém abas.');
             const worksheet = workbook.Sheets[firstSheetName];
-            const json = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+            const faixa = worksheet['!ref'] ? XLSX.utils.decode_range(worksheet['!ref']) : null;
+            const linhasEstimadas = faixa ? Math.max(0, faixa.e.r - faixa.s.r) : 0;
+            if (linhasEstimadas > MAX_IMPORT_ROWS) throw new Error('A planilha excede 20.000 linhas.');
+            const jsonOriginal = XLSX.utils.sheet_to_json(worksheet, {defval: "", raw: true});
+            const normalizarCabecalho = texto => String(texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const aliases = {
+                DATA: ['DATA'], ESTRIBO: ['ESTRIBO', 'PRODUTO', 'ESTRIBOPRODUTO'], MATERIAL: ['MATERIAL', 'BITOLA'],
+                PAC: ['PAC', 'PACOTE', 'EMBALAGEM'], QTD: ['QPORPACOTE', 'QTD', 'QTDEMB', 'QUANTIDADEPOREMBALAGEM'],
+                TOTAL: ['TOTALPACOTE', 'TOTALEMB', 'TOTALEMBALAGENS'], PECAS: ['PECASTOTAL', 'TOTALPECAS'], RESPONSAVEL: ['RESPONSAVEL', 'OPERADOR']
+            };
+            const mapaColunas = {};
+            if (jsonOriginal.length) {
+                for (const campo in aliases) {
+                    const coluna = Object.keys(jsonOriginal[0]).find(chave => aliases[campo].includes(normalizarCabecalho(chave)));
+                    if (coluna) mapaColunas[campo] = coluna;
+                }
+            }
+            if (!mapaColunas.DATA || !mapaColunas.ESTRIBO || !mapaColunas.QTD || !mapaColunas.TOTAL) throw new Error('Cabeçalhos obrigatórios ausentes.');
+            const json = jsonOriginal.map(row => Object.fromEntries(Object.entries(mapaColunas).map(([campo, coluna]) => [campo, row[coluna]])));
             if (json.length > MAX_IMPORT_ROWS) throw new Error('A planilha excede 20.000 linhas.');
 
             let responsavelImportacao = String(localStorage.getItem('responsavel_login') || document.getElementById('in-responsavel').value || '').trim().toLocaleUpperCase('pt-BR');
@@ -1948,12 +2269,14 @@
             let invalidos = 0;
             
             json.forEach(row => {
-                if (!row.DATA || !row.ESTRIBO) return;
-                if (String(row.DATA).trim() === "" || String(row.ESTRIBO).trim() === "") return;
+                if (row.DATA === null || row.DATA === undefined || String(row.DATA).trim() === '' || row.ESTRIBO === null || row.ESTRIBO === undefined || String(row.ESTRIBO).trim() === '') return;
 
                 let dataStr = row.DATA;
                 if (dataStr instanceof Date && !Number.isNaN(dataStr.getTime())) {
-                    dataStr = dataStr.toLocaleDateString('pt-BR');
+                    dataStr = `${String(dataStr.getDate()).padStart(2, '0')}/${String(dataStr.getMonth() + 1).padStart(2, '0')}/${dataStr.getFullYear()}`;
+                } else if (typeof dataStr === 'number' && XLSX.SSF.parse_date_code(dataStr)) {
+                    const d = XLSX.SSF.parse_date_code(dataStr);
+                    dataStr = `${String(d.d).padStart(2, '0')}/${String(d.m).padStart(2, '0')}/${d.y}`;
                 } else {
                     dataStr = String(dataStr).trim().split(' ')[0];
                     if (dataStr.includes('-')) {
@@ -1969,30 +2292,26 @@
                 const produtoStr = String(row.ESTRIBO).trim().toUpperCase();
                 if (!dataValida || !produtoStr || produtoStr.length > 100) { invalidos++; return; }
 
-                let materialStr = String(row.MATERIAL || "").trim();
-                if(materialStr.includes('00:00:00')) {
-                    materialStr = materialStr.split(' ')[0];
-                    materialStr = "4.2mm";
-                } else if (materialStr && !materialStr.includes('mm')) {
-                    materialStr += "mm";
-                }
+                let materialStr = row.MATERIAL instanceof Date ? '' : String(row.MATERIAL || '').trim();
+                if (materialStr && !/mm$/i.test(materialStr)) materialStr += 'mm';
 
-                const qtdEmb = converterNumeroPlanilha(row["Q POR PACOTE"]);
-                const totalEmb = converterNumeroPlanilha(row["TOTAL PACOTE"]);
-                const totalPecasImportadas = converterNumeroPlanilha(row["PEÇAS TOTAL"]);
+                const qtdEmb = converterNumeroPlanilha(row.QTD);
+                const totalEmb = converterNumeroPlanilha(row.TOTAL);
+                const totalPecasImportadas = converterNumeroPlanilha(row.PECAS);
                 if (!Number.isSafeInteger(qtdEmb) || !Number.isSafeInteger(totalEmb) || qtdEmb < 1 || totalEmb < 1 || (totalPecasImportadas !== 0 && (!Number.isSafeInteger(totalPecasImportadas) || totalPecasImportadas < 1))) { invalidos++; return; }
-                const totalPecas = totalPecasImportadas || (qtdEmb * totalEmb);
-                if (!Number.isSafeInteger(totalPecas)) { invalidos++; return; }
+                const totalPecasCalculadas = qtdEmb * totalEmb;
+                if (!Number.isSafeInteger(totalPecasCalculadas) || (totalPecasImportadas !== 0 && totalPecasImportadas !== totalPecasCalculadas)) { invalidos++; return; }
+                const totalPecas = totalPecasCalculadas;
 
                 novosDados.push({
                     dataFormatada: dataStr,
                     produto: produtoStr,
                     bitola: materialStr,
-                    embalagem: String(row["P,A,C"] || "AMARRADO").trim().toUpperCase(),
+                    embalagem: String(row.PAC || 'AMARRADO').trim().toUpperCase(),
                     qtdEmb: qtdEmb,
                     totalEmb: totalEmb,
                     totalPecas: totalPecas,
-                    responsavel: responsavelImportacao
+                    responsavel: String(row.RESPONSAVEL || responsavelImportacao).trim().toLocaleUpperCase('pt-BR')
                 });
             });
 
@@ -2020,16 +2339,21 @@
                 // A importação sempre acrescenta; registros repetidos são ignorados, nunca substituem os dados.
                 if (registrosParaAdicionar.length > 0) {
                     if (!firebaseEdicaoLiberada || !producaoRef) throw new Error('Sincronização ainda não pronta.');
-                    const gravacoes = registrosParaAdicionar.map(item => producaoRef.child('items').child(chaveTemporaria()).set(item));
-                    Promise.all(gravacoes).catch(mostrarErroFirebase);
+                    const lote = 250;
+                    for (let inicio = 0; inicio < registrosParaAdicionar.length; inicio += lote) {
+                        const atualizacoes = {};
+                        registrosParaAdicionar.slice(inicio, inicio + lote).forEach(item => { atualizacoes[chaveTemporaria()] = item; });
+                        await producaoRef.child('items').update(atualizacoes);
+                        gravados += Object.keys(atualizacoes).length;
+                    }
                 }
 
                 if (duplicados > 0 && registrosParaAdicionar.length > 0) {
-                    alert(`Importação concluída: ${registrosParaAdicionar.length} novo(s) registro(s) adicionado(s).\n\n⚠️ ${duplicados} registro(s) igual(is) já existiam e foram ignorados. Os dados anteriores foram mantidos.`);
+                    alert(`Importação concluída: ${gravados} novo(s) registro(s) gravado(s).\n\n⚠️ ${duplicados} registro(s) igual(is) já existiam e foram ignorados. Os dados anteriores foram mantidos.`);
                 } else if (duplicados > 0) {
                     alert(`⚠️ Os ${duplicados} registro(s) do arquivo já existiam. Nenhum foi adicionado e seus dados foram mantidos.`);
                 } else {
-                    alert(`✅ Importação concluída: ${registrosParaAdicionar.length} novo(s) registro(s) adicionado(s), sem substituir os atuais.`);
+                    alert(`✅ Importação concluída: ${gravados} novo(s) registro(s) gravado(s), sem substituir os atuais.`);
                 }
             } else {
                 alert('Nenhum registro válido encontrado.' + (invalidos ? ` ${invalidos} linha(s) foram rejeitadas por dados inválidos.` : ''));
@@ -2037,41 +2361,37 @@
             if (novosDados.length > 0 && invalidos > 0) alert(`${invalidos} linha(s) inválida(s) foram ignoradas.`);
           } catch (error) {
             console.error('Falha na importação:', error);
-            alert('Não foi possível importar a planilha. Confira o arquivo, os cabeçalhos e os tipos dos dados.');
+            const parcial = gravados ? `\n\nForam gravados ${gravados} registro(s) antes da falha; confira a tabela antes de tentar novamente.` : '';
+            alert(`Não foi possível concluir a importação. ${error.message || 'Confira o arquivo, os cabeçalhos e os tipos dos dados.'}${parcial}`);
+          } finally {
+            inputArquivo.disabled = false;
+            inputArquivo.value = '';
           }
         };
-        reader.onerror = function() { alert('Não foi possível ler o arquivo selecionado.'); };
+        reader.onerror = function() { inputArquivo.disabled = false; inputArquivo.value = ''; alert('Não foi possível ler o arquivo selecionado.'); };
         reader.readAsArrayBuffer(file);
-        event.target.value = '';
     }
 
     // Recalcula total de peças por registro antes de gerar a planilha.
     // Fórmula usada: quantidade por embalagem × total de embalagens.
-    function atualizarTotaisProducao() {
+    async function atualizarTotaisProducao() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
-        if (producao.length === 0) {
-            alert("Não há registros para conferir.");
-            return;
-        }
         if (!firebaseEdicaoLiberada || !producaoRef) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
-        let corrigidos = 0;
-        const atualizacoes = [];
-        producao.forEach(item => {
-            const qtdEmb = Number(item.qtdEmb);
-            const totalEmb = Number(item.totalEmb);
-            if (!Number.isFinite(qtdEmb) || !Number.isFinite(totalEmb)) return;
+        const alteracoes = [];
+        for (const item of producao) {
+            const qtdEmb = Number(item.qtdEmb), totalEmb = Number(item.totalEmb);
+            if (!Number.isSafeInteger(qtdEmb) || !Number.isSafeInteger(totalEmb) || qtdEmb < 1 || totalEmb < 1) continue;
             const totalCorreto = qtdEmb * totalEmb;
-            if (Number(item.totalPecas) !== totalCorreto) {
-                item.totalPecas = totalCorreto;
-                if (item._firebaseKey) atualizacoes.push(producaoRef.child('items').child(item._firebaseKey).child('totalPecas').set(totalCorreto));
-                corrigidos++;
-            }
-        });
-        Promise.all(atualizacoes).catch(mostrarErroFirebase);
-        renderizarTabela();
-        alert(corrigidos
-            ? `Conferência concluída: ${corrigidos} registro(s) tiveram o total de peças atualizado. A planilha já pode ser exportada.`
-            : "Conferência concluída: os totais de peças já estavam corretos.");
+            if (!Number.isSafeInteger(totalCorreto)) continue;
+            if (Number(item.totalPecas) !== totalCorreto && item._firebaseKey) alteracoes.push({ item, totalCorreto });
+        }
+        if (!alteracoes.length) { alert('Conferência concluída: não há totais divergentes para corrigir.'); return; }
+        if (!confirm(`${alteracoes.length} registro(s) têm total de peças diferente de quantidade por embalagem × embalagens. Corrigir esses valores no Firebase?`)) return;
+        try {
+            await Promise.all(alteracoes.map(({ item, totalCorreto }) => producaoRef.child('items').child(item._firebaseKey).child('totalPecas').set(totalCorreto)));
+            renderizarTabela();
+            alert(`Conferência concluída: ${alteracoes.length} total(is) corrigido(s) e sincronizado(s).`);
+        } catch (error) { mostrarErroFirebase(error); }
     }
 
     // ==========================================
@@ -2084,17 +2404,19 @@
         }
 
         const dadosExibicao = producao
-            .filter(item => filtroAtual === "" || String(item.responsavel || '').includes(filtroAtual))
-            .slice();
+            .map((item, indice) => ({ ...item, _indiceOriginal: indice }))
+            .filter(item => (filtroAtual === "" || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)) && registroNoMes(item, filtroMesAtual));
 
         if (filtroAtual === "") {
             dadosExibicao.sort((a, b) => {
-                if (a.responsavel !== b.responsavel) return a.responsavel.localeCompare(b.responsavel);
-                return producao.indexOf(b) - producao.indexOf(a);
+                if (a.responsavel !== b.responsavel) return String(a.responsavel || '').localeCompare(String(b.responsavel || ''), 'pt-BR');
+                return b._indiceOriginal - a._indiceOriginal;
             });
         } else {
-            dadosExibicao.sort((a, b) => producao.indexOf(b) - producao.indexOf(a));
+            dadosExibicao.sort((a, b) => b._indiceOriginal - a._indiceOriginal);
         }
+
+        if (!dadosExibicao.length) { alert('Não há registros para o mês e os filtros selecionados.'); return; }
 
         const linhas = [[
             'DATA', 'ESTRIBO', 'MATERIAL', 'P,A,C',
@@ -2108,7 +2430,7 @@
 
         dadosExibicao.forEach(item => {
             if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
-                linhas.push(['', '', '', '', `Subtotal - ${lastResponsavel}:`, subtotalEmb, subtotalPecas, '']);
+                linhas.push(['', '', '', '', escaparCelulaExcel(`Subtotal - ${lastResponsavel}:`), subtotalEmb, subtotalPecas, '']);
                 subtotalPecas = 0;
                 subtotalEmb = 0;
             }
@@ -2119,19 +2441,19 @@
             totalEmbGeral += Number(item.totalEmb) || 0;
 
             linhas.push([
-                item.dataFormatada,
-                item.produto,
-                String(item.bitola || '').replace(/mm/gi, '').trim(),
-                item.embalagem,
+                escaparCelulaExcel(item.dataFormatada),
+                escaparCelulaExcel(item.produto),
+                escaparCelulaExcel(String(item.bitola || '').replace(/mm/gi, '').trim()),
+                escaparCelulaExcel(item.embalagem),
                 Number(item.qtdEmb) || 0,
                 Number(item.totalEmb) || 0,
                 Number(item.totalPecas) || 0,
-                item.responsavel
+                escaparCelulaExcel(item.responsavel)
             ]);
         });
 
         if (filtroAtual === "" && lastResponsavel !== null) {
-            linhas.push(['', '', '', '', `Subtotal - ${lastResponsavel}:`, subtotalEmb, subtotalPecas, '']);
+            linhas.push(['', '', '', '', escaparCelulaExcel(`Subtotal - ${lastResponsavel}:`), subtotalEmb, subtotalPecas, '']);
         }
         linhas.push(['', '', '', '', 'TOTAL GERAL:', totalEmbGeral, totalPecasGeral, '']);
 
