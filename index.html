@@ -1051,12 +1051,19 @@
                     <label for="material-peso">Peso da bobina nova (kg)</label>
                     <input type="number" id="material-peso" min="0.01" step="0.01" inputmode="decimal" placeholder="Ex.: 250" required>
                 </div>
+                <div class="input-group">
+                    <label for="material-fornecedor">Fornecedor</label>
+                    <input type="text" id="material-fornecedor" maxlength="100" placeholder="Nome do fornecedor" required>
+                </div>
                 <button class="btn-add" id="btn-registrar-material" type="button" onclick="registrarBobinaConsumida()">+ Registrar bobina nova</button>
             </div>
             <p class="material-status" id="material-status" aria-live="polite">Aguardando sincronização do material…</p>
-            <div class="input-group" style="max-width:240px; margin:12px 0;">
-                <label for="material-mes">Mês para consultar</label>
-                <input type="month" id="material-mes">
+            <div style="display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:12px 0;">
+                <div class="input-group" style="max-width:240px;">
+                    <label for="material-mes">Mês para consultar</label>
+                    <input type="month" id="material-mes">
+                </div>
+                <button class="btn-import" type="button" onclick="enviarResumoMaterialWhatsApp()">Enviar resumo pelo WhatsApp</button>
             </div>
             <div class="material-summary">
                 <div class="card"><h3>Kg de bobinas iniciadas no mês</h3><p id="material-total-kg">0,00 kg</p></div>
@@ -1066,7 +1073,7 @@
                 <div class="table-header"><h3>Bobinas iniciadas no mês</h3></div>
                 <div class="table-responsive">
                     <table aria-label="Bobinas iniciadas no mês">
-                        <thead><tr><th>Data</th><th>Material / bitola</th><th>Peso (kg)</th><th class="material-actions-col">Ações</th></tr></thead>
+                        <thead><tr><th>Data</th><th>Material / bitola</th><th>Peso (kg)</th><th>Fornecedor</th><th class="material-actions-col">Ações</th></tr></thead>
                         <tbody id="material-corpo-tabela"></tbody>
                     </table>
                 </div>
@@ -1430,7 +1437,7 @@
             const tr = document.createElement('tr');
             const dataPartes = String(item.data || '').split('-');
             const dataBr = dataPartes.length === 3 ? `${dataPartes[2]}/${dataPartes[1]}/${dataPartes[0]}` : String(item.data || '');
-            [dataBr, item.material || '', `${formatoKg.format(Number(item.pesoKg) || 0)} kg`].forEach(texto => {
+            [dataBr, item.material || '', `${formatoKg.format(Number(item.pesoKg) || 0)} kg`, item.fornecedor || '—'].forEach(texto => {
                 const td = document.createElement('td');
                 td.textContent = texto;
                 tr.appendChild(td);
@@ -1450,7 +1457,7 @@
         if (!registros.length) {
             const tr = document.createElement('tr');
             const td = document.createElement('td');
-            td.colSpan = 4;
+            td.colSpan = 5;
             td.textContent = materialPronto ? 'Nenhuma bobina iniciada neste mês.' : 'Aguardando acesso aos registros de material.';
             td.style.textAlign = 'center';
             tr.appendChild(td);
@@ -1462,6 +1469,7 @@
         document.getElementById('material-data').disabled = !usuarioEhAdmin || !materialPronto;
         document.getElementById('material-tipo').disabled = !usuarioEhAdmin || !materialPronto;
         document.getElementById('material-peso').disabled = !usuarioEhAdmin || !materialPronto;
+        document.getElementById('material-fornecedor').disabled = !usuarioEhAdmin || !materialPronto;
         document.querySelectorAll('.material-actions-col').forEach(el => el.style.display = usuarioEhAdmin ? '' : 'none');
         document.querySelectorAll('#material-corpo-tabela tr').forEach(tr => {
             if (!usuarioEhAdmin) tr.lastElementChild.style.display = 'none';
@@ -1475,15 +1483,17 @@
         const material = document.getElementById('material-tipo').value;
         const pesoTexto = document.getElementById('material-peso').value.trim().replace(',', '.');
         const pesoKg = Number(pesoTexto);
-        if (!data || !['3.8mm', '4.2mm', '5.0mm', '6.0mm'].includes(material) || !Number.isFinite(pesoKg) || pesoKg <= 0) {
-            alert('Informe a data, selecione uma bitola e digite um peso em kg maior que zero.');
+        const fornecedor = document.getElementById('material-fornecedor').value.trim();
+        if (!data || !['3.8mm', '4.2mm', '5.0mm', '6.0mm'].includes(material) || !Number.isFinite(pesoKg) || pesoKg <= 0 || !fornecedor || fornecedor.length > 100) {
+            alert('Informe a data, selecione a bitola, digite um peso positivo e preencha o fornecedor.');
             return;
         }
         const key = materialRef.push().key;
-        materialRef.child(key).set({ data, material, pesoKg, tipoRegistro: 'bobina_iniciada', criadoEm: new Date().toISOString() })
+        materialRef.child(key).set({ data, material, pesoKg, fornecedor, tipoRegistro: 'bobina_iniciada', criadoEm: new Date().toISOString() })
             .then(() => {
                 document.getElementById('material-tipo').value = '';
                 document.getElementById('material-peso').value = '';
+                document.getElementById('material-fornecedor').value = '';
                 document.getElementById('material-status').innerText = 'Bobina nova registrada e sincronizada.';
             })
             .catch(error => {
@@ -1500,6 +1510,32 @@
             console.error('Erro ao excluir registro de consumo:', error);
             alert('Não foi possível excluir o registro. Verifique as regras do Firebase.');
         });
+    }
+
+    function enviarResumoMaterialWhatsApp() {
+        const mes = document.getElementById('material-mes').value;
+        if (!mes) { alert('Escolha o mês que deseja compartilhar.'); return; }
+        const registros = materialConsumido.filter(item => String(item.data || '').slice(0, 7) === mes);
+        if (!registros.length) { alert('Não há bobinas registradas nesse mês para compartilhar.'); return; }
+        const totalKg = registros.reduce((soma, item) => soma + (Number(item.pesoKg) || 0), 0);
+        const formatoKg = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const [ano, numeroMes] = mes.split('-');
+        const nomeMes = new Date(Number(ano), Number(numeroMes) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const linhasBobinas = registros
+            .slice()
+            .sort((a, b) => String(a.data || '').localeCompare(String(b.data || '')))
+            .map(item => {
+                const partesData = String(item.data || '').split('-');
+                const dataBr = partesData.length === 3 ? `${partesData[2]}/${partesData[1]}/${partesData[0]}` : String(item.data || '');
+                return `• ${dataBr} — ${item.material || 'Bitola não informada'} — ${formatoKg.format(Number(item.pesoKg) || 0)} kg — Fornecedor: ${item.fornecedor || 'não informado'}`;
+            });
+        const mensagem = [
+            `*Resumo de bobinas — ${nomeMes}*`,
+            `Total: *${formatoKg.format(totalKg)} kg* em *${registros.length} bobina(s)*`,
+            '',
+            ...linhasBobinas
+        ].join('\\n');
+        window.open(`https://wa.me/?text=${encodeURIComponent(mensagem)}`, '_blank', 'noopener,noreferrer');
     }
 
     document.getElementById('material-mes').addEventListener('change', renderizarMaterial);
