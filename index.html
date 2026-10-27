@@ -1033,30 +1033,30 @@
     </div><!-- /producao-page -->
 
     <section id="bobinas-page" role="tabpanel" aria-labelledby="tab-bobinas" hidden>
-        <h1 class="print-title" id="print-title-bobinas">Controle mensal de bobinas</h1>
+        <h1 class="print-title" id="print-title-bobinas">Cadastro mensal de bobinas</h1>
         <div class="bobinas-dashboard">
-            <div class="card"><h3>Bobinas no mês</h3><p id="kpi-bobinas-qtd">0</p></div>
-            <div class="card"><h3>Quilos usados no mês</h3><p id="kpi-bobinas-kg">0 kg</p></div>
-            <div class="card"><h3>Peças produzidas no mês</h3><p id="kpi-bobinas-pecas">0</p></div>
+            <div class="card"><h3>Bobinas cadastradas no mês</h3><p id="kpi-bobinas-qtd">0</p></div>
+            <div class="card"><h3>Peso total cadastrado</h3><p id="kpi-bobinas-kg">0 kg</p></div>
+            <div class="card"><h3>Bitolas cadastradas</h3><p id="kpi-bobinas-bitolas">—</p></div>
         </div>
         <div class="bobinas-form solo-admin">
-            <h3 style="margin-bottom:14px;color:var(--primary)">Lançar bobina utilizada</h3>
+            <h3 style="margin-bottom:14px;color:var(--primary)">Cadastrar bobina para uso</h3>
             <div class="form-grid">
                 <div class="input-group"><label for="bobina-data">Data</label><input type="date" id="bobina-data" required></div>
-                <div class="input-group"><label for="bobina-nome">Bobina / identificação</label><input type="text" id="bobina-nome" maxlength="80" placeholder="Ex.: Bobina 4,2 mm — lote 018" required></div>
-                <div class="input-group"><label for="bobina-kg">Peso utilizado (kg)</label><input type="text" id="bobina-kg" inputmode="decimal" placeholder="Ex.: 25,5" aria-describedby="bobina-kg-ajuda" required><small id="bobina-kg-ajuda">Aceita vírgula ou ponto decimal (até 3 casas).</small></div>
-                <div class="input-group"><label for="bobina-pecas">Peças produzidas</label><input type="number" id="bobina-pecas" min="0" step="1" inputmode="numeric" placeholder="Ex.: 1200" required></div>
-                <div class="input-group"><label for="bobina-responsavel">Responsável</label><input type="text" id="bobina-responsavel" maxlength="80" placeholder="Nome do operador"></div>
-                <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Registrar bobina</button>
+                <div class="input-group"><label for="bobina-bitola">Categoria / bitola da bobina</label><select id="bobina-bitola" required><option value="">Selecione...</option><option value="3.8 mm">3,8 mm</option><option value="4.2 mm">4,2 mm</option><option value="5.0 mm">5,0 mm</option></select></div>
+                <div class="input-group"><label for="bobina-kg">Peso da bobina (kg)</label><input type="text" id="bobina-kg" inputmode="decimal" placeholder="Ex.: 25,5" aria-describedby="bobina-kg-ajuda" required><small id="bobina-kg-ajuda">Aceita vírgula ou ponto decimal (até 3 casas).</small></div>
+                <div class="input-group"><label for="bobina-fornecedor">Fornecedor</label><input type="text" id="bobina-fornecedor" maxlength="100" placeholder="Nome do fornecedor" required></div>
+                <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Cadastrar bobina</button>
             </div>
+            <small>Os registros antigos de bobinas utilizadas permanecem guardados no Firebase; este cadastro passa a registrar bobinas disponíveis para uso.</small>
         </div>
         <div class="bobinas-section">
             <div class="table-header" style="padding:0 0 14px;border:0;flex-wrap:wrap;gap:10px">
-                <h3>Controle mensal de bobinas</h3>
+                <h3>Cadastro mensal de bobinas para uso</h3>
                 <div class="mes-filtro"><label for="filtro-mes-bobinas">Mês:</label><input type="month" id="filtro-mes-bobinas" aria-label="Filtrar bobinas por mês"></div>
             </div>
             <div class="table-responsive"><table id="tabela-bobinas">
-                <thead><tr><th scope="col">Data</th><th scope="col">Bobina</th><th scope="col">Kg usados</th><th scope="col">Peças</th><th scope="col">Responsável</th><th scope="col" class="solo-admin">Ações</th></tr></thead>
+                <thead><tr><th scope="col">Data</th><th scope="col">Categoria / bitola</th><th scope="col">Peso da bobina (kg)</th><th scope="col">Fornecedor</th><th scope="col" class="solo-admin">Ações</th></tr></thead>
                 <tbody id="corpo-tabela-bobinas"></tbody>
             </table></div>
             <div class="bobinas-actions">
@@ -1417,7 +1417,7 @@
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
-        ['btn-cancel', 'bobina-data', 'bobina-nome', 'bobina-kg', 'bobina-pecas', 'bobina-responsavel', 'btn-salvar-bobina', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
+        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'btn-salvar-bobina', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
@@ -1963,27 +1963,31 @@
         const tbody = document.getElementById('corpo-tabela-bobinas');
         if (!tbody) return;
         tbody.innerHTML = '';
-        const dados = ordenarPorDataDesc(bobinas.filter(item => registroNoMes(item, filtroMesBobinas)));
-        let somaKg = 0, somaPecas = 0;
+        const dados = ordenarPorDataDesc(bobinas.filter(item => item.bitola && item.fornecedor && registroNoMes(item, filtroMesBobinas)));
+        let somaKg = 0;
+        const bitolas = new Set();
         dados.forEach(item => {
-            const kg = Number(item.kg) || 0, pecas = numeroSeguro(item.pecas);
-            somaKg += kg; somaPecas += pecas;
+            const kg = Number(item.kg) || 0;
+            const bitola = item.bitola || item.nome || 'Sem categoria (registro antigo)';
+            const fornecedor = item.fornecedor || '—';
+            somaKg += kg;
+            if (item.bitola) bitolas.add(item.bitola);
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${escaparHtml(item.dataFormatada)}</td><td>${escaparHtml(item.nome)}</td><td>${kg.toLocaleString('pt-BR',{minimumFractionDigits:0, maximumFractionDigits:3})}</td><td>${pecas.toLocaleString('pt-BR')}</td><td>${escaparHtml(item.responsavel || '')}</td><td class="solo-admin"></td>`;
+            tr.innerHTML = `<td>${escaparHtml(item.dataFormatada)}</td><td>${escaparHtml(bitola)}</td><td>${kg.toLocaleString('pt-BR',{minimumFractionDigits:0, maximumFractionDigits:3})}</td><td>${escaparHtml(fornecedor)}</td><td class="solo-admin"></td>`;
             if (usuarioEhAdmin) {
                 const btn = document.createElement('button');
                 btn.type = 'button'; btn.className = 'bobina-delete'; btn.textContent = 'Excluir';
-                btn.setAttribute('aria-label', `Excluir lançamento da bobina ${item.nome || ''}`);
+                btn.setAttribute('aria-label', `Excluir cadastro da bobina ${item.bitola || item.nome || ''}`);
                 btn.addEventListener('click', () => excluirBobina(item._firebaseKey));
                 tr.lastElementChild.appendChild(btn);
             }
             tbody.appendChild(tr);
         });
-        if (!dados.length) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:18px">Nenhuma bobina lançada neste mês.</td></tr>';
+        if (!dados.length) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:18px">Nenhuma bobina cadastrada neste mês.</td></tr>';
         const kgFormatado = somaKg.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:3});
         document.getElementById('kpi-bobinas-qtd').textContent = dados.length.toLocaleString('pt-BR');
         document.getElementById('kpi-bobinas-kg').textContent = `${kgFormatado} kg`;
-        document.getElementById('kpi-bobinas-pecas').textContent = somaPecas.toLocaleString('pt-BR');
+        document.getElementById('kpi-bobinas-bitolas').textContent = bitolas.size ? [...bitolas].sort().join(', ') : '—';
         const [ano,mes] = String(filtroMesBobinas || '').split('-');
         const mesRotulo = ano && mes ? new Date(Number(ano),Number(mes)-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'}) : 'todos os meses';
         document.getElementById('print-title-bobinas').textContent = `Controle mensal de bobinas — ${mesRotulo}`;
@@ -1994,29 +1998,26 @@
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (!firebaseEdicaoLiberada || !bobinasRef) { alert('Aguarde a sincronização com o Firebase.'); return; }
         const data = document.getElementById('bobina-data');
-        const nome = document.getElementById('bobina-nome');
+        const bitola = document.getElementById('bobina-bitola');
         const kgInput = document.getElementById('bobina-kg');
-        const pecasInput = document.getElementById('bobina-pecas');
-        const responsavelInput = document.getElementById('bobina-responsavel');
-        for (const campo of [data,nome,kgInput,pecasInput]) { if (!campo.checkValidity()) { campo.reportValidity(); return; } }
+        const fornecedorInput = document.getElementById('bobina-fornecedor');
+        for (const campo of [data,bitola,kgInput,fornecedorInput]) { if (!campo.checkValidity()) { campo.reportValidity(); return; } }
         const kgTexto = kgInput.value.trim().replace(',','.');
         const kg = Number(kgTexto);
-        const pecas = Number(pecasInput.value);
-        if (!/^\d+(?:[.,]\d{1,3})?$/.test(kgInput.value.trim()) || !Number.isFinite(kg) || kg <= 0 || !Number.isSafeInteger(pecas) || pecas < 0) { alert('Informe o peso em kg (até 3 casas decimais) e uma quantidade inteira válida de peças.'); return; }
-        const registro = { dataFormatada: formatarData(data.value), nome: nome.value.trim(), kg, pecas, responsavel: ((usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value) || responsavelInput.value.trim() || '').trim().toLocaleUpperCase('pt-BR') };
+        if (!/^\d+(?:[.,]\d{1,3})?$/.test(kgInput.value.trim()) || !Number.isFinite(kg) || kg <= 0) { alert('Informe um peso válido em kg (até 3 casas decimais).'); return; }
+        const registro = { dataFormatada: formatarData(data.value), bitola: bitola.value, kg, fornecedor: fornecedorInput.value.trim() };
         try {
             await bobinasRef.push(registro);
-            nome.value = ''; kgInput.value = ''; pecasInput.value = '';
-            responsavelInput.value = '';
+            bitola.value = ''; kgInput.value = ''; fornecedorInput.value = '';
             data.valueAsDate = new Date();
-            alert('Bobina registrada.');
+            alert('Bobina cadastrada.');
         } catch (error) { mostrarErroFirebase(error); }
     }
 
     async function excluirBobina(key) {
         if (!usuarioEhAdmin || !firebaseEdicaoLiberada || !bobinasRef) return;
         const item = bobinas.find(registro => registro._firebaseKey === key);
-        if (!item || !confirm(`Excluir o lançamento da bobina “${item.nome}” de ${item.dataFormatada}?`)) return;
+        if (!item || !confirm(`Excluir o cadastro da bobina “${item.bitola || item.nome || ''}” de ${item.dataFormatada}?`)) return;
         try { await bobinasRef.child(key).remove(); }
         catch (error) { mostrarErroFirebase(error); }
     }
@@ -2027,7 +2028,7 @@
     }
 
     function nomeMesArquivo(mes) { return String(mes || mesLocalAtual()).replace('-', '_'); }
-    function dadosBobinasFiltrados() { return bobinas.filter(item => registroNoMes(item, filtroMesBobinas)); }
+    function dadosBobinasFiltrados() { return bobinas.filter(item => item.bitola && item.fornecedor && registroNoMes(item, filtroMesBobinas)); }
 
     function gerarArquivoRelatorio(tipo, formato) {
         const dados = tipo === 'bobinas'
@@ -2037,24 +2038,23 @@
         if (!dados.length) throw new Error('Não há registros para o mês selecionado.');
         if (formato === 'xlsx') {
             const somaBobinasKg = dados.reduce((a,x)=>a+(Number(x.kg)||0),0);
-            const somaBobinasPecas = dados.reduce((a,x)=>a+(Number(x.pecas)||0),0);
             const somaProducaoEmb = dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0);
             const somaProducaoPecas = dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0);
             const linhas = tipo === 'bobinas'
-                ? [['DATA','BOBINA','KG USADOS','PEÇAS PRODUZIDAS','RESPONSÁVEL'], ...dados.map(x => [x.dataFormatada, escaparCelulaExcel(x.nome), Number(x.kg)||0, Number(x.pecas)||0, escaparCelulaExcel(x.responsavel)]), ['', 'TOTAL DO MÊS', somaBobinasKg, somaBobinasPecas, '']]
+                ? [['DATA','CATEGORIA / BITOLA','PESO DA BOBINA (KG)','FORNECEDOR'], ...dados.map(x => [x.dataFormatada, escaparCelulaExcel(x.bitola || x.nome || 'Registro antigo'), Number(x.kg)||0, escaparCelulaExcel(x.fornecedor || '')]), ['', 'TOTAL DO MÊS', somaBobinasKg, '']]
                 : [['DATA','ESTRIBO','BITOLA','EMBALAGEM','QTD. EMB.','TOTAL EMB.','TOTAL PEÇAS','RESPONSÁVEL'], ...dados.map(x => [x.dataFormatada, escaparCelulaExcel(x.produto), escaparCelulaExcel(x.bitola), escaparCelulaExcel(x.embalagem), Number(x.qtdEmb)||0, Number(x.totalEmb)||0, Number(x.totalPecas)||0, escaparCelulaExcel(x.responsavel)]), ['', '', '', '', 'TOTAL DO MÊS', somaProducaoEmb, somaProducaoPecas, '']];
             const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,tipo === 'bobinas' ? 'Bobinas' : 'Produção');
             return { blob: new Blob([XLSX.write(wb,{bookType:'xlsx',type:'array'})],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}), filename: `${titulo}.xlsx`, mime:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' };
         }
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('Biblioteca PDF não carregou. Confira sua conexão e tente novamente.');
         const pdf = new window.jspdf.jsPDF({orientation:'landscape'});
-        pdf.setFontSize(16); pdf.text(tipo === 'bobinas' ? 'Controle mensal de bobinas' : 'Relatório mensal de produção', 14, 16);
+        pdf.setFontSize(16); pdf.text(tipo === 'bobinas' ? 'Cadastro mensal de bobinas' : 'Relatório mensal de produção', 14, 16);
         const mesRelatorio = tipo === 'bobinas' ? filtroMesBobinas : filtroMesAtual;
         pdf.setFontSize(10); pdf.text(`Mês: ${mesRelatorio || 'Todos'}`, 14, 22);
         pdf.setFontSize(9);
-        const colunas = tipo === 'bobinas' ? ['Data','Bobina','Kg usados','Peças','Responsável'] : ['Data','Estribo','Bitola','Embalagem','Qtd/emb.','Total emb.','Peças','Responsável'];
-        const linhas = dados.map(x => tipo === 'bobinas' ? [x.dataFormatada,x.nome,String(x.kg),String(x.pecas),x.responsavel || ''] : [x.dataFormatada,x.produto,x.bitola,x.embalagem,String(x.qtdEmb),String(x.totalEmb),String(x.totalPecas),x.responsavel || '']);
-        const larguras = tipo === 'bobinas' ? [27,80,34,30,80] : [24,48,20,30,22,22,22,48];
+        const colunas = tipo === 'bobinas' ? ['Data','Categoria / bitola','Peso da bobina (kg)','Fornecedor'] : ['Data','Estribo','Bitola','Embalagem','Qtd/emb.','Total emb.','Peças','Responsável'];
+        const linhas = dados.map(x => tipo === 'bobinas' ? [x.dataFormatada,x.bitola || x.nome || 'Registro antigo',String(x.kg),x.fornecedor || ''] : [x.dataFormatada,x.produto,x.bitola,x.embalagem,String(x.qtdEmb),String(x.totalEmb),String(x.totalPecas),x.responsavel || '']);
+        const larguras = tipo === 'bobinas' ? [27,65,45,90] : [24,48,20,30,22,22,22,48];
         let y=26; const x0=14; let rowH=9;
         const linhaTabela = (cells, bold=false) => {
             let x=x0; pdf.setFont(undefined,bold?'bold':'normal');
@@ -2064,7 +2064,7 @@
         y=30;
         linhaTabela(colunas,true); linhas.forEach(l => linhaTabela(l));
         if (tipo === 'bobinas') {
-            linhaTabela(['TOTAL', '', `${dados.reduce((a,x)=>a+(Number(x.kg)||0),0).toLocaleString('pt-BR')} kg`, dados.reduce((a,x)=>a+(Number(x.pecas)||0),0).toLocaleString('pt-BR'), ''],true);
+            linhaTabela(['TOTAL', '', `${dados.reduce((a,x)=>a+(Number(x.kg)||0),0).toLocaleString('pt-BR')} kg`, ''],true);
         } else {
             linhaTabela(['TOTAL DO MÊS','','','','',dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0).toLocaleString('pt-BR'),dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0).toLocaleString('pt-BR'),''],true);
         }
