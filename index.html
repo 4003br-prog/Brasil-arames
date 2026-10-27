@@ -1789,17 +1789,17 @@
         const inputQtdEmb = document.getElementById('in-qtd-emb');
         const inputBitola = document.getElementById('in-bitola');
 
+        // Trocar embalagem não deve apagar a bitola escolhida pelo usuário.
         if (!['M. LIVRE', 'CAIXA'].includes(embalagem)) {
             inputQtdEmb.value = '';
-            inputBitola.value = '';
         }
         if (embalagem === 'M. LIVRE') {
             inputQtdEmb.value = 100;
-            inputBitola.value = "4.2mm";
+            if (!inputBitola.value) inputBitola.value = '4.2mm';
             piscarCampos(inputQtdEmb, inputBitola);
         } else if (embalagem === 'CAIXA') {
             inputQtdEmb.value = 250;
-            inputBitola.value = "4.2mm";
+            if (!inputBitola.value) inputBitola.value = '4.2mm';
             piscarCampos(inputQtdEmb, inputBitola);
         }
     }
