@@ -1553,6 +1553,8 @@
         const podeAcessarBobinas = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
         bobinasRef = podeAcessarBobinas ? firebaseDb.ref('bobinas/items') : null;
         fornecedoresBobinasRef = usuarioEhAdmin ? firebaseDb.ref('bobinas/fornecedores') : null;
+        const statusBobinas = document.getElementById('bobinas-status');
+        if (statusBobinas && podeAcessarBobinas) statusBobinas.textContent = 'Carregando Bobinas…';
         if (fornecedoresBobinasRef) fornecedoresBobinasRef.on('value', snapshot => {
             const valor = snapshot.val() || {};
             fornecedoresBobinas = Object.keys(valor).map(key => ({ key, nome: String((valor[key] && valor[key].nome) || valor[key] || '').trim() })).filter(item => item.nome);
@@ -1583,7 +1585,7 @@
             const itemsBobinas = snapshot.val() || {};
             bobinas = Object.entries(itemsBobinas).filter(([, item]) => item && typeof item === 'object').map(([key, item]) => ({ ...item, _firebaseKey: key }));
             const avisoBobinas = document.getElementById('bobinas-status');
-            if (avisoBobinas && avisoBobinas.textContent.includes('registros de Bobinas')) avisoBobinas.textContent = '';
+            if (avisoBobinas) avisoBobinas.textContent = '';
             renderizarBobinas();
         }, error => {
             console.warn('Não foi possível carregar Bobinas.', error);
