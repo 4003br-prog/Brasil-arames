@@ -794,6 +794,37 @@
           #tab-configuracoes{grid-column:2;grid-row:3;justify-self:end;width:48px}
         }
 
+
+        .tabs-app{display:flex;flex-direction:column;gap:8px;margin:0 0 16px;width:100%}
+        .tabs-row{display:flex;gap:10px;width:100%;align-items:stretch}
+        .tabs-row .tab-app{min-width:0;white-space:normal;line-height:1.2}
+        .tabs-row-main .tab-app{flex:1 1 0}
+        .tabs-row-recebimentos{display:flex;flex-direction:column;gap:8px}
+        .tabs-row-recebimentos .tab-app{width:100%;text-align:left;justify-content:flex-start}
+        .tabs-row-config{justify-content:flex-end;min-height:0}
+        .tabs-row-config:empty{display:none}
+        .tab-config-icon{width:46px;min-width:46px!important;height:44px;padding:6px!important;font-size:22px!important}
+        @media screen and (max-width:700px){
+          #app-container{display:block!important;width:100%;max-width:100%;overflow-x:hidden}
+          body{padding:10px!important;overflow-x:hidden}
+          .header{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;gap:12px!important;padding:14px!important;width:100%}
+          .header-brand{display:flex!important;width:100%;min-width:0;gap:10px!important;align-items:center!important}
+          .header-brand>div{min-width:0;flex:1 1 auto}
+          .header-brand h1{font-size:22px!important;line-height:1.15!important;white-space:normal!important;word-break:keep-all!important;overflow-wrap:normal!important}
+          .header-brand p{font-size:13px!important;line-height:1.25!important}
+          .header>div:last-child{text-align:left!important;width:100%!important;min-width:0;font-size:13px!important;line-height:1.35}
+          #data-hoje,#firebase-status,#user-email{display:block;white-space:normal;overflow-wrap:anywhere;line-height:1.35}
+          .header .theme-picker-label{margin:6px 6px 0 0!important}
+          .header .theme-picker{max-width:165px}
+          .tabs-app{display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important}
+          .tabs-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:8px!important;width:100%!important}
+          .tabs-row-recebimentos{display:flex!important;flex-direction:column!important;gap:8px!important;width:100%!important}
+          .tabs-row .tab-app{display:flex!important;align-items:center;justify-content:center;width:100%!important;min-width:0!important;min-height:48px!important;padding:8px 6px!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;text-align:center!important;font-size:13px!important;line-height:1.15!important}
+          .tabs-row-recebimentos .tab-app{justify-content:flex-start!important;text-align:left!important;padding-left:16px!important}
+          .tabs-row-config{display:flex!important;justify-content:flex-end!important;min-height:0!important}
+          .tabs-row-config .tab-config-icon{width:46px!important;min-width:46px!important;height:44px!important;font-size:22px!important}
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
         }
@@ -951,11 +982,17 @@
     <div class="consulta-banner" id="consulta-banner">👁️ Esta conta pode lançar produção como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.</div>
 
     <div class="tabs-app" role="tablist" aria-label="Seções do controle">
-        <button type="button" class="tab-app" id="tab-producao" role="tab" aria-selected="true" aria-controls="producao-page" onclick="selecionarAba('producao')">Produção de estribos</button>
-        <button type="button" class="tab-app" id="tab-bobinas" role="tab" aria-selected="false" aria-controls="bobinas-page" onclick="selecionarAba('bobinas')">Bobinas</button>
-        <button type="button" class="tab-app recebimentos-tab" id="tab-receb-barras" role="tab" aria-selected="false" aria-controls="receb-barras-page" onclick="selecionarAba('receb-barras')" hidden>Receb. barras 12 m</button>
-        <button type="button" class="tab-app recebimentos-tab" id="tab-receb-bobinas" role="tab" aria-selected="false" aria-controls="receb-bobinas-page" onclick="selecionarAba('receb-bobinas')" hidden>Receb. bobinas</button>
-        <button type="button" class="tab-app tab-config-icon" id="tab-configuracoes" role="tab" aria-label="Configurações" title="Configurações" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden>⚙️</button>
+        <div class="tabs-row tabs-row-main">
+            <button type="button" class="tab-app" id="tab-producao" role="tab" aria-selected="true" aria-controls="producao-page" onclick="selecionarAba('producao')">Produção de estribos</button>
+            <button type="button" class="tab-app" id="tab-bobinas" role="tab" aria-selected="false" aria-controls="bobinas-page" onclick="selecionarAba('bobinas')">Bobinas</button>
+        </div>
+        <div class="tabs-row tabs-row-recebimentos">
+            <button type="button" class="tab-app recebimentos-tab" id="tab-receb-barras" role="tab" aria-selected="false" aria-controls="receb-barras-page" onclick="selecionarAba('receb-barras')" hidden>Receb. barras 12 m</button>
+            <button type="button" class="tab-app recebimentos-tab" id="tab-receb-bobinas" role="tab" aria-selected="false" aria-controls="receb-bobinas-page" onclick="selecionarAba('receb-bobinas')" hidden>Receb. bobinas</button>
+        </div>
+        <div class="tabs-row tabs-row-config">
+            <button type="button" class="tab-app tab-config-icon" id="tab-configuracoes" role="tab" aria-label="Configurações" title="Configurações" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden>⚙</button>
+        </div>
     </div>
 
     <div id="producao-page" role="tabpanel" aria-labelledby="tab-producao">
