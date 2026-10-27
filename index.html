@@ -1045,10 +1045,17 @@
                 <div class="input-group"><label for="bobina-data">Data</label><input type="date" id="bobina-data" required></div>
                 <div class="input-group"><label for="bobina-bitola">Categoria / bitola da bobina</label><select id="bobina-bitola" required><option value="">Selecione...</option><option value="3.8 mm">3,8 mm</option><option value="4.2 mm">4,2 mm</option><option value="5.0 mm">5,0 mm</option><option value="6.0 mm">6,0 mm</option></select></div>
                 <div class="input-group"><label for="bobina-kg">Peso da bobina (kg)</label><input type="text" id="bobina-kg" inputmode="decimal" placeholder="Ex.: 25,5" aria-describedby="bobina-kg-ajuda" required><small id="bobina-kg-ajuda">Aceita vírgula ou ponto decimal (até 3 casas).</small></div>
-                <div class="input-group"><label for="bobina-fornecedor">Fornecedor</label><input type="text" id="bobina-fornecedor" maxlength="100" placeholder="Nome do fornecedor" required></div>
+                <div class="input-group"><label for="bobina-fornecedor">Fornecedor</label><select id="bobina-fornecedor" required><option value="">Selecione um fornecedor...</option></select></div>
                 <div class="input-group"><label for="bobina-quantidade">Quantidade de bobinas</label><input type="number" id="bobina-quantidade" min="1" max="100" step="1" value="1" inputmode="numeric" required><small>Até 100 bobinas por cadastro.</small></div>
                 <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Adicionar bobinas</button>
             </div>
+            <div class="config-grid" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+                <div class="input-group"><label for="bobina-novo-fornecedor">Adicionar fornecedor</label><input type="text" id="bobina-novo-fornecedor" maxlength="100" placeholder="Nome do fornecedor"></div>
+                <button class="btn-add solo-admin" id="bobina-btn-adicionar-fornecedor" type="button" onclick="adicionarFornecedorBobina()">+ Adicionar fornecedor</button>
+                <div class="input-group"><label for="bobina-remover-fornecedor">Remover fornecedor da lista</label><select id="bobina-remover-fornecedor"><option value="">Selecione...</option></select></div>
+                <button class="btn-clear solo-admin" id="bobina-btn-remover-fornecedor" type="button" onclick="removerFornecedorBobina()">Remover fornecedor</button>
+            </div>
+            <small>Remover um fornecedor da lista não apaga os cadastros antigos que já o mencionam.</small>
             <small>Os registros antigos de bobinas utilizadas permanecem guardados no Firebase; este cadastro passa a registrar bobinas disponíveis para uso.</small>
         </div>
         <div class="bobinas-section">
@@ -1125,7 +1132,10 @@
     let operadoresRef = null;
     let configuracaoRef = null;
     let bobinasRef = null;
+    let fornecedoresBobinasRef = null;
     let bobinas = [];
+    let fornecedoresBobinas = [];
+    let fornecedoresBobinasProntos = false;
     let filtroMesBobinas = '';
     let responsavelAtivoFirebase = '';
     let responsavelAtivoRecebidoFirebase = false;
@@ -1234,8 +1244,12 @@
             if (operadoresRef) operadoresRef.off();
             if (configuracaoRef) configuracaoRef.off();
             if (bobinasRef) bobinasRef.off();
-            producaoRef = padroesRef = operadoresRef = configuracaoRef = bobinasRef = null;
+            if (fornecedoresBobinasRef) fornecedoresBobinasRef.off();
+            producaoRef = padroesRef = operadoresRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = null;
             bobinas = [];
+            fornecedoresBobinas = [];
+            fornecedoresBobinasProntos = false;
+            atualizarSeletoresFornecedoresBobinas();
             nomesOperadoresFirebase = [];
             operadoresFirebaseSnapshot = {};
             firebaseProducaoPronto = firebasePadroesPronto = firebaseOperadoresPronto = firebaseConfiguracaoPronta = false;
@@ -1331,6 +1345,17 @@
             console.warn('Não foi possível carregar o responsável ativo compartilhado.', error);
         });
         bobinasRef = firebaseDb.ref('bobinas/items');
+        fornecedoresBobinasRef = firebaseDb.ref('bobinas/fornecedores');
+        fornecedoresBobinasRef.on('value', snapshot => {
+            const valor = snapshot.val() || {};
+            fornecedoresBobinas = Object.keys(valor).map(key => ({ key, nome: String((valor[key] && valor[key].nome) || valor[key] || '').trim() })).filter(item => item.nome);
+            fornecedoresBobinas.sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+            fornecedoresBobinasProntos = true;
+            atualizarSeletoresFornecedoresBobinas();
+        }, error => {
+            fornecedoresBobinasProntos = false;
+            console.warn('Não foi possível carregar a lista de fornecedores de bobinas.', error);
+        });
         bobinasRef.on('value', snapshot => {
             const items = snapshot.val() || {};
             bobinas = Object.keys(items).map(key => ({ ...items[key], _firebaseKey: key }));
@@ -1418,7 +1443,7 @@
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
-        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
+        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
@@ -1960,6 +1985,59 @@
         if (configAtiva) { atualizarSeletoresConfiguracoes(); document.getElementById('config-novo-responsavel').focus(); }
     }
 
+    function chaveFornecedorBobina(nome) {
+        return String(nome || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+    }
+
+    function atualizarSeletoresFornecedoresBobinas() {
+        const seletor = document.getElementById('bobina-fornecedor');
+        const remover = document.getElementById('bobina-remover-fornecedor');
+        if (!seletor || !remover) return;
+        const valorAtual = seletor.value;
+        seletor.replaceChildren();
+        const placeholder = document.createElement('option');
+        placeholder.value = ''; placeholder.textContent = fornecedoresBobinasProntos ? 'Selecione um fornecedor...' : 'Carregando fornecedores...';
+        seletor.appendChild(placeholder);
+        fornecedoresBobinas.forEach(item => {
+            const opcao = document.createElement('option'); opcao.value = item.nome; opcao.textContent = item.nome; seletor.appendChild(opcao);
+        });
+        if (fornecedoresBobinas.some(item => item.nome === valorAtual)) seletor.value = valorAtual;
+        const valorRemover = remover.value;
+        remover.replaceChildren();
+        const opcaoInicial = document.createElement('option'); opcaoInicial.value = ''; opcaoInicial.textContent = 'Selecione...'; remover.appendChild(opcaoInicial);
+        fornecedoresBobinas.forEach(item => {
+            const opcao = document.createElement('option'); opcao.value = item.key; opcao.textContent = item.nome; remover.appendChild(opcao);
+        });
+        if (fornecedoresBobinas.some(item => item.key === valorRemover)) remover.value = valorRemover;
+    }
+
+    async function adicionarFornecedorBobina() {
+        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada || !fornecedoresBobinasRef) { alert('Somente o administrador pode gerenciar fornecedores, após sincronizar.'); return; }
+        const campo = document.getElementById('bobina-novo-fornecedor');
+        const nome = String(campo.value || '').trim().replace(/\s+/g, ' ');
+        if (!nome) { campo.focus(); alert('Digite o nome do fornecedor.'); return; }
+        if (fornecedoresBobinas.some(item => chaveFornecedorBobina(item.nome) === chaveFornecedorBobina(nome))) { alert('Esse fornecedor já está na lista.'); return; }
+        try {
+            await confirmarSenhaAdministrador();
+            await fornecedoresBobinasRef.push({ nome });
+            campo.value = '';
+            document.getElementById('config-message').textContent = `Fornecedor ${nome} adicionado à lista.`;
+        } catch (error) { alert(error.message || 'Não foi possível adicionar o fornecedor.'); }
+    }
+
+    async function removerFornecedorBobina() {
+        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada || !fornecedoresBobinasRef) { alert('Somente o administrador pode gerenciar fornecedores, após sincronizar.'); return; }
+        const key = document.getElementById('bobina-remover-fornecedor').value;
+        const item = fornecedoresBobinas.find(fornecedor => fornecedor.key === key);
+        if (!item) { alert('Selecione um fornecedor para remover.'); return; }
+        if (!confirm(`Remover “${item.nome}” da lista? Os cadastros existentes não serão apagados.`)) return;
+        try {
+            await confirmarSenhaAdministrador();
+            await fornecedoresBobinasRef.child(key).remove();
+            document.getElementById('config-message').textContent = `Fornecedor ${item.nome} removido da lista; o histórico das bobinas foi mantido.`;
+        } catch (error) { alert(error.message || 'Não foi possível remover o fornecedor.'); }
+    }
+
     function renderizarBobinas() {
         const tbody = document.getElementById('corpo-tabela-bobinas');
         if (!tbody) return;
@@ -1998,6 +2076,7 @@
     async function salvarBobina() {
         if (!usuarioEhAdmin) { alert('Acesso somente para consulta.'); return; }
         if (!firebaseEdicaoLiberada || !bobinasRef) { alert('Aguarde a sincronização com o Firebase.'); return; }
+        if (!fornecedoresBobinasProntos) { alert('Aguarde a sincronização da lista de fornecedores.'); return; }
         const data = document.getElementById('bobina-data');
         const bitola = document.getElementById('bobina-bitola');
         const kgInput = document.getElementById('bobina-kg');
@@ -2009,7 +2088,8 @@
         const quantidade = Number(quantidadeInput.value);
         if (!/^\d+(?:[.,]\d{1,3})?$/.test(kgInput.value.trim()) || !Number.isFinite(kg) || kg <= 0) { alert('Informe um peso válido em kg (até 3 casas decimais).'); return; }
         if (!Number.isSafeInteger(quantidade) || quantidade < 1 || quantidade > 100) { alert('Informe uma quantidade inteira entre 1 e 100 bobinas.'); return; }
-        const registro = { dataFormatada: formatarData(data.value), bitola: bitola.value, kg, fornecedor: fornecedorInput.value.trim() };
+        if (!fornecedoresBobinas.some(item => item.nome === fornecedorInput.value)) { alert('Selecione um fornecedor cadastrado na lista.'); return; }
+        const registro = { dataFormatada: formatarData(data.value), bitola: bitola.value, kg, fornecedor: fornecedorInput.value };
         try {
             const novosRegistros = {};
             for (let i = 0; i < quantidade; i++) novosRegistros[bobinasRef.push().key] = registro;
