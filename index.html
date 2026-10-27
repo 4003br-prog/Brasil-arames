@@ -358,6 +358,13 @@
         .tabs-app { display:flex; gap:10px; margin:0 0 16px; }
         .tab-app { border:1px solid var(--border); border-radius:10px; padding:11px 18px; background:#fff; color:var(--primary); font-weight:700; cursor:pointer; box-shadow:var(--shadow-soft); }
         .tab-app[aria-selected="true"] { color:#fff; background:var(--primary); border-color:var(--primary); }
+        .daily-summary { background:var(--surface); padding:18px 20px; border-radius:16px; box-shadow:var(--shadow-soft); margin:0 0 18px; }
+        .daily-summary-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+        .daily-summary-header h3 { margin:0; color:var(--primary); font-size:18px; }
+        #tabela-resumo-diario { width:100%; border-collapse:collapse; }
+        #tabela-resumo-diario th, #tabela-resumo-diario td { padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; }
+        #rodape-resumo-diario td { font-weight:700; border-top:2px solid var(--border); }
+        body[data-theme="noite"] .daily-summary { background:#1b2638; color:#e4eaf5; }
         .bobinas-dashboard { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:0 0 18px; }
         .bobinas-form, .bobinas-section { background:#fff; padding:20px; border-radius:16px; box-shadow:var(--shadow-soft),inset 0 1px 0 #fff; margin-bottom:18px; }
         .bobinas-section h3 { color:var(--primary); }
@@ -906,6 +913,20 @@
             <p id="kpi-embalagens">0</p>
         </div>
     </div>
+
+    <section class="daily-summary" aria-labelledby="titulo-resumo-diario">
+        <div class="daily-summary-header">
+            <h3 id="titulo-resumo-diario">Total do dia por responsável</h3>
+            <div class="mes-filtro"><label for="resumo-data-dia">Data:</label><input type="date" id="resumo-data-dia" aria-label="Selecionar o dia do resumo"></div>
+        </div>
+        <div class="table-responsive">
+            <table id="tabela-resumo-diario">
+                <thead><tr><th scope="col">Responsável</th><th scope="col">Peças</th><th scope="col">Pacotes / embalagens</th></tr></thead>
+                <tbody id="corpo-resumo-diario"></tbody>
+                <tfoot id="rodape-resumo-diario"></tfoot>
+            </table>
+        </div>
+    </section>
 
     <!-- Formulário -->
     <div class="form-section" id="production-form-section">
@@ -1542,6 +1563,9 @@
     campoFiltroMesBobinas.addEventListener('change', () => { filtroMesBobinas = campoFiltroMesBobinas.value; renderizarBobinas(); });
     document.getElementById('bobina-data').valueAsDate = new Date();
     document.getElementById('in-data').valueAsDate = new Date();
+    const campoResumoData = document.getElementById('resumo-data-dia');
+    campoResumoData.valueAsDate = new Date();
+    campoResumoData.addEventListener('change', renderizarResumoDiario);
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
     document.getElementById('in-responsavel').addEventListener('change', event => {
         if (usuarioPodeLancarProducao && !usuarioEhAdmin && OPERADORES_PRODUCAO.includes(event.target.value)) {
@@ -2276,7 +2300,45 @@
         return Number.isSafeInteger(numero) && numero >= 0 ? numero : 0;
     }
 
+    function renderizarResumoDiario() {
+        const tbody = document.getElementById('corpo-resumo-diario');
+        const tfoot = document.getElementById('rodape-resumo-diario');
+        const campoData = document.getElementById('resumo-data-dia');
+        if (!tbody || !tfoot || !campoData) return;
+        tbody.replaceChildren();
+        tfoot.replaceChildren();
+        const dataSelecionada = campoData.value ? formatarData(campoData.value) : '';
+        const totais = new Map();
+        producao.filter(item => item.dataFormatada === dataSelecionada).forEach(item => {
+            const responsavel = String(item.responsavel || 'SEM RESPONSÁVEL').trim() || 'SEM RESPONSÁVEL';
+            const atual = totais.get(responsavel) || { pecas: 0, embalagens: 0 };
+            atual.pecas += numeroSeguro(item.totalPecas);
+            atual.embalagens += numeroSeguro(item.totalEmb);
+            totais.set(responsavel, atual);
+        });
+        const nomes = [...totais.keys()].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+        if (!nomes.length) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = '<td colspan="3" style="text-align:center;padding:14px">Sem lançamentos para este dia.</td>';
+            tbody.appendChild(tr);
+            return;
+        }
+        let totalPecas = 0, totalEmbalagens = 0;
+        nomes.forEach(nome => {
+            const total = totais.get(nome);
+            totalPecas += total.pecas;
+            totalEmbalagens += total.embalagens;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${escaparHtml(nome)}</td><td>${total.pecas.toLocaleString('pt-BR')}</td><td>${total.embalagens.toLocaleString('pt-BR')}</td>`;
+            tbody.appendChild(tr);
+        });
+        const trTotal = document.createElement('tr');
+        trTotal.innerHTML = `<td>Total do dia</td><td>${totalPecas.toLocaleString('pt-BR')}</td><td>${totalEmbalagens.toLocaleString('pt-BR')}</td>`;
+        tfoot.appendChild(trTotal);
+    }
+
     function renderizarTabela() {
+        renderizarResumoDiario();
         const tbody = document.getElementById('corpo-tabela');
         tbody.innerHTML = "";
 
