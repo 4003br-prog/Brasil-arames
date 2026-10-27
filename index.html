@@ -1043,10 +1043,11 @@
             <h3 style="margin-bottom:14px;color:var(--primary)">Cadastrar bobina para uso</h3>
             <div class="form-grid">
                 <div class="input-group"><label for="bobina-data">Data</label><input type="date" id="bobina-data" required></div>
-                <div class="input-group"><label for="bobina-bitola">Categoria / bitola da bobina</label><select id="bobina-bitola" required><option value="">Selecione...</option><option value="3.8 mm">3,8 mm</option><option value="4.2 mm">4,2 mm</option><option value="5.0 mm">5,0 mm</option></select></div>
+                <div class="input-group"><label for="bobina-bitola">Categoria / bitola da bobina</label><select id="bobina-bitola" required><option value="">Selecione...</option><option value="3.8 mm">3,8 mm</option><option value="4.2 mm">4,2 mm</option><option value="5.0 mm">5,0 mm</option><option value="6.0 mm">6,0 mm</option></select></div>
                 <div class="input-group"><label for="bobina-kg">Peso da bobina (kg)</label><input type="text" id="bobina-kg" inputmode="decimal" placeholder="Ex.: 25,5" aria-describedby="bobina-kg-ajuda" required><small id="bobina-kg-ajuda">Aceita vírgula ou ponto decimal (até 3 casas).</small></div>
                 <div class="input-group"><label for="bobina-fornecedor">Fornecedor</label><input type="text" id="bobina-fornecedor" maxlength="100" placeholder="Nome do fornecedor" required></div>
-                <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Cadastrar bobina</button>
+                <div class="input-group"><label for="bobina-quantidade">Quantidade de bobinas</label><input type="number" id="bobina-quantidade" min="1" max="100" step="1" value="1" inputmode="numeric" required><small>Até 100 bobinas por cadastro.</small></div>
+                <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Adicionar bobinas</button>
             </div>
             <small>Os registros antigos de bobinas utilizadas permanecem guardados no Firebase; este cadastro passa a registrar bobinas disponíveis para uso.</small>
         </div>
@@ -1417,7 +1418,7 @@
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
-        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'btn-salvar-bobina', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
+        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
@@ -2001,16 +2002,21 @@
         const bitola = document.getElementById('bobina-bitola');
         const kgInput = document.getElementById('bobina-kg');
         const fornecedorInput = document.getElementById('bobina-fornecedor');
-        for (const campo of [data,bitola,kgInput,fornecedorInput]) { if (!campo.checkValidity()) { campo.reportValidity(); return; } }
+        const quantidadeInput = document.getElementById('bobina-quantidade');
+        for (const campo of [data,bitola,kgInput,fornecedorInput,quantidadeInput]) { if (!campo.checkValidity()) { campo.reportValidity(); return; } }
         const kgTexto = kgInput.value.trim().replace(',','.');
         const kg = Number(kgTexto);
+        const quantidade = Number(quantidadeInput.value);
         if (!/^\d+(?:[.,]\d{1,3})?$/.test(kgInput.value.trim()) || !Number.isFinite(kg) || kg <= 0) { alert('Informe um peso válido em kg (até 3 casas decimais).'); return; }
+        if (!Number.isSafeInteger(quantidade) || quantidade < 1 || quantidade > 100) { alert('Informe uma quantidade inteira entre 1 e 100 bobinas.'); return; }
         const registro = { dataFormatada: formatarData(data.value), bitola: bitola.value, kg, fornecedor: fornecedorInput.value.trim() };
         try {
-            await bobinasRef.push(registro);
-            bitola.value = ''; kgInput.value = ''; fornecedorInput.value = '';
+            const novosRegistros = {};
+            for (let i = 0; i < quantidade; i++) novosRegistros[bobinasRef.push().key] = registro;
+            await bobinasRef.update(novosRegistros);
+            bitola.value = ''; kgInput.value = ''; fornecedorInput.value = ''; quantidadeInput.value = '1';
             data.valueAsDate = new Date();
-            alert('Bobina cadastrada.');
+            alert(`${quantidade} bobina${quantidade === 1 ? '' : 's'} cadastrada${quantidade === 1 ? '' : 's'}.`);
         } catch (error) { mostrarErroFirebase(error); }
     }
 
