@@ -1041,7 +1041,7 @@
             <!-- Campo de Produto com AUTOCOMPLETE -->
             <div class="input-group autocomplete-wrapper">
                 <label for="in-produto">Estribo / Produto</label>
-                <input type="text" id="in-produto" placeholder="Ex: RED 15" autocomplete="off" required>
+                <input type="text" id="in-produto" maxlength="100" placeholder="Ex: RED 15" autocomplete="off" required>
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>
 
@@ -1148,6 +1148,7 @@
 
     <section id="bobinas-page" role="tabpanel" aria-labelledby="tab-bobinas" hidden>
         <h1 class="print-title" id="print-title-bobinas">Cadastro mensal de bobinas</h1>
+        <p id="bobinas-status" role="status" aria-live="polite" style="margin:0 0 12px;color:#64748b"></p>
         <div class="bobinas-dashboard">
             <div class="card"><h3>Bobinas cadastradas no mês</h3><p id="kpi-bobinas-qtd">0</p></div>
             <div class="card"><h3>Peso total cadastrado</h3><p id="kpi-bobinas-kg">0 kg</p></div>
@@ -1194,14 +1195,14 @@
       <div class="recebimento-kpis">
         <div class="recebimento-kpi"><small>Cargas no período</small><strong id="rb-cargas">0</strong></div>
         <div class="recebimento-kpi"><small>Peso total — etiquetas</small><strong id="rb-etiqueta">0 kg</strong></div>
-        <div class="recebimento-kpi"><small>Peso total — balança</small><strong id="rb-balanca">0 kg</strong></div>
-        <div class="recebimento-kpi"><small>Diferença total</small><strong id="rb-diferenca">0 kg</strong></div>
+        <div class="recebimento-kpi"><small>Peso na balança — todas as cargas</small><strong id="rb-balanca">0 kg</strong></div>
+        <div class="recebimento-kpi"><small>Diferença total (com etiqueta)</small><strong id="rb-diferenca">0 kg</strong></div>
       </div>
       <div class="recebimento-panel rb-form admin-receb-edit">
         <h2>Receber barras de 12 metros</h2>
         <div class="recebimento-grid">
           <div><label for="rb-data">Data do recebimento</label><input type="date" id="rb-data" required></div>
-          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento()" style="margin-top:5px">Salvar fornecedor</button></div>
+          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento()" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rb-bitola">Bitola</label><select id="rb-bitola"><option value="">Selecione...</option><option>4,2 mm</option><option>5,0 mm</option><option>6,3 mm</option><option>10 mm</option><option>Outra</option></select></div>
           <div id="rb-outra-bitola-wrap" hidden><label for="rb-outra-bitola">Outra bitola</label><input id="rb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
           <div class="sem-etiqueta-option"><label><input type="checkbox" id="rb-sem-etiqueta"> Material sem etiqueta</label><small>Marque se não houver peso de etiqueta.</small></div><div><label for="rb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
@@ -1214,21 +1215,21 @@
       </div>
       <div class="recebimento-panel">
         <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('barras')">Exportar Excel</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
-        <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rb-linhas"></tbody><tfoot id="rb-totais"></tfoot></table></div>
+        <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rb-linhas"></tbody><tfoot id="rb-totais"></tfoot></table></div>
       </div>
     </section>
     <section id="receb-bobinas-page" class="recebimento-page" role="tabpanel" aria-labelledby="tab-receb-bobinas" hidden>
       <div class="recebimento-kpis">
         <div class="recebimento-kpi"><small>Cargas no período</small><strong id="rbb-cargas">0</strong></div>
         <div class="recebimento-kpi"><small>Peso total — etiquetas</small><strong id="rbb-etiqueta">0 kg</strong></div>
-        <div class="recebimento-kpi"><small>Peso total — balança</small><strong id="rbb-balanca">0 kg</strong></div>
-        <div class="recebimento-kpi"><small>Diferença total</small><strong id="rbb-diferenca">0 kg</strong></div>
+        <div class="recebimento-kpi"><small>Peso na balança — todas as cargas</small><strong id="rbb-balanca">0 kg</strong></div>
+        <div class="recebimento-kpi"><small>Diferença total (com etiqueta)</small><strong id="rbb-diferenca">0 kg</strong></div>
       </div>
       <div class="recebimento-panel rbb-form admin-receb-edit">
         <h2>Receber bobinas</h2>
         <div class="recebimento-grid">
           <div><label for="rbb-data">Data do recebimento</label><input type="date" id="rbb-data" required></div>
-          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-fornecedores-datalist"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento()" style="margin-top:5px">Salvar fornecedor</button></div>
+          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento()" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rbb-bitola">Bitola</label><select id="rbb-bitola"><option value="">Selecione...</option><option>3,8 mm</option><option>4,2 mm</option><option>5,0 mm</option><option>6,0 mm</option><option>Outra</option></select></div>
           <div id="rbb-outra-bitola-wrap" hidden><label for="rbb-outra-bitola">Outra bitola</label><input id="rbb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
           <div class="sem-etiqueta-option"><label><input type="checkbox" id="rbb-sem-etiqueta"> Material sem etiqueta</label><small>Marque se não houver peso de etiqueta.</small></div><div><label for="rbb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rbb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
@@ -1241,7 +1242,7 @@
       </div>
       <div class="recebimento-panel">
         <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('bobinas')">Exportar Excel</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
-        <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rbb-linhas"></tbody><tfoot id="rbb-totais"></tfoot></table></div>
+        <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rbb-linhas"></tbody><tfoot id="rbb-totais"></tfoot></table></div>
       </div>
     </section>
 
@@ -1304,7 +1305,10 @@
     let bobinasRef = null;
     let fornecedoresBobinasRef = null;
     let recebimentosRef = null;
+    let recebimentosBarrasRef = null;
+    let recebimentosBobinasRef = null;
     let recebimentosFornecedoresRef = null;
+    let responsavelAtivoRef = null;
     const recebimentos = { barras: [], bobinas: [] };
     let fornecedoresRecebimento = [];
     let bobinas = [];
@@ -1333,13 +1337,16 @@
     let firebaseEdicaoLiberada = false;
     let aplicandoPadroesFirebase = false;
     let avisoErroFirebaseExibido = false;
+    let erroFirebaseAtivo = false;
     let usuarioUidAtual = null;
+    let versaoTransicaoAuth = 0;
     const padroesIniciaisFirebase = ["9x15", "9x20", "RED 20", "HEXA 20", "7x17", "7x27", "15x15", "10x20"];
 
     function mostrarErroFirebase(error) {
         console.error('Erro do Firebase:', error);
         const status = document.getElementById('firebase-status');
-        if (status) status.innerText = 'Falha na sincronização com Firebase';
+        erroFirebaseAtivo = true;
+        if (status) status.innerText = 'Falha na sincronização com Firebase — confira conexão e regras de acesso';
         firebaseEdicaoLiberada = false;
         atualizarBloqueioEdicao();
         if (!avisoErroFirebaseExibido) {
@@ -1349,16 +1356,18 @@
     }
 
     function mostrarErroLogin(error) {
+        if (error && error.code === 'auth/too-many-requests') { document.getElementById('auth-message').innerText = 'Muitas tentativas. Aguarde um pouco e tente novamente.'; return; }
         const mensagens = {
             'auth/invalid-email': 'O e-mail informado não é válido.',
             'auth/user-disabled': 'Esta conta foi desativada.',
-            'auth/user-not-found': 'Conta não encontrada. Confira os dados ou crie sua conta.',
-            'auth/wrong-password': 'Senha incorreta. Tente novamente ou redefina a senha.',
+            'auth/user-not-found': 'Conta não encontrada. Confira o e-mail ou peça ao administrador para verificar seu acesso.',
+            'auth/wrong-password': 'Senha incorreta. Confira os dados ou peça ao administrador para verificar o acesso.',
             'auth/invalid-credential': 'E-mail ou senha incorretos.',
             'auth/email-already-in-use': 'Já existe uma conta com este e-mail. Faça login.',
             'auth/weak-password': 'A senha precisa ter pelo menos 6 caracteres.',
             'auth/operation-not-allowed': 'Ative o método E-mail/senha em Authentication no Firebase Console.',
-            'auth/network-request-failed': 'Sem conexão com a internet. Tente novamente.'
+            'auth/network-request-failed': 'Sem conexão com a internet. Tente novamente.',
+            'auth/too-many-requests': 'Muitas tentativas. Aguarde um pouco e tente novamente.'
         };
         document.getElementById('auth-message').innerText = mensagens[error.code] || 'Não foi possível concluir. Confira a configuração de Authentication no Firebase.';
     }
@@ -1378,10 +1387,10 @@
     }
 
     function nomesOperadoresAtivos() {
-        const removidosLocal = new Set(lerListaLocal(CHAVE_OPERADORES_REMOVIDOS));
         const removidosNuvem = new Set(Object.values(operadoresFirebaseSnapshot || {}).filter(item => item && item.ativo === false).map(item => String(item.nome || '').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')));
-        return [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase, ...lerListaLocal('nomes_responsaveis')]
-            .map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(nome => nome && !removidosLocal.has(nome) && !removidosNuvem.has(nome)))];
+        // A lista ativa vem do Firebase; dados locais antigos só são migrados pelo administrador.
+        return [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase]
+            .map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(nome => nome && !removidosNuvem.has(nome)))];
     }
 
     function sincronizarOperadoresNaTela() {
@@ -1399,17 +1408,21 @@
         event.preventDefault();
         const email = document.getElementById('auth-email').value.trim().toLowerCase();
         const password = document.getElementById('auth-password').value;
+        const submit = document.querySelector('#auth-form button[type=submit]');
         document.getElementById('auth-message').innerText = 'Entrando...';
+        if (submit) submit.disabled = true;
         try { await firebaseAuth.signInWithEmailAndPassword(email, password); }
         catch (error) { mostrarErroLogin(error); }
+        finally { if (submit) submit.disabled = false; }
     });
 
     function sair() {
-        localStorage.removeItem('responsavel_login');
-        firebaseAuth.signOut();
+        try { localStorage.removeItem('responsavel_login'); } catch (_) {}
+        firebaseAuth.signOut().catch(error => console.warn('Não foi possível encerrar a sessão imediatamente.', error));
     }
 
     firebaseAuth.onAuthStateChanged(async user => {
+        const transicaoAtual = ++versaoTransicaoAuth;
         const authScreen = document.getElementById('auth-screen');
         const app = document.getElementById('app-container');
         if (!user) {
@@ -1417,11 +1430,13 @@
             if (padroesRef) padroesRef.off();
             if (operadoresRef) operadoresRef.off();
             if (configuracaoRef) configuracaoRef.off();
+            if (responsavelAtivoRef) responsavelAtivoRef.off();
             if (bobinasRef) bobinasRef.off();
             if (fornecedoresBobinasRef) fornecedoresBobinasRef.off();
-            if (recebimentosRef) recebimentosRef.off();
+            if (recebimentosBarrasRef) recebimentosBarrasRef.off();
+            if (recebimentosBobinasRef) recebimentosBobinasRef.off();
             if (recebimentosFornecedoresRef) recebimentosFornecedoresRef.off();
-            producaoRef = padroesRef = operadoresRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = recebimentosRef = recebimentosFornecedoresRef = null;
+            producaoRef = padroesRef = operadoresRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = recebimentosRef = recebimentosBarrasRef = recebimentosBobinasRef = recebimentosFornecedoresRef = responsavelAtivoRef = null;
             recebimentos.barras = []; recebimentos.bobinas = []; fornecedoresRecebimento = [];
             document.querySelectorAll('.recebimentos-tab').forEach(el => el.hidden = true);
             ['receb-barras-page','receb-bobinas-page'].forEach(id => document.getElementById(id).hidden = true);
@@ -1432,6 +1447,8 @@
             nomesOperadoresFirebase = [];
             operadoresFirebaseSnapshot = {};
             firebaseProducaoPronto = firebasePadroesPronto = firebaseOperadoresPronto = firebaseConfiguracaoPronta = false;
+            erroFirebaseAtivo = false;
+            avisoErroFirebaseExibido = false;
             responsavelAtivoFirebase = '';
             responsavelAtivoRecebidoFirebase = false;
             firebaseEdicaoLiberada = false;
@@ -1442,6 +1459,7 @@
             usuarioPodeLancarProducao = false;
             document.body.classList.remove('solo-consulta', 'somente-consulta-basica', 'somente-producao');
             document.getElementById('tab-configuracoes').hidden = true;
+            document.getElementById('tab-bobinas').hidden = true;
             document.getElementById('config-page').hidden = true;
             selecionarAba('producao');
             document.body.classList.remove('solo-consulta');
@@ -1470,9 +1488,13 @@
         usuarioAtualFirebase = user;
         usuarioUidAtual = user.uid;
         document.body.classList.toggle('solo-consulta', email === EMAIL_EXPORTADOR);
+        document.getElementById('tab-bobinas').hidden = true;
+        document.getElementById('tab-configuracoes').hidden = true;
+        document.getElementById('config-page').hidden = true;
         const podeAcessarRecebimentos = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
+        document.getElementById('tab-bobinas').hidden = !(usuarioEhAdmin || email === EMAIL_EXPORTADOR);
         document.querySelectorAll('.recebimentos-tab').forEach(el => el.hidden = !podeAcessarRecebimentos);
-        document.querySelectorAll('.admin-receb-edit').forEach(el => el.hidden = !usuarioEhAdmin);
+        document.querySelectorAll('.admin-receb-edit').forEach(el => el.hidden = !usuarioEhAdminFernando());
         authScreen.style.display = 'none';
         app.style.display = 'block';
         firebaseEdicaoLiberada = false;
@@ -1484,6 +1506,7 @@
             ? '👁️ Consulta e exportação: esta conta pode visualizar e exportar PDF/Excel, mas não alterar os dados.'
             : '👷 Produção: esta conta pode lançar como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.';
         document.querySelectorAll('.export-access').forEach(el => el.hidden = !usuarioPodeExportar);
+        document.querySelectorAll('.admin-receb-edit').forEach(el => el.hidden = !usuarioEhAdminFernando());
         atualizarAcessoConfiguracoes();
 
         producao = dadosIniciais.map(item => ({ ...item }));
@@ -1498,8 +1521,9 @@
         padroesRef = firebaseDb.ref('estribosPadroes');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         operadoresRef = firebaseDb.ref('operadores');
-        configuracaoRef = firebaseDb.ref('configuracao');
-        configuracaoRef.child('responsavelAtivo').on('value', snapshot => {
+        configuracaoRef = usuarioEhAdmin ? firebaseDb.ref('configuracao') : null;
+        responsavelAtivoRef = configuracaoRef ? configuracaoRef.child('responsavelAtivo') : null;
+        if (responsavelAtivoRef) responsavelAtivoRef.on('value', snapshot => {
             responsavelAtivoRecebidoFirebase = true;
             const valor = String(snapshot.val() || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
             responsavelAtivoFirebase = valor;
@@ -1526,36 +1550,52 @@
             atualizarEstadoSincronizacao();
             console.warn('Não foi possível carregar o responsável ativo compartilhado.', error);
         });
-        bobinasRef = firebaseDb.ref('bobinas/items');
-        fornecedoresBobinasRef = firebaseDb.ref('bobinas/fornecedores');
-        fornecedoresBobinasRef.on('value', snapshot => {
+        const podeAcessarBobinas = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
+        bobinasRef = podeAcessarBobinas ? firebaseDb.ref('bobinas/items') : null;
+        fornecedoresBobinasRef = usuarioEhAdmin ? firebaseDb.ref('bobinas/fornecedores') : null;
+        if (fornecedoresBobinasRef) fornecedoresBobinasRef.on('value', snapshot => {
             const valor = snapshot.val() || {};
             fornecedoresBobinas = Object.keys(valor).map(key => ({ key, nome: String((valor[key] && valor[key].nome) || valor[key] || '').trim() })).filter(item => item.nome);
             fornecedoresBobinas.sort((a,b) => a.nome.localeCompare(b.nome, 'pt-BR'));
             fornecedoresBobinasProntos = true;
+            const avisoBobinas = document.getElementById('bobinas-status');
+            if (avisoBobinas) avisoBobinas.textContent = '';
             atualizarSeletoresFornecedoresBobinas();
         }, error => {
             fornecedoresBobinasProntos = false;
+            const avisoBobinas = document.getElementById('bobinas-status');
+            if (avisoBobinas) avisoBobinas.textContent = 'Não foi possível carregar os fornecedores. Confira as regras Firebase.';
             console.warn('Não foi possível carregar a lista de fornecedores de bobinas.', error);
         });
         if (podeAcessarRecebimentos) {
             recebimentosRef = firebaseDb.ref('recebimentos');
-            recebimentosRef.child('barras/items').on('value', snapshot => { recebimentos.barras = Object.entries(snapshot.val() || {}).map(([id,r]) => ({...r,id})); renderRecebimentos('barras'); }, error => mostrarErroRecebimento('barras', error));
-            recebimentosRef.child('bobinas/items').on('value', snapshot => { recebimentos.bobinas = Object.entries(snapshot.val() || {}).map(([id,r]) => ({...r,id})); renderRecebimentos('bobinas'); }, error => mostrarErroRecebimento('bobinas', error));
+            recebimentosBarrasRef = recebimentosRef.child('barras/items');
+            recebimentosBobinasRef = recebimentosRef.child('bobinas/items');
+            recebimentosBarrasRef.on('value', snapshot => { recebimentos.barras = Object.entries(snapshot.val() || {}).filter(([,r]) => r && typeof r === 'object').map(([id,r]) => ({...r,id})); renderRecebimentos('barras'); }, error => mostrarErroRecebimento('barras', error));
+            recebimentosBobinasRef.on('value', snapshot => { recebimentos.bobinas = Object.entries(snapshot.val() || {}).filter(([,r]) => r && typeof r === 'object').map(([id,r]) => ({...r,id})); renderRecebimentos('bobinas'); }, error => mostrarErroRecebimento('bobinas', error));
             recebimentosFornecedoresRef = recebimentosRef.child('fornecedores');
             recebimentosFornecedoresRef.on('value', snapshot => { const raw=snapshot.val()||{}; fornecedoresRecebimento=Object.values(raw).map(v=>String((v&&v.nome)||v||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR')); atualizarFornecedoresRecebimento(); }, error => console.warn('Falha ao carregar fornecedores de recebimento.', error));
             document.querySelectorAll('.recebimento-page input[type="date"]').forEach(el => { if (!el.value) el.value = dataHojeISO(); });
             ['rb','rbb'].forEach(prefix => { ['peso-etiqueta','peso-balanca'].forEach(f => document.getElementById(`${prefix}-${f}`).addEventListener('input', () => atualizarPreviaRecebimento(prefix))); document.getElementById(`${prefix}-sem-etiqueta`).addEventListener('change',()=>{const sem=document.getElementById(`${prefix}-sem-etiqueta`).checked;const campo=document.getElementById(`${prefix}-peso-etiqueta`);campo.disabled=sem;campo.required=!sem;if(sem)campo.value='';atualizarPreviaRecebimento(prefix)}); document.getElementById(`${prefix}-bitola`).addEventListener('change',()=>{const w=document.getElementById(`${prefix}-outra-bitola-wrap`);const input=document.getElementById(`${prefix}-outra-bitola`);const outra=document.getElementById(`${prefix}-bitola`).value==='Outra';w.hidden=!outra;input.required=outra;}); });
             ['rb','rbb'].forEach(prefix => { [`${prefix}-inicio`,`${prefix}-fim`].forEach(id=>document.getElementById(id).addEventListener('change',()=>renderRecebimentos(prefix==='rb'?'barras':'bobinas'))); });
         }
-        bobinasRef.on('value', snapshot => {
-            bobinas = Object.keys(items).map(key => ({ ...items[key], _firebaseKey: key }));
+        if (bobinasRef) bobinasRef.on('value', snapshot => {
+            const itemsBobinas = snapshot.val() || {};
+            bobinas = Object.entries(itemsBobinas).filter(([, item]) => item && typeof item === 'object').map(([key, item]) => ({ ...item, _firebaseKey: key }));
+            const avisoBobinas = document.getElementById('bobinas-status');
+            if (avisoBobinas && avisoBobinas.textContent.includes('registros de Bobinas')) avisoBobinas.textContent = '';
             renderizarBobinas();
-        }, mostrarErroFirebase);
+        }, error => {
+            console.warn('Não foi possível carregar Bobinas.', error);
+            const avisoBobinas = document.getElementById('bobinas-status');
+            if (avisoBobinas) avisoBobinas.textContent = 'Não foi possível carregar os registros de Bobinas. Confira as regras Firebase.';
+            bobinas = [];
+            renderizarBobinas();
+        });
         operadoresRef.on('value', snapshot => {
             operadoresFirebaseSnapshot = snapshot.val() || {};
             const removidos = new Set(lerListaLocal(CHAVE_OPERADORES_REMOVIDOS));
-            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).filter(item => item && item.ativo !== false).map(item => String(item.nome || '').trim()).filter(nome => nome && !removidos.has(nome.toLocaleUpperCase('pt-BR')));
+            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).filter(item => item && item.ativo !== false).map(item => String(item.nome || '').trim()).filter(Boolean);
             sincronizarOperadoresNaTela();
             if (usuarioPodeLancarProducao && !usuarioEhAdmin) {
                 let nomeProducao = 'ÂNGELO';
@@ -1603,8 +1643,10 @@
         if (usuarioEhAdmin) {
             try {
                 const sharedPatterns = await padroesRef.once('value');
+                if (transicaoAtual !== versaoTransicaoAuth || firebaseAuth.currentUser && firebaseAuth.currentUser.uid !== user.uid) return;
                 if (!sharedPatterns.exists()) {
                     const oldPatterns = await padroesLegadosRef.once('value');
+                    if (transicaoAtual !== versaoTransicaoAuth || (firebaseAuth.currentUser && firebaseAuth.currentUser.uid !== user.uid)) return;
                     if (oldPatterns.exists()) await padroesRef.set(oldPatterns.val());
                     else {
                         const localPatterns = localStorage.getItem('estribosPadroes_' + user.uid);
@@ -1613,9 +1655,10 @@
                     }
                 }
             } catch (error) {
-                mostrarErroFirebase(error);
+                if (transicaoAtual === versaoTransicaoAuth) mostrarErroFirebase(error);
             }
         }
+        if (transicaoAtual !== versaoTransicaoAuth || firebaseAuth.currentUser && firebaseAuth.currentUser.uid !== user.uid) return;
         conectarFirebase();
     });
 
@@ -1639,7 +1682,10 @@
             if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
         const status = document.getElementById('firebase-status');
-        if (status && !firebaseEdicaoLiberada) status.innerText = 'Carregando dados do Firebase…';
+        if (status) {
+            if (erroFirebaseAtivo) status.innerText = 'Falha na sincronização com Firebase — confira conexão e regras de acesso';
+            else if (!firebaseEdicaoLiberada) status.innerText = 'Carregando dados do Firebase…';
+        }
     }
 
     function chaveTemporaria() {
@@ -1668,6 +1714,8 @@
                 if (!item.responsavel || item.responsavel === 'IMPORTADO' || String(item.responsavel).trim() === '') item.responsavel = 'FERNANDO';
             });
             firebaseProducaoPronto = true;
+            avisoErroFirebaseExibido = false;
+            erroFirebaseAtivo = false;
             atualizarEstadoSincronizacao();
             document.getElementById('firebase-status').innerText = snapshot.exists() ? 'Sincronizado com Firebase' : 'Banco vazio; pronto para iniciar';
             renderizarTabela();
@@ -1687,7 +1735,7 @@
             const ordemCrescente = ordenarListaEstribos(ordemRecebida);
             aplicandoPadroesFirebase = true;
             estribosPadroes = ordemCrescente;
-            if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
+            if (usuarioUidAtual) { try { localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes)); } catch (_) {} }
             aplicandoPadroesFirebase = false;
             firebasePadroesPronto = true;
             atualizarEstadoSincronizacao();
@@ -1744,8 +1792,10 @@
     });
 
     function salvarPadroes() {
-        if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
-        else localStorage.setItem('estribosPadroes', JSON.stringify(estribosPadroes));
+        try {
+            if (usuarioUidAtual) localStorage.setItem('estribosPadroes_' + usuarioUidAtual, JSON.stringify(estribosPadroes));
+            else localStorage.setItem('estribosPadroes', JSON.stringify(estribosPadroes));
+        } catch (_) {}
         if (firebasePadroesPronto && !aplicandoPadroesFirebase) salvarPadroesFirebase();
     }
     
@@ -1907,11 +1957,11 @@
         });
 
         // BOTÃO DE SALVAR PADRÃO EXPANSÍVEL
-        const btnAdd = document.createElement('div');
+        const btnAdd = document.createElement('button');
+        btnAdd.type = 'button';
         btnAdd.className = 'add-pattern-box';
         btnAdd.id = 'btn-add-pattern';
-        btnAdd.setAttribute('role', 'button'); btnAdd.tabIndex = 0; btnAdd.setAttribute('aria-label', 'Salvar padrão atual');
-        btnAdd.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnAdd.click(); } };
+        btnAdd.setAttribute('aria-label', 'Salvar padrão atual');
         btnAdd.onclick = (e) => {
             e.stopPropagation();
             const box = document.getElementById('btn-add-pattern');
@@ -1930,10 +1980,10 @@
         container.appendChild(btnAdd);
 
         // BOTÃO GERENCIAR EXPANSÍVEL
-        const btnGerenciar = document.createElement('div');
+        const btnGerenciar = document.createElement('button');
+        btnGerenciar.type = 'button';
         btnGerenciar.className = modoGerenciar ? 'manage-box active' : 'manage-box';
-        btnGerenciar.setAttribute('role', 'button'); btnGerenciar.tabIndex = 0; btnGerenciar.setAttribute('aria-label', modoGerenciar ? 'Concluir gerenciamento de padrões' : 'Gerenciar padrões');
-        btnGerenciar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btnGerenciar.click(); } };
+        btnGerenciar.setAttribute('aria-label', modoGerenciar ? 'Concluir gerenciamento de padrões' : 'Gerenciar padrões');
         btnGerenciar.onclick = (e) => {
             e.stopPropagation();
             toggleModoGerenciar();
@@ -2169,6 +2219,7 @@
     function selecionarAba(aba) {
         if (aba === 'configuracoes' && !usuarioEhAdminFernando()) { aba = 'producao'; }
         if ((aba === 'receb-barras' || aba === 'receb-bobinas') && !(usuarioEhAdmin || (usuarioAtualFirebase && String(usuarioAtualFirebase.email||'').trim().toLowerCase() === EMAIL_EXPORTADOR))) aba='producao';
+        if (aba === 'bobinas' && !(usuarioEhAdmin || (usuarioAtualFirebase && String(usuarioAtualFirebase.email || '').trim().toLowerCase() === EMAIL_EXPORTADOR))) aba = 'producao';
         const bobinasAtiva = aba === 'bobinas';
         const configAtiva = aba === 'configuracoes';
         const rb=aba==='receb-barras', rbb=aba==='receb-bobinas';
@@ -2190,15 +2241,63 @@
     function formatarPesoRecebimento(v,d=3){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:d});}
     function escaparRecebimento(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
     function atualizarPreviaRecebimento(prefix){const semEtiqueta=document.getElementById(`${prefix}-sem-etiqueta`).checked;const e=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-etiqueta`).value),b=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-balanca`).value),d=b-e,p=e?100*d/e:NaN,ok=!semEtiqueta&&e>0&&b>0&&Number.isFinite(d);document.getElementById(`${prefix}-prev-diff`).textContent=semEtiqueta?'Não calculável':ok?`${d>0?'+':''}${formatarPesoRecebimento(d)} kg`:'—';document.getElementById(`${prefix}-prev-percent`).textContent=semEtiqueta?'Não calculável':ok?`${p>0?'+':''}${formatarPesoRecebimento(p,2)}%`:'—';document.getElementById(`${prefix}-prev-status`).textContent=semEtiqueta?(b>0?'Sem etiqueta: diferença e variação não calculáveis.':'Sem etiqueta: informe o peso da balança.'):(ok?(d>0?'Balança acima da etiqueta':d<0?'Balança abaixo da etiqueta':'Pesos iguais'):'Informe os dois pesos.');}
-    function atualizarFornecedoresRecebimento(){const dl=document.getElementById('receb-fornecedores');if(dl)dl.replaceChildren(...fornecedoresRecebimento.map(nome=>{const o=document.createElement('option');o.value=nome;return o}));const dl2=document.getElementById('rbb-fornecedores-datalist');if(dl2)dl2.replaceChildren(...fornecedoresRecebimento.map(nome=>{const o=document.createElement('option');o.value=nome;return o}));}
-    async function salvarFornecedorRecebimento(){if(!usuarioEhAdminFernando()||!recebimentosFornecedoresRef){alert('Somente o administrador pode cadastrar fornecedores após conectar ao Firebase.');return}const campo=document.getElementById('rb-fornecedor');const alt=document.getElementById('rbb-fornecedor');const nome=String(campo.value||alt.value||'').trim().replace(/\s+/g,' ');if(!nome){alert('Digite o nome do fornecedor em um dos formulários.');return}if(fornecedoresRecebimento.some(x=>x.toLocaleUpperCase('pt-BR')===nome.toLocaleUpperCase('pt-BR'))){alert('Fornecedor já está salvo na lista.');return}try{await recebimentosFornecedoresRef.push({nome});document.getElementById('rb-status').textContent=`Fornecedor ${nome} salvo.`;document.getElementById('rbb-status').textContent=`Fornecedor ${nome} salvo.`}catch(e){mostrarErroRecebimento('barras',e)}}
+    function atualizarFornecedoresRecebimento(){['rb-receb-fornecedores','rbb-receb-fornecedores'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.replaceChildren(...fornecedoresRecebimento.map(nome=>{const o=document.createElement('option');o.value=nome;return o}))});}
+    async function salvarFornecedorRecebimento() {
+        if (!usuarioEhAdminFernando() || !recebimentosFornecedoresRef) { alert('Somente o administrador pode cadastrar fornecedores após conectar ao Firebase.'); return; }
+        const campo = document.getElementById('rb-fornecedor');
+        const alternativo = document.getElementById('rbb-fornecedor');
+        const nome = String(campo.value || alternativo.value || '').trim().replace(/\s+/g, ' ');
+        if (!nome || nome.length > 100) { alert('Digite um fornecedor com até 100 caracteres.'); return; }
+        if (fornecedoresRecebimento.some(item => item.toLocaleUpperCase('pt-BR') === nome.toLocaleUpperCase('pt-BR'))) { alert('Fornecedor já está salvo na lista.'); return; }
+        try {
+            await confirmarSenhaAdministrador();
+            await recebimentosFornecedoresRef.push({ nome });
+            document.getElementById('rb-status').textContent = `Fornecedor ${nome} salvo.`;
+            document.getElementById('rbb-status').textContent = `Fornecedor ${nome} salvo.`;
+        } catch (error) { mostrarErroRecebimento('barras', error); }
+    }
     function mostrarErroRecebimento(tipo,error){const p=tipo==='barras'?'rb':'rbb';const el=document.getElementById(`${p}-status`);if(el)el.textContent='Falha de sincronização Firebase: '+(error&&error.message||'verifique as regras publicadas.');console.error('Erro recebimentos Firebase:',error)}
-    async function salvarRecebimento(tipo){if(!usuarioEhAdminFernando()){alert('Somente o administrador pode registrar recebimentos.');return}const prefix=tipo==='barras'?'rb':'rbb';const data=document.getElementById(`${prefix}-data`).value;const fornecedor=document.getElementById(`${prefix}-fornecedor`).value.trim();let bitola=document.getElementById(`${prefix}-bitola`).value;if(bitola==='Outra')bitola=document.getElementById(`${prefix}-outra-bitola`).value.trim();const semEtiqueta=document.getElementById(`${prefix}-sem-etiqueta`).checked;const etiqueta=semEtiqueta?null:numeroRecebimentoBR(document.getElementById(`${prefix}-peso-etiqueta`).value),balanca=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-balanca`).value);if(!data||!fornecedor||!bitola||(!semEtiqueta&&!(etiqueta>0))||!(balanca>0)){alert(semEtiqueta?'Preencha data, fornecedor, bitola e o peso da balança.':'Preencha data, fornecedor, bitola e os dois pesos válidos.');return}if(!recebimentosRef){alert('Aguarde a conexão com o Firebase.');return}const registro={criado:Date.now(),data,fornecedor,bitola,pesoEtiqueta:etiqueta,semEtiqueta,pesoBalanca:balanca,observacao:document.getElementById(`${prefix}-observacao`).value.trim()};try{await recebimentosRef.child(`${tipo}/items`).push(registro);['data','fornecedor','peso-etiqueta','peso-balanca','observacao','outra-bitola'].forEach(k=>{const el=document.getElementById(`${prefix}-${k}`);if(el)el.value=''});document.getElementById(`${prefix}-data`).value=dataHojeISO();document.getElementById(`${prefix}-bitola`).value='';document.getElementById(`${prefix}-outra-bitola-wrap`).hidden=true;document.getElementById(`${prefix}-sem-etiqueta`).checked=false;document.getElementById(`${prefix}-peso-etiqueta`).disabled=false;document.getElementById(`${prefix}-peso-etiqueta`).required=true;document.getElementById(`${prefix}-status`).textContent='Recebimento salvo e sincronizado.';atualizarPreviaRecebimento(prefix)}catch(e){mostrarErroRecebimento(tipo,e)}}
-    function renderRecebimentos(tipo){const prefix=tipo==='barras'?'rb':'rbb';const campoIni=document.getElementById(`${prefix}-inicio`),campoFim=document.getElementById(`${prefix}-fim`);const ini=campoIni?campoIni.value:'',fim=campoFim?campoFim.value:'';const rows=recebimentos[tipo].filter(r=>(!ini||r.data>=ini)&&(!fim||r.data<=fim)).sort((a,b)=>String(b.data).localeCompare(String(a.data))||Number(b.criado)-Number(a.criado));const tbody=document.getElementById(`${prefix}-linhas`),tfoot=document.getElementById(`${prefix}-totais`);if(!tbody||!tfoot)return;tbody.replaceChildren();tfoot.replaceChildren();let etiqueta=0,balanca=0,balancaComparavel=0;rows.forEach(r=>{balanca+=Number(r.pesoBalanca)||0;if(!r.semEtiqueta&&Number(r.pesoEtiqueta)>0){etiqueta+=Number(r.pesoEtiqueta);balancaComparavel+=Number(r.pesoBalanca)||0;}const d=r.semEtiqueta?NaN:Number(r.pesoBalanca)-Number(r.pesoEtiqueta),p=!r.semEtiqueta&&Number(r.pesoEtiqueta)?100*d/Number(r.pesoEtiqueta):NaN;const tr=document.createElement('tr');tr.innerHTML=`<td>${escaparRecebimento(r.data.split('-').reverse().join('/'))}</td><td>${escaparRecebimento(r.fornecedor)}</td><td>${escaparRecebimento(r.bitola)}</td><td class="num">${r.semEtiqueta?'Sem etiqueta':formatarPesoRecebimento(r.pesoEtiqueta)}</td><td class="num">${formatarPesoRecebimento(r.pesoBalanca)}</td><td class="num recebimento-variance ${d>0?'positive':d<0?'negative':''}">${r.semEtiqueta?'—':`${d>0?'+':''}${formatarPesoRecebimento(d)}`}</td><td class="num">${r.semEtiqueta?'—':`${p>0?'+':''}${formatarPesoRecebimento(p,2)}%`}</td><td>${escaparRecebimento(r.observacao||'')}</td><td class="admin-receb-edit"><button class="btn-clear" type="button" onclick="excluirRecebimento('${tipo}','${escaparRecebimento(r.id)}')">Excluir</button></td>`;tbody.appendChild(tr)});const d=balancaComparavel-etiqueta,p=etiqueta?100*d/etiqueta:0;if(rows.length){const tr=document.createElement('tr');tr.innerHTML=`<td colspan="3">TOTAL</td><td class="num">${formatarPesoRecebimento(etiqueta)}</td><td class="num">${formatarPesoRecebimento(balanca)}</td><td class="num">${d>0?'+':''}${formatarPesoRecebimento(d)}</td><td class="num">${p>0?'+':''}${formatarPesoRecebimento(p,2)}%</td><td colspan="2"></td>`;tfoot.appendChild(tr)}document.getElementById(`${prefix}-cargas`).textContent=rows.length.toLocaleString('pt-BR');document.getElementById(`${prefix}-etiqueta`).textContent=`${formatarPesoRecebimento(etiqueta)} kg`;document.getElementById(`${prefix}-balanca`).textContent=`${formatarPesoRecebimento(balanca)} kg`;document.getElementById(`${prefix}-diferenca`).textContent=`${d>0?'+':''}${formatarPesoRecebimento(d)} kg`;document.querySelectorAll('.admin-receb-edit').forEach(el=>el.hidden=!usuarioEhAdminFernando());}
+    async function salvarRecebimento(tipo) {
+        if (!usuarioEhAdminFernando()) { alert('Somente o administrador pode registrar recebimentos.'); return; }
+        if (!['barras', 'bobinas'].includes(tipo)) { alert('Tipo de recebimento inválido.'); return; }
+        const prefix = tipo === 'barras' ? 'rb' : 'rbb';
+        const data = document.getElementById(`${prefix}-data`).value;
+        const fornecedor = document.getElementById(`${prefix}-fornecedor`).value.trim().replace(/\s+/g, ' ');
+        let bitola = document.getElementById(`${prefix}-bitola`).value;
+        if (bitola === 'Outra') bitola = document.getElementById(`${prefix}-outra-bitola`).value.trim();
+        const semEtiqueta = document.getElementById(`${prefix}-sem-etiqueta`).checked;
+        const textoEtiqueta = document.getElementById(`${prefix}-peso-etiqueta`).value.trim();
+        const textoBalanca = document.getElementById(`${prefix}-peso-balanca`).value.trim();
+        const formatoPesoValido = texto => /^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,3})?$/.test(texto);
+        const etiqueta = semEtiqueta ? null : numeroRecebimentoBR(textoEtiqueta);
+        const balanca = numeroRecebimentoBR(textoBalanca);
+        const observacao = document.getElementById(`${prefix}-observacao`).value.trim();
+        const partesData = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data);
+        const dataOk = !!partesData && (() => { const d = new Date(Date.UTC(Number(partesData[1]), Number(partesData[2]) - 1, Number(partesData[3]))); return d.getUTCFullYear() === Number(partesData[1]) && d.getUTCMonth() === Number(partesData[2]) - 1 && d.getUTCDate() === Number(partesData[3]); })();
+        const fornecedorConhecido = fornecedoresRecebimento.some(nome => nome.toLocaleUpperCase('pt-BR') === fornecedor.toLocaleUpperCase('pt-BR'));
+        if (!dataOk || !fornecedor || fornecedor.length > 100 || !fornecedorConhecido || !bitola || bitola.length > 30 || (!semEtiqueta && (!formatoPesoValido(textoEtiqueta) || !Number.isFinite(etiqueta) || etiqueta <= 0 || etiqueta > 1000000000)) || !formatoPesoValido(textoBalanca) || !Number.isFinite(balanca) || balanca <= 0 || balanca > 1000000000 || observacao.length > 200) {
+            alert('Confira a data, o fornecedor cadastrado, a bitola, os pesos válidos e a observação (máximo 200 caracteres).'); return;
+        }
+        if (!recebimentosRef) { alert('Aguarde a conexão com o Firebase.'); return; }
+        const registro = { criado: Date.now(), data, fornecedor, bitola, pesoEtiqueta: etiqueta, semEtiqueta, pesoBalanca: balanca, observacao };
+        try {
+            await recebimentosRef.child(`${tipo}/items`).push(registro);
+            ['data','fornecedor','peso-etiqueta','peso-balanca','observacao','outra-bitola'].forEach(k => { const el=document.getElementById(`${prefix}-${k}`); if(el) el.value=''; });
+            document.getElementById(`${prefix}-data`).value=dataHojeISO();
+            document.getElementById(`${prefix}-bitola`).value='';
+            document.getElementById(`${prefix}-outra-bitola-wrap`).hidden=true;
+            document.getElementById(`${prefix}-sem-etiqueta`).checked=false;
+            document.getElementById(`${prefix}-peso-etiqueta`).disabled=false;
+            document.getElementById(`${prefix}-peso-etiqueta`).required=true;
+            document.getElementById(`${prefix}-status`).textContent='Recebimento salvo e sincronizado.';
+            atualizarPreviaRecebimento(prefix);
+        } catch (error) { mostrarErroRecebimento(tipo, error); }
+    }
+    function renderRecebimentos(tipo){const prefix=tipo==='barras'?'rb':'rbb';const campoIni=document.getElementById(`${prefix}-inicio`),campoFim=document.getElementById(`${prefix}-fim`);const ini=campoIni?campoIni.value:'',fim=campoFim?campoFim.value:'';const rows=recebimentos[tipo].filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.data||''))&&(!ini||r.data>=ini)&&(!fim||r.data<=fim)).sort((a,b)=>String(b.data).localeCompare(String(a.data))||Number(b.criado)-Number(a.criado));const tbody=document.getElementById(`${prefix}-linhas`),tfoot=document.getElementById(`${prefix}-totais`);if(!tbody||!tfoot)return;tbody.replaceChildren();tfoot.replaceChildren();let etiqueta=0,balanca=0,balancaComparavel=0;rows.forEach(r=>{balanca+=Number(r.pesoBalanca)||0;if(!r.semEtiqueta&&Number(r.pesoEtiqueta)>0){etiqueta+=Number(r.pesoEtiqueta);balancaComparavel+=Number(r.pesoBalanca)||0;}const d=r.semEtiqueta?NaN:Number(r.pesoBalanca)-Number(r.pesoEtiqueta),p=!r.semEtiqueta&&Number(r.pesoEtiqueta)?100*d/Number(r.pesoEtiqueta):NaN;const tr=document.createElement('tr');tr.innerHTML=`<td>${escaparRecebimento(r.data.split('-').reverse().join('/'))}</td><td>${escaparRecebimento(r.fornecedor)}</td><td>${escaparRecebimento(r.bitola)}</td><td class="num">${r.semEtiqueta?'Sem etiqueta':formatarPesoRecebimento(r.pesoEtiqueta)}</td><td class="num">${formatarPesoRecebimento(r.pesoBalanca)}</td><td class="num recebimento-variance ${d>0?'positive':d<0?'negative':''}">${r.semEtiqueta?'—':`${d>0?'+':''}${formatarPesoRecebimento(d)}`}</td><td class="num">${r.semEtiqueta?'—':`${p>0?'+':''}${formatarPesoRecebimento(p,2)}%`}</td><td>${escaparRecebimento(r.observacao||'')}</td><td class="admin-receb-edit"><button class="btn-clear" type="button" onclick="excluirRecebimento('${tipo}','${escaparRecebimento(r.id)}')">Excluir</button></td>`;tbody.appendChild(tr)});const d=balancaComparavel-etiqueta,p=etiqueta?100*d/etiqueta:0;if(rows.length){const tr=document.createElement('tr');tr.innerHTML=`<td colspan="3">TOTAL</td><td class="num">${formatarPesoRecebimento(etiqueta)}</td><td class="num">${formatarPesoRecebimento(balancaComparavel)}</td><td class="num">${d>0?'+':''}${formatarPesoRecebimento(d)}</td><td class="num">${p>0?'+':''}${formatarPesoRecebimento(p,2)}%</td><td colspan="2"></td>`;tfoot.appendChild(tr)}document.getElementById(`${prefix}-cargas`).textContent=rows.length.toLocaleString('pt-BR');document.getElementById(`${prefix}-etiqueta`).textContent=`${formatarPesoRecebimento(etiqueta)} kg`;document.getElementById(`${prefix}-balanca`).textContent=`${formatarPesoRecebimento(balanca)} kg`;document.getElementById(`${prefix}-diferenca`).textContent=`${d>0?'+':''}${formatarPesoRecebimento(d)} kg`;document.querySelectorAll('.admin-receb-edit').forEach(el=>el.hidden=!usuarioEhAdminFernando());}
     async function excluirRecebimento(tipo,id){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Excluir este recebimento?'))return;try{await recebimentosRef.child(`${tipo}/items/${id}`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     async function apagarHistoricoRecebimento(tipo){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Apagar todos os recebimentos desta aba?'))return;try{await recebimentosRef.child(`${tipo}/items`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     function limparFiltrosRecebimento(tipo){const p=tipo==='barras'?'rb':'rbb';document.getElementById(`${p}-inicio`).value='';document.getElementById(`${p}-fim`).value='';renderRecebimentos(tipo)}
-    function exportarRecebimentos(tipo){if(!usuarioPodeExportar){alert('Esta conta não pode exportar.');return}const p=tipo==='barras'?'rb':'rbb';const ini=document.getElementById(`${p}-inicio`).value,fim=document.getElementById(`${p}-fim`).value;const rows=recebimentos[tipo].filter(r=>(!ini||r.data>=ini)&&(!fim||r.data<=fim)).sort((a,b)=>String(b.data).localeCompare(String(a.data)));if(!rows.length){alert('Não há recebimentos neste período para exportar.');return}const data=rows.map(r=>{const d=r.semEtiqueta?null:Number(r.pesoBalanca)-Number(r.pesoEtiqueta);return{'Data':r.data.split('-').reverse().join('/'),'Fornecedor':r.fornecedor,'Bitola':r.bitola,'Peso etiqueta (kg)':r.semEtiqueta?'Sem etiqueta':Number(r.pesoEtiqueta),'Peso balança (kg)':Number(r.pesoBalanca),'Diferença (kg)':r.semEtiqueta?'Não calculável':d,'Variação (%)':r.semEtiqueta?'Não calculável':Number(r.pesoEtiqueta)?100*d/Number(r.pesoEtiqueta):0,'Observação':r.observacao||''}});const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(data);XLSX.utils.book_append_sheet(wb,ws,tipo==='barras'?'Barras 12m':'Bobinas');XLSX.writeFile(wb,`Recebimento_${tipo}_${dataHojeISO()}.xlsx`)}
+    function exportarRecebimentos(tipo){if(!usuarioPodeExportar){alert('Esta conta não pode exportar.');return}if(!window.XLSX){alert('A biblioteca de planilhas não carregou. Confira sua conexão.');return}if(!['barras','bobinas'].includes(tipo)){alert('Tipo de relatório inválido.');return}const p=tipo==='barras'?'rb':'rbb';const ini=document.getElementById(`${p}-inicio`).value,fim=document.getElementById(`${p}-fim`).value;const rows=recebimentos[tipo].filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.data||''))&&(!ini||r.data>=ini)&&(!fim||r.data<=fim)).sort((a,b)=>String(b.data).localeCompare(String(a.data)));if(!rows.length){alert('Não há recebimentos neste período para exportar.');return}const data=rows.map(r=>{const d=r.semEtiqueta?null:Number(r.pesoBalanca)-Number(r.pesoEtiqueta);return{'Data':r.data.split('-').reverse().join('/'),'Fornecedor':escaparCelulaExcel(r.fornecedor),'Bitola':escaparCelulaExcel(r.bitola),'Peso etiqueta (kg)':r.semEtiqueta?'Sem etiqueta':Number(r.pesoEtiqueta),'Peso balança (kg)':Number(r.pesoBalanca),'Diferença (kg)':r.semEtiqueta?'Não calculável':d,'Variação (%)':r.semEtiqueta?'Não calculável':Number(r.pesoEtiqueta)?100*d/Number(r.pesoEtiqueta):0,'Observação':escaparCelulaExcel(r.observacao||'')}});const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(data);XLSX.utils.book_append_sheet(wb,ws,tipo==='barras'?'Barras 12m':'Bobinas');XLSX.writeFile(wb,`Recebimento_${tipo}_${dataHojeISO()}.xlsx`)}
 
     function chaveFornecedorBobina(nome) {
         return String(nome || '').trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
@@ -2220,10 +2319,12 @@
         const valorRemover = remover.value;
         remover.replaceChildren();
         const opcaoInicial = document.createElement('option'); opcaoInicial.value = ''; opcaoInicial.textContent = 'Selecione...'; remover.appendChild(opcaoInicial);
+        if (!usuarioEhAdminFernando()) remover.disabled = true;
         fornecedoresBobinas.forEach(item => {
             const opcao = document.createElement('option'); opcao.value = item.key; opcao.textContent = item.nome; remover.appendChild(opcao);
         });
         if (fornecedoresBobinas.some(item => item.key === valorRemover)) remover.value = valorRemover;
+        remover.disabled = !usuarioEhAdminFernando() || !firebaseEdicaoLiberada;
     }
 
     async function adicionarFornecedorBobina() {
@@ -2257,7 +2358,7 @@
         const tbody = document.getElementById('corpo-tabela-bobinas');
         if (!tbody) return;
         tbody.innerHTML = '';
-        const dados = ordenarPorDataDesc(bobinas.filter(item => item.bitola && item.fornecedor && registroNoMes(item, filtroMesBobinas)));
+        const dados = ordenarPorDataDesc(bobinas.filter(item => item && item.bitola && item.fornecedor && item.dataFormatada && registroNoMes(item, filtroMesBobinas)));
         let somaKg = 0;
         const bitolas = new Set();
         dados.forEach(item => {
@@ -2325,11 +2426,30 @@
 
     function imprimirRelatorio() {
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
-        window.print();
+        if (!firebaseProducaoPronto) { alert('Aguarde o carregamento dos registros antes de gerar o PDF.'); return; }
+        try {
+            const arquivo = gerarArquivoRelatorio('producao', 'pdf');
+            const url = URL.createObjectURL(arquivo.blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = arquivo.filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (error) {
+            if (error && /Biblioteca PDF não carregou/i.test(error.message || '')) {
+                alert('A biblioteca de PDF não carregou. Vou abrir a impressão do navegador como alternativa; escolha “Salvar como PDF”.');
+                window.print();
+                return;
+            }
+            alert(error && error.message ? error.message : 'Não foi possível gerar o PDF. Tente novamente.');
+        }
     }
 
     function nomeMesArquivo(mes) { return String(mes || mesLocalAtual()).replace('-', '_'); }
-    function dadosBobinasFiltrados() { return bobinas.filter(item => item.bitola && item.fornecedor && registroNoMes(item, filtroMesBobinas)); }
+    function dadosBobinasFiltrados() { return bobinas.filter(item => item && item.bitola && item.fornecedor && item.dataFormatada && registroNoMes(item, filtroMesBobinas)); }
 
     function gerarArquivoRelatorio(tipo, formato) {
         const dados = tipo === 'bobinas'
@@ -2349,35 +2469,64 @@
         }
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('Biblioteca PDF não carregou. Confira sua conexão e tente novamente.');
         const pdf = new window.jspdf.jsPDF({orientation:'landscape'});
-        pdf.setFontSize(16); pdf.text(tipo === 'bobinas' ? 'Cadastro mensal de bobinas' : 'Relatório mensal de produção', 14, 16);
         const mesRelatorio = tipo === 'bobinas' ? filtroMesBobinas : filtroMesAtual;
-        pdf.setFontSize(10); pdf.text(`Mês: ${mesRelatorio || 'Todos'}`, 14, 22);
-        pdf.setFontSize(9);
         const colunas = tipo === 'bobinas' ? ['Data','Categoria / bitola','Peso da bobina (kg)','Fornecedor'] : ['Data','Estribo','Bitola','Embalagem','Qtd/emb.','Total emb.','Peças','Responsável'];
         const linhas = dados.map(x => tipo === 'bobinas' ? [x.dataFormatada,x.bitola || x.nome || 'Registro antigo',String(x.kg),x.fornecedor || ''] : [x.dataFormatada,x.produto,x.bitola,x.embalagem,String(x.qtdEmb),String(x.totalEmb),String(x.totalPecas),x.responsavel || '']);
         const larguras = tipo === 'bobinas' ? [27,65,45,90] : [24,48,20,30,22,22,22,48];
-        let y=26; const x0=14; let rowH=9;
-        const linhaTabela = (cells, bold=false) => {
-            let x=x0; pdf.setFont(undefined,bold?'bold':'normal');
-            cells.forEach((cell,i) => { pdf.rect(x,y,larguras[i],rowH); const txt=pdf.splitTextToSize(String(cell ?? ''),larguras[i]-3); pdf.text(txt.slice(0,2),x+1.5,y+5); x+=larguras[i]; });
-            y+=rowH; if(y>185){pdf.addPage();y=15;}
+        const x0 = 14;
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const larguraTotal = larguras.reduce((soma, largura) => soma + largura, 0);
+        const larguraPagina = pdf.internal.pageSize.getWidth();
+        if (larguraTotal > larguraPagina - 2 * x0) throw new Error('As colunas do PDF ultrapassam a largura da página.');
+        const desenharCabecalhoPagina = () => {
+            pdf.setFont(undefined, 'bold');
+            pdf.setFontSize(16);
+            pdf.text(tipo === 'bobinas' ? 'Cadastro mensal de bobinas' : 'Relatório mensal de produção', 14, 12);
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            pdf.text(`Mês: ${mesRelatorio || 'Todos'}${tipo === 'producao' && filtroAtual ? ` — Responsável: ${filtroAtual}` : ''}`, 14, 18);
         };
-        y=30;
-        linhaTabela(colunas,true); linhas.forEach(l => linhaTabela(l));
+        let y = 24;
+        const drawRow = (cells, bold=false) => {
+            pdf.setFont(undefined, bold ? 'bold' : 'normal');
+            pdf.setFontSize(9);
+            const wrapped = cells.map((cell, i) => pdf.splitTextToSize(String(cell ?? ''), larguras[i] - 3));
+            const maxLines = Math.max(1, ...wrapped.map(text => text.length));
+            const rowHeight = Math.min(pageHeight - 48, Math.max(9, maxLines * 4 + 3));
+            if (y + rowHeight > pageHeight - 12) {
+                pdf.addPage();
+                desenharCabecalhoPagina();
+                y = 24;
+                // Repete o título e o cabeçalho da tabela nas páginas seguintes.
+                if (cells !== colunas) drawRow(colunas, true);
+            }
+            let x = x0;
+            cells.forEach((_, i) => {
+                pdf.rect(x, y, larguras[i], rowHeight);
+                const linhasVisiveis = wrapped[i].slice(0, Math.max(1, Math.floor((rowHeight - 3) / 4)));
+                pdf.text(linhasVisiveis, x + 1.5, y + 4.5, { maxWidth: larguras[i] - 3 });
+                x += larguras[i];
+            });
+            y += rowHeight;
+        };
+        desenharCabecalhoPagina();
+        drawRow(colunas, true);
+        linhas.forEach(row => drawRow(row));
         if (tipo === 'bobinas') {
-            linhaTabela(['TOTAL', '', `${dados.reduce((a,x)=>a+(Number(x.kg)||0),0).toLocaleString('pt-BR')} kg`, ''],true);
+            drawRow(['TOTAL', '', `${dados.reduce((a,x)=>a+(Number(x.kg)||0),0).toLocaleString('pt-BR')} kg`, ''], true);
         } else {
-            linhaTabela(['TOTAL DO MÊS','','','','',dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0).toLocaleString('pt-BR'),dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0).toLocaleString('pt-BR'),''],true);
+            drawRow(['TOTAL DO MÊS','','','','',dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0).toLocaleString('pt-BR'),dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0).toLocaleString('pt-BR'),''],true);
         }
         return { blob: pdf.output('blob'), filename: `${titulo}.pdf`, mime:'application/pdf' };
     }
 
     async function compartilharRelatorio(tipo, formato) {
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar ou compartilhar relatórios.'); return; }
+        if (tipo === 'producao' && !firebaseProducaoPronto) { alert('Aguarde o carregamento dos registros antes de exportar.'); return; }
         try {
             const arquivo = gerarArquivoRelatorio(tipo, formato);
-            const file = new File([arquivo.blob], arquivo.filename, { type: arquivo.mime });
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            const file = typeof File === 'function' ? new File([arquivo.blob], arquivo.filename, { type: arquivo.mime }) : null;
+            if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({ files: [file], title: arquivo.filename, text: 'Relatório do controle de produção.' });
                 return;
             }
@@ -2396,6 +2545,9 @@
 
     function exportarBobinasExcel() {
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
+        const avisoBobinas = document.getElementById('bobinas-status');
+        if (!bobinasRef || (avisoBobinas && avisoBobinas.textContent.includes('Não foi possível'))) { alert('Não foi possível carregar Bobinas. Confira as regras de acesso no Firebase e tente novamente.'); return; }
+        if (!window.XLSX) { alert('A biblioteca de planilhas não carregou. Confira sua conexão.'); return; }
         try {
             const arquivo = gerarArquivoRelatorio('bobinas','xlsx');
             const url=URL.createObjectURL(arquivo.blob); const a=document.createElement('a'); a.href=url; a.download=arquivo.filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1500);
@@ -2414,6 +2566,7 @@
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
         const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
         if (!usuarioEhAdmin && !OPERADORES_PRODUCAO.includes(responsavel)) { alert('A conta de produção só pode lançar como ÂNGELO ou GENIVAL.'); return; }
+        if (!usuarioEhAdmin && registroEmEdicao) { alert('A conta de produção só pode criar lançamentos novos; edição é exclusiva do administrador.'); return; }
 
         const camposObrigatorios = ['in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'];
         const campoInvalido = camposObrigatorios.map(id => document.getElementById(id)).find(campo => !campo.checkValidity());
@@ -2456,8 +2609,14 @@
             }).catch(mostrarErroFirebase);
         } else {
             const key = chaveTemporaria();
-            const itemEnviado = producaoRef.child('items').child(key).set(registro);
-            itemEnviado.then(() => limparFormulario()).catch(mostrarErroFirebase);
+            const botao = document.getElementById('btn-add');
+            botao.disabled = true;
+            const textoBotao = botao.textContent;
+            botao.textContent = 'Salvando…';
+            producaoRef.child('items').child(key).set(registro)
+                .then(() => limparFormulario())
+                .catch(mostrarErroFirebase)
+                .finally(() => { botao.disabled = !firebaseEdicaoLiberada || !usuarioPodeLancarProducao; botao.textContent = textoBotao; });
         }
     }
 
@@ -2829,15 +2988,19 @@
                 if (!Number.isSafeInteger(totalPecasCalculadas) || (totalPecasImportadas !== 0 && totalPecasImportadas !== totalPecasCalculadas)) { invalidos++; return; }
                 const totalPecas = totalPecasCalculadas;
 
+                const nomeImportado = String(row.RESPONSAVEL || responsavelImportacao).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR');
+                if (!nomeImportado || nomeImportado.length > 80) { invalidos++; return; }
+                const embalagemImportada = String(row.PAC || 'AMARRADO').trim().toUpperCase();
+                if (!embalagemImportada || embalagemImportada.length > 30) { invalidos++; return; }
                 novosDados.push({
                     dataFormatada: dataStr,
                     produto: produtoStr,
                     bitola: materialStr,
-                    embalagem: String(row.PAC || 'AMARRADO').trim().toUpperCase(),
+                    embalagem: embalagemImportada,
                     qtdEmb: qtdEmb,
                     totalEmb: totalEmb,
                     totalPecas: totalPecas,
-                    responsavel: String(row.RESPONSAVEL || responsavelImportacao).trim().toLocaleUpperCase('pt-BR')
+                    responsavel: nomeImportado
                 });
             });
 
@@ -2925,6 +3088,8 @@
     // ==========================================
     function exportarExcel() {
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
+        if (!window.XLSX) { alert('A biblioteca de planilhas não carregou. Confira sua conexão e tente novamente.'); return; }
+        if (!firebaseProducaoPronto) { alert('Aguarde o carregamento dos registros antes de exportar.'); return; }
         if (producao.length === 0) {
             alert("Não há dados para exportar!");
             return;
