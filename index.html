@@ -774,6 +774,26 @@
             .actions > button { flex:1 1 145px; justify-content:center; padding:11px 12px; font-size:14px; }
             .table-responsive { max-height:55vh; }
         }
+
+        .tab-config-icon{min-width:48px;padding-left:13px!important;padding-right:13px!important;font-size:20px!important}
+        @media (max-width:700px){
+          .header{display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:16px!important}
+          .header-brand{width:100%;align-items:center;min-width:0}
+          .header-brand>div{min-width:0}
+          .header h1{font-size:clamp(20px,6vw,26px);line-height:1.12;overflow-wrap:normal;word-break:normal}
+          .header-brand p{font-size:13px;line-height:1.3}
+          .header>div:last-child{text-align:left!important;width:100%;min-width:0;font-size:13px;overflow-wrap:anywhere}
+          #data-hoje,#firebase-status,#user-email{display:block;line-height:1.35;overflow-wrap:anywhere}
+          .theme-picker-label{margin-left:0}
+          .tabs-app{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;width:100%;align-items:stretch}
+          .tabs-app .tab-app{width:100%;min-width:0;min-height:46px;padding:10px 8px!important;white-space:normal!important;word-break:normal!important;overflow-wrap:break-word;line-height:1.15;text-align:center;font-size:clamp(12px,3.5vw,14px)}
+          #tab-producao{grid-column:1;grid-row:1}
+          #tab-bobinas{grid-column:2;grid-row:1}
+          #tab-receb-barras{grid-column:1;grid-row:2}
+          #tab-receb-bobinas{grid-column:2;grid-row:2}
+          #tab-configuracoes{grid-column:2;grid-row:3;justify-self:end;width:48px}
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
         }
@@ -935,7 +955,7 @@
         <button type="button" class="tab-app" id="tab-bobinas" role="tab" aria-selected="false" aria-controls="bobinas-page" onclick="selecionarAba('bobinas')">Bobinas</button>
         <button type="button" class="tab-app recebimentos-tab" id="tab-receb-barras" role="tab" aria-selected="false" aria-controls="receb-barras-page" onclick="selecionarAba('receb-barras')" hidden>Receb. barras 12 m</button>
         <button type="button" class="tab-app recebimentos-tab" id="tab-receb-bobinas" role="tab" aria-selected="false" aria-controls="receb-bobinas-page" onclick="selecionarAba('receb-bobinas')" hidden>Receb. bobinas</button>
-        <button type="button" class="tab-app" id="tab-configuracoes" role="tab" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden>Configurações</button>
+        <button type="button" class="tab-app tab-config-icon" id="tab-configuracoes" role="tab" aria-label="Configurações" title="Configurações" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden>⚙️</button>
     </div>
 
     <div id="producao-page" role="tabpanel" aria-labelledby="tab-producao">
