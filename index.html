@@ -581,7 +581,6 @@
         body.solo-consulta #bobinas-page .solo-admin,
         body.solo-consulta #col-acoes { display:none !important; }
         body.solo-consulta th:last-child, body.solo-consulta td:last-child { display:none !important; }
-        body.somente-consulta-basica .export-access,
         body.somente-producao .export-access,
         body.somente-producao .solo-admin,
         body.somente-producao .add-pattern-box,
@@ -1307,7 +1306,7 @@
         usuarioEhAdmin = email === EMAIL_ADMIN;
         usuarioPodeExportar = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
         usuarioPodeLancarProducao = usuarioEhAdmin || email === EMAIL_PRODUCAO;
-        document.body.classList.toggle('somente-consulta-basica', email === EMAIL_EXPORTADOR);
+        document.body.classList.remove('somente-consulta-basica');
         document.body.classList.toggle('somente-producao', email === EMAIL_PRODUCAO);
         usuarioAtualFirebase = user;
         usuarioUidAtual = user.uid;
