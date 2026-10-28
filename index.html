@@ -383,7 +383,17 @@
         .config-section > p { color:#64748b; margin-bottom:16px; }
         .config-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:15px; align-items:end; }
         .config-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
-        .config-password { max-width:460px; margin-top:18px; }
+
+        .senha-modal[hidden]{display:none!important}
+        .senha-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px}
+        .senha-modal-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.58)}
+        .senha-modal-card{position:relative;width:min(100%,420px);padding:22px;background:#fff;border-radius:16px;box-shadow:0 20px 55px rgba(0,0,0,.28);display:flex;flex-direction:column;gap:10px}
+        .senha-modal-card h2{color:var(--primary);font-size:20px}
+        .senha-modal-card p{line-height:1.4;color:#475569}
+        .senha-modal-card label{font-weight:700;font-size:14px}
+        .senha-modal-card input{width:100%;padding:12px;border:1px solid var(--border);border-radius:9px;font:inherit}
+        .senha-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+
         #config-page[hidden] { display:none !important; }
         body[data-theme="noite"] .config-section { background:#1b2638; color:#e4eaf5; }
 
@@ -1169,7 +1179,7 @@
         <h2>Receber barras de 12 metros</h2>
         <div class="recebimento-grid">
           <div><label for="rb-data">Data do recebimento</label><input type="date" id="rb-data" required></div>
-          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento()" style="margin-top:5px">Salvar fornecedor</button></div>
+          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento('barras')" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rb-bitola">Bitola</label><select id="rb-bitola"><option value="">Selecione...</option><option>4,2 mm</option><option>5,0 mm</option><option>6,3 mm</option><option>10 mm</option><option>Outra</option></select></div>
           <div id="rb-outra-bitola-wrap" hidden><label for="rb-outra-bitola">Outra bitola</label><input id="rb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
           <div class="sem-etiqueta-option"><label><input type="checkbox" id="rb-sem-etiqueta"> Material sem etiqueta</label><small>Marque se não houver peso de etiqueta.</small></div><div><label for="rb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
@@ -1196,7 +1206,7 @@
         <h2>Receber bobinas</h2>
         <div class="recebimento-grid">
           <div><label for="rbb-data">Data do recebimento</label><input type="date" id="rbb-data" required></div>
-          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento()" style="margin-top:5px">Salvar fornecedor</button></div>
+          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento('bobinas')" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rbb-bitola">Bitola</label><select id="rbb-bitola"><option value="">Selecione...</option><option>3,8 mm</option><option>4,2 mm</option><option>5,0 mm</option><option>6,0 mm</option><option>Outra</option></select></div>
           <div id="rbb-outra-bitola-wrap" hidden><label for="rbb-outra-bitola">Outra bitola</label><input id="rbb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
           <div class="sem-etiqueta-option"><label><input type="checkbox" id="rbb-sem-etiqueta"> Material sem etiqueta</label><small>Marque se não houver peso de etiqueta.</small></div><div><label for="rbb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rbb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
@@ -1229,13 +1239,19 @@
                 <div class="input-group"><label for="config-responsavel-ativo">Responsável para novos lançamentos</label><select id="config-responsavel-ativo"></select></div>
                 <button class="btn-add" id="config-btn-ativo" type="button" onclick="configDefinirResponsavelAtivo()">Trocar responsável ativo</button>
             </div>
-            <div class="input-group config-password">
-                <label for="config-senha-atual">Senha atual do administrador (confirmada pelo Firebase)</label>
-                <input type="password" id="config-senha-atual" autocomplete="current-password" placeholder="Digite sua senha para confirmar cada alteração">
-            </div>
             <p class="auth-message" id="config-message" aria-live="polite"></p>
         </div>
     </section>
+    <div id="senha-confirmacao-modal" class="senha-modal" hidden aria-hidden="true">
+      <div class="senha-modal-backdrop" data-senha-cancelar></div>
+      <form id="senha-confirmacao-form" class="senha-modal-card" role="dialog" aria-modal="true" aria-labelledby="senha-modal-titulo">
+        <h2 id="senha-modal-titulo">Confirmar alteração</h2>
+        <p id="senha-modal-mensagem">Digite a senha atual da conta administradora para continuar.</p>
+        <label for="senha-modal-input">Senha atual</label>
+        <input id="senha-modal-input" type="password" autocomplete="current-password" required>
+        <div class="senha-modal-actions"><button type="button" class="btn-secondary" id="senha-modal-cancelar">Cancelar</button><button type="submit" class="btn-add" id="senha-modal-confirmar">Confirmar</button></div>
+      </form>
+    </div>
 </div>
 
 <script>
@@ -1723,7 +1739,7 @@
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
-        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-renomear-responsavel', 'config-nome-corrigido', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-renomear'].forEach(id => {
+        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-renomear-responsavel', 'config-nome-corrigido', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-renomear'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = !listaOperadoresGerenciavel();
         });
@@ -2128,19 +2144,32 @@
         if (nomes.includes(atual)) selectAtivo.value=atual;
     }
 
+    function solicitarSenhaAdministrador() {
+        return new Promise(resolve => {
+            const modal=document.getElementById('senha-confirmacao-modal');
+            const form=document.getElementById('senha-confirmacao-form');
+            const input=document.getElementById('senha-modal-input');
+            const cancel=document.getElementById('senha-modal-cancelar');
+            const btn=document.getElementById('senha-modal-confirmar');
+            const encerrar=valor=>{modal.hidden=true;modal.setAttribute('aria-hidden','true');form.removeEventListener('submit',enviar);cancel.removeEventListener('click',cancelar);modal.querySelector('[data-senha-cancelar]').removeEventListener('click',cancelar);document.removeEventListener('keydown',tecla);input.value='';resolve(valor)};
+            const cancelar=()=>encerrar(null);
+            const enviar=event=>{event.preventDefault();const senha=input.value;if(!senha){input.focus();return}encerrar(senha)};
+            const tecla=event=>{if(event.key==='Escape'){event.preventDefault();cancelar()}};
+            form.addEventListener('submit',enviar);cancel.addEventListener('click',cancelar);modal.querySelector('[data-senha-cancelar]').addEventListener('click',cancelar);document.addEventListener('keydown',tecla);
+            modal.hidden=false;modal.setAttribute('aria-hidden','false');input.focus();
+        });
+    }
+
     async function confirmarSenhaAdministrador() {
         if (!usuarioEhAdminFernando() || !usuarioAtualFirebase || !firebase.auth.EmailAuthProvider) throw new Error('Configurações exclusivas da conta administradora.');
-        const campo = document.getElementById('config-senha-atual');
-        const senha = campo.value;
-        if (!senha) { campo.focus(); throw new Error('Digite a senha atual do administrador para confirmar.'); }
+        const senha=await solicitarSenhaAdministrador();
+        if(senha===null) throw new Error('Ação cancelada. Nenhuma alteração foi feita.');
         try {
-            const credencial = firebase.auth.EmailAuthProvider.credential(usuarioAtualFirebase.email, senha);
+            const credencial=firebase.auth.EmailAuthProvider.credential(usuarioAtualFirebase.email,senha);
             await usuarioAtualFirebase.reauthenticateWithCredential(credencial);
-            campo.value = '';
-        } catch (error) {
-            campo.value = '';
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-login-credentials') throw new Error('Senha atual incorreta. Nenhuma alteração foi feita.');
-            throw new Error(error.message || 'Não foi possível confirmar a senha do administrador.');
+        } catch(error) {
+            if(error.code==='auth/wrong-password'||error.code==='auth/invalid-credential'||error.code==='auth/invalid-login-credentials') throw new Error('Senha atual incorreta. Nenhuma alteração foi feita.');
+            throw new Error(error.message||'Não foi possível confirmar a senha do administrador.');
         }
     }
 
@@ -2277,11 +2306,11 @@
     function escaparRecebimento(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
     function atualizarPreviaRecebimento(prefix){const semEtiqueta=document.getElementById(`${prefix}-sem-etiqueta`).checked;const e=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-etiqueta`).value),b=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-balanca`).value),d=b-e,p=e?100*d/e:NaN,ok=!semEtiqueta&&e>0&&b>0&&Number.isFinite(d);document.getElementById(`${prefix}-prev-diff`).textContent=semEtiqueta?'Não calculável':ok?`${d>0?'+':''}${formatarPesoRecebimento(d)} kg`:'—';document.getElementById(`${prefix}-prev-percent`).textContent=semEtiqueta?'Não calculável':ok?`${p>0?'+':''}${formatarPesoRecebimento(p,2)}%`:'—';document.getElementById(`${prefix}-prev-status`).textContent=semEtiqueta?(b>0?'Sem etiqueta: diferença e variação não calculáveis.':'Sem etiqueta: informe o peso da balança.'):(ok?(d>0?'Balança acima da etiqueta':d<0?'Balança abaixo da etiqueta':'Pesos iguais'):'Informe os dois pesos.');}
     function atualizarFornecedoresRecebimento(){['rb-receb-fornecedores','rbb-receb-fornecedores'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.replaceChildren(...fornecedoresRecebimento.map(nome=>{const o=document.createElement('option');o.value=nome;return o}))});}
-    async function salvarFornecedorRecebimento() {
+    async function salvarFornecedorRecebimento(tipo='barras') {
         if (!usuarioEhAdminFernando() || !recebimentosFornecedoresRef) { alert('Somente o administrador pode cadastrar fornecedores após conectar ao Firebase.'); return; }
-        const campo = document.getElementById('rb-fornecedor');
-        const alternativo = document.getElementById('rbb-fornecedor');
-        const nome = String(campo.value || alternativo.value || '').trim().replace(/\s+/g, ' ');
+        const prefix = tipo === 'bobinas' ? 'rbb' : 'rb';
+        const campo = document.getElementById(`${prefix}-fornecedor`);
+        const nome = String(campo.value || '').trim().replace(/\s+/g, ' ');
         if (!nome || nome.length > 100) { alert('Digite um fornecedor com até 100 caracteres.'); return; }
         if (fornecedoresRecebimento.some(item => item.toLocaleUpperCase('pt-BR') === nome.toLocaleUpperCase('pt-BR'))) { alert('Fornecedor já está salvo na lista.'); return; }
         try {
