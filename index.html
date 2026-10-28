@@ -259,17 +259,13 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: none;
         }
-        .autocomplete-items div {
-            padding: 10px;
-            cursor: pointer;
-            background-color: #fff;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-            color: #1e293b;
-            transition: background 0.2s;
+        .autocomplete-items .autocomplete-option {
+            display:block; width:100%; text-align:left; padding:10px; cursor:pointer;
+            background:#fff; border:0; border-bottom:1px solid #f1f5f9;
+            font-size:14px; color:#1e293b; transition:background .2s;
         }
-        .autocomplete-items div:hover { background-color: #e2e8f0; }
-        .autocomplete-items div strong { color: var(--primary); }
+        .autocomplete-items .autocomplete-option:hover,
+        .autocomplete-items .autocomplete-option:focus { background-color:#e2e8f0; outline:2px solid var(--primary); outline-offset:-2px; }
         /* --------------------------- */
 
         /* Botões do Formulário */
@@ -866,7 +862,7 @@
         body[data-theme="noite"] .add-pattern-box, body[data-theme="noite"] .manage-box, body[data-theme="noite"] .search-box { background:#243149; border-color:#45536c; color:#d7e0f2; box-shadow:0 3px 9px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.04); }
         body[data-theme="noite"] .input-group input, body[data-theme="noite"] .input-group select, body[data-theme="noite"] .auth-screen input { color:#e4eaf5; background:#121c2b; border-color:#3b4a63; box-shadow:inset 0 2px 4px rgba(0,0,0,.18); }
         body[data-theme="noite"] .input-group select option { color:#e4eaf5; background:#121c2b; }
-        body[data-theme="noite"] .autocomplete-items, body[data-theme="noite"] .autocomplete-items div { color:#e4eaf5; background:#1b2638; border-color:#354258; }
+        body[data-theme="noite"] .autocomplete-items, body[data-theme="noite"] .autocomplete-items .autocomplete-option { color:#e4eaf5; background:#1b2638; border-color:#354258; }
         body[data-theme="noite"] .autocomplete-items div:hover { background:#2b3a54; }
         body[data-theme="noite"] .consulta-banner { color:#c5d5ff; background:linear-gradient(110deg,#263856,#1c3847); border-color:#415a7b; }
         body[data-theme="noite"] .btn-clear { color:#fb9bab; background:linear-gradient(135deg,#342833,#31252d); border-color:#8a4c5b; }
@@ -1013,7 +1009,7 @@
                 <label for="in-produto">Estribo / Produto</label>
                 <input type="text" id="in-produto" maxlength="100" placeholder="Digite o estribo ou produto" autocomplete="off" aria-describedby="produto-ajuda" required>
                 <small id="produto-ajuda" aria-live="polite">Digite o estribo ou produto; um nome novo será guardado automaticamente ao registrar a produção.</small>
-                <div id="autocomplete-list" class="autocomplete-items" aria-hidden="true"></div>
+                <div id="autocomplete-list" class="autocomplete-items" role="listbox" aria-label="Estribos que começam com o texto digitado" aria-hidden="true"></div>
             </div>
 
             <div class="input-group">
@@ -1822,27 +1818,56 @@
         }
         const nomes = obterSugestoesEstribo();
         const exato = nomes.some(nome => chaveDuplicadoPadrao(nome) === chaveDuplicadoPadrao(valorDigitado));
-        const correspondentes = nomes.filter(nome => nome.includes(valorDigitado) && nome !== valorDigitado).slice(0, 8);
+        const correspondentes = nomes.filter(nome => nome.startsWith(valorDigitado) && nome !== valorDigitado).slice(0, 20);
         ajudaProduto.textContent = exato
             ? 'Esse estribo já está salvo nos padrões.'
             : 'Produto novo: será salvo automaticamente quando você registrar a produção.';
         if (!correspondentes.length) return;
         correspondentes.forEach(nome => {
-            const sugestao = document.createElement('div');
+            const sugestao = document.createElement('button');
+            sugestao.type = 'button';
+            sugestao.className = 'autocomplete-option';
+            sugestao.setAttribute('role', 'option');
             sugestao.textContent = nome;
+            sugestao.addEventListener('pointerdown', event => event.preventDefault());
+            sugestao.addEventListener('mousedown', event => event.preventDefault());
+            sugestao.addEventListener('click', () => {
+                inputProduto.value = nome;
+                inputProduto.dispatchEvent(new Event('change', { bubbles: true }));
+                document.getElementById('produto-ajuda').textContent = 'Estribo padrão selecionado.';
+                closeAllLists();
+                aplicarAutomacaoAmaciado(nome);
+            });
             listaAutocomplete.appendChild(sugestao);
         });
+        listaAutocomplete.setAttribute('aria-hidden', 'false');
         listaAutocomplete.style.display = 'block';
     });
 
     document.addEventListener('click', function (e) {
         if (e.target !== inputProduto && !listaAutocomplete.contains(e.target)) closeAllLists();
     });
-    inputProduto.addEventListener('blur', () => setTimeout(closeAllLists, 120));
-
+    inputProduto.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeAllLists();
+        if (event.key === 'ArrowDown') {
+            const first = listaAutocomplete.querySelector('.autocomplete-option');
+            if (first) { event.preventDefault(); first.focus(); }
+        }
+    });
+    listaAutocomplete.addEventListener('keydown', event => {
+        const options = [...listaAutocomplete.querySelectorAll('.autocomplete-option')];
+        const index = options.indexOf(document.activeElement);
+        if (event.key === 'ArrowDown' && index >= 0 && index < options.length - 1) { event.preventDefault(); options[index + 1].focus(); }
+        else if (event.key === 'ArrowUp') { event.preventDefault(); if (index <= 0) inputProduto.focus(); else options[index - 1].focus(); }
+        else if (event.key === 'Escape') { closeAllLists(); inputProduto.focus(); }
+    });
+    inputProduto.addEventListener('blur', () => setTimeout(() => {
+        if (!listaAutocomplete.contains(document.activeElement)) closeAllLists();
+    }, 120));
 
     function closeAllLists() {
-        listaAutocomplete.innerHTML = '';
+        listaAutocomplete.replaceChildren();
+        listaAutocomplete.setAttribute('aria-hidden', 'true');
         listaAutocomplete.style.display = 'none';
     }
 
