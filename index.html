@@ -1216,9 +1216,10 @@
     <section id="config-page" role="tabpanel" aria-labelledby="tab-configuracoes" hidden>
         <div class="config-section">
             <h2>Configurações do administrador</h2>
+            <p class="operadores-ajuda">Para adicionar alguém, digite o nome no primeiro campo e toque em “Adicionar à lista”. Não precisa selecionar ninguém antes. Se pedir, confirme com a senha atual do administrador.</p>
             <p>Somente fernandolisboa.br@gmail.com pode adicionar, corrigir ou remover qualquer responsável. A senha da conta é confirmada a cada mudança. Os lançamentos antigos permanecem no histórico; correções e remoções valem para novos lançamentos.</p>
             <div class="config-grid">
-                <div class="input-group"><label for="config-novo-responsavel">Adicionar responsável</label><input type="text" id="config-novo-responsavel" maxlength="80" placeholder="Nome do responsável"></div>
+                <div class="input-group"><label for="config-novo-responsavel">Adicionar responsável</label><input type="text" id="config-novo-responsavel" maxlength="80" placeholder="Digite o novo nome (não precisa selecionar outro)"></div>
                 <button class="btn-add" id="config-btn-adicionar" type="button" onclick="configAdicionarResponsavel()">Adicionar à lista</button>
                 <div class="input-group"><label for="config-remover-responsavel">Remover responsável</label><select id="config-remover-responsavel"></select></div>
                 <button class="btn-clear" id="config-btn-remover" type="button" onclick="configRemoverResponsavel()">Remover selecionado</button>
@@ -1292,6 +1293,7 @@
     let operadoresFirebaseSnapshot = {};
     const CHAVE_OPERADORES_REMOVIDOS = 'nomes_responsaveis_removidos';
     let migracaoOperadoresEmAndamento = false;
+    let seedOperadoresEmAndamento = false;
     const EMAIL_ADMIN = 'fernandolisboa.br@gmail.com';
     const EMAIL_EXPORTADOR = 'arames@confere.com';
     const EMAIL_PRODUCAO = 'arames@brasil.com';
@@ -1357,9 +1359,33 @@
         catch (_) { return false; }
     }
 
+    function listaOperadoresGerenciavel() {
+        return Boolean(usuarioEhAdminFernando() && operadoresRef);
+    }
+
     function nomesOperadoresAtivos() {
-        return [...new Set(nomesOperadoresFirebase
-            .map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(Boolean))];
+        const nomes=[...nomesOperadoresFirebase];
+        // Mantém visíveis responsáveis existentes no registro ativo, inclusive em instalações antigas com formato diferente.
+        if(responsavelAtivoFirebase) nomes.push(responsavelAtivoFirebase);
+        return [...new Set(nomes.map(nome=>String(nome).trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')).filter(Boolean))];
+    }
+
+    function extrairNomesOperadores(snapshot) {
+        const dados=snapshot||{};
+        return Object.entries(dados).flatMap(([key,item])=>{
+            if(typeof item==='string') return [item];
+            if(item&&typeof item==='object') {
+                if(item.ativo===false || item.active===false || item.removido===true) return [];
+                const nome=String(item.nome||item.name||item.responsavel||item.operador||'').trim();
+                if(nome) return [nome];
+                // Older versions sometimes saved a name-keyed active map or a record without a nome field.
+                if(item.ativo===true || item.active===true || item.ativo==null) return [key];
+                return [];
+            }
+            // Compatibility with older lists stored as { NOME: true }.
+            if(item===true) return [key];
+            return [];
+        }).map(nome=>String(nome).trim().replace(/\s+/g,' ')).filter(Boolean);
     }
 
     function chaveOperadorSegura(nome) {
@@ -1372,6 +1398,16 @@
         if (!operadoresAtivosRef) throw new Error('A lista de permissões dos operadores ainda não sincronizou.');
         const chave=chaveOperadorSegura(nome);
         await operadoresAtivosRef.child(chave).set(Boolean(ativo));
+    }
+
+    async function recarregarOperadoresParaEdicao() {
+        if(!operadoresRef) throw new Error('A conexão com /operadores não está pronta.');
+        const snap=await operadoresRef.once('value');
+        operadoresFirebaseSnapshot=snap.val()||{};
+        nomesOperadoresFirebase=extrairNomesOperadores(operadoresFirebaseSnapshot);
+        firebaseOperadoresPronto=true;
+        sincronizarOperadoresNaTela();
+        return nomesOperadoresAtivos();
     }
 
     function sincronizarOperadoresNaTela() {
@@ -1511,8 +1547,8 @@
             responsavelAtivoFirebase = valor;
             firebaseConfiguracaoPronta = false;
             if (!valor) {
-                if (usuarioEhAdmin && firebaseOperadoresPronto && nomesOperadoresAtivos().includes('FERNANDO')) {
-                    configuracaoRef.child('responsavelAtivo').set('FERNANDO').catch(error => console.warn('Não foi possível definir responsável ativo padrão.', error));
+                if (usuarioEhAdmin && firebaseOperadoresPronto && nomesOperadoresAtivos().length) {
+                    const inicial=nomesOperadoresAtivos()[0]; responsavelAtivoFirebase=inicial; configuracaoRef.child('responsavelAtivo').set(inicial).catch(error => console.warn('Não foi possível definir responsável ativo padrão.', error));
                 }
                 atualizarEstadoSincronizacao();
                 return;
@@ -1521,9 +1557,10 @@
             if (nomesOperadoresAtivos().includes(valor)) {
                 aplicarResponsavelAtivoCompartilhado(valor);
                 firebaseConfiguracaoPronta = true;
-            } else if (usuarioEhAdmin && nomesOperadoresAtivos().includes('FERNANDO')) {
-                responsavelAtivoFirebase = '';
-                configuracaoRef.child('responsavelAtivo').set('FERNANDO').catch(error => console.warn('Não foi possível corrigir o responsável ativo.', error));
+            } else if (usuarioEhAdmin && responsavelAtivoFirebase && !nomesOperadoresAtivos().includes(responsavelAtivoFirebase)) {
+                const nomeLegado=responsavelAtivoFirebase;
+                const novaRef=operadoresRef.push();
+                novaRef.set({nome:nomeLegado,ativo:true}).then(()=>atualizarPermissaoOperador(nomeLegado,true)).catch(error=>console.warn('Não foi possível migrar o responsável ativo antigo.',error));
             }
             atualizarEstadoSincronizacao();
         }, error => {
@@ -1580,17 +1617,27 @@
             operadoresFirebaseSnapshot = snapshot.val() || {};
             const temRegistrosOperador=Object.keys(operadoresFirebaseSnapshot).length>0;
             // Migração única para instalações antigas: os três nomes que já vinham no seletor passam a ser registros normais e editáveis.
-            if (usuarioEhAdmin && !temRegistrosOperador && !localStorage.getItem('operadores_inicializados_v2')) {
+            if (usuarioEhAdmin && !temRegistrosOperador && !seedOperadoresEmAndamento) {
+                seedOperadoresEmAndamento=true;
                 try {
                     const seed={};
-                    standardOperatorNames.forEach(nome=>{const key=operadoresRef.push().key;seed[key]={nome,ativo:true};});
+                    const iniciais=[...standardOperatorNames];
+                    const atual=String(responsavelAtivoFirebase||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
+                    if(atual&&!iniciais.includes(atual))iniciais.push(atual);
+                    iniciais.forEach(nome=>{const key=operadoresRef.push().key;seed[key]={nome,ativo:true};});
                     await operadoresRef.update(seed);
-                    localStorage.setItem('operadores_inicializados_v2','1');
+                    try{localStorage.setItem('operadores_inicializados_v2','1')}catch(_){}
                     return;
-                } catch(error) { console.warn('Migração inicial dos operadores pendente.',error); }
+                } catch(error) {
+                    const mensagem=document.getElementById('config-message');
+                    if(mensagem)mensagem.textContent='Não consegui inicializar a lista no Firebase. Confirme que a regra /operadores permite escrita apenas ao administrador.';
+                    console.warn('Migração inicial dos operadores pendente.',error);
+                } finally { seedOperadoresEmAndamento=false; }
             }
-            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).filter(item => item && item.ativo !== false).map(item => String(item.nome || '').trim().replace(/\s+/g,' ')).filter(Boolean);
+            nomesOperadoresFirebase = extrairNomesOperadores(operadoresFirebaseSnapshot);
             sincronizarOperadoresNaTela();
+            const mensagemLista=document.getElementById('config-message');
+            if(mensagemLista&&usuarioEhAdmin)mensagemLista.textContent=nomesOperadoresFirebase.length?`${nomesOperadoresFirebase.length} responsável(is) carregado(s). Para adicionar, basta digitar um nome no primeiro campo; não precisa selecionar outro.`:'Lista carregada vazia. Digite um novo nome no primeiro campo e toque em “Adicionar à lista”.';
             if (usuarioEhAdmin && operadoresAtivosRef) {
                 const atualizacoes={};
                 Object.values(operadoresFirebaseSnapshot).forEach(item=>{if(item&&item.nome){try{atualizacoes[chaveOperadorSegura(item.nome)]=item.ativo!==false;}catch(_){}}});
@@ -1608,10 +1655,10 @@
                 if (responsavelAtivoFirebase && nomesOperadoresAtivos().includes(responsavelAtivoFirebase)) {
                     aplicarResponsavelAtivoCompartilhado(responsavelAtivoFirebase);
                     firebaseConfiguracaoPronta = true;
-                } else if (usuarioEhAdmin && nomesOperadoresAtivos().includes('FERNANDO')) {
+                } else if (usuarioEhAdmin && responsavelAtivoFirebase && !nomesOperadoresAtivos().includes(responsavelAtivoFirebase) && !operadorAtivoLegadoEmMigracao) {
                     firebaseConfiguracaoPronta = false;
-                    responsavelAtivoFirebase = '';
-                    configuracaoRef.child('responsavelAtivo').set('FERNANDO').catch(error => console.warn('Não foi possível corrigir o responsável ativo.', error));
+                    const nomeLegado=responsavelAtivoFirebase; operadorAtivoLegadoEmMigracao=nomeLegado;
+                    operadoresRef.push({nome:nomeLegado,ativo:true}).then(()=>atualizarPermissaoOperador(nomeLegado,true)).catch(error=>{operadorAtivoLegadoEmMigracao='';console.warn('Não foi possível migrar o responsável ativo antigo.',error)});
                 }
             }
             atualizarEstadoSincronizacao();
@@ -1629,6 +1676,8 @@
         }, error => {
             firebaseOperadoresPronto = false;
             atualizarEstadoSincronizacao();
+            const mensagem=document.getElementById('config-message');
+            if(mensagem&&usuarioEhAdmin)mensagem.textContent='Não consegui carregar os responsáveis. Confira a regra de leitura de /operadores no Firebase.';
             console.warn('Leitura da lista compartilhada indisponível; edição bloqueada até a sincronização.', error);
         });
         firebaseProducaoPronto = firebasePadroesPronto = firebaseOperadoresPronto = firebaseConfiguracaoPronta = false;
@@ -1674,10 +1723,11 @@
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
-        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-renomear-responsavel', 'config-nome-corrigido', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-renomear', 'config-btn-ativo'].forEach(id => {
+        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-renomear-responsavel', 'config-nome-corrigido', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-renomear'].forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
+            if (el) el.disabled = !listaOperadoresGerenciavel();
         });
+        ['config-responsavel-ativo','config-btn-ativo'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=!firebaseEdicaoLiberada||!usuarioEhAdminFernando();});
         const status = document.getElementById('firebase-status');
         if (status) {
             if (erroFirebaseAtivo) status.innerText = 'Falha na sincronização com Firebase — confira conexão e regras de acesso';
@@ -2070,7 +2120,7 @@
         nomes.filter(nome => nome !== 'FERNANDO').forEach(nome => { const o=document.createElement('option'); o.value=nome; o.textContent=nome; selectRemover.appendChild(o); });
         if (nomes.includes(valorRemover)) selectRemover.value = valorRemover;
         selectRenomear.replaceChildren();
-        const opcaoRenomearInicial=document.createElement('option');opcaoRenomearInicial.value='';opcaoRenomearInicial.textContent='Selecione o nome a corrigir';selectRenomear.appendChild(opcaoRenomearInicial);
+        const opcaoRenomearInicial=document.createElement('option');opcaoRenomearInicial.value='';opcaoRenomearInicial.textContent=nomes.length?'Selecione o nome a corrigir':'Nenhum nome ativo para corrigir';selectRenomear.appendChild(opcaoRenomearInicial);
         nomes.forEach(nome=>{const o=document.createElement('option');o.value=nome;o.textContent=nome;selectRenomear.appendChild(o)});
         if(nomes.includes(valorRenomear))selectRenomear.value=valorRenomear;
         selectAtivo.replaceChildren();
@@ -2095,12 +2145,13 @@
     }
 
     async function configAdicionarResponsavel() {
-        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Entre com a conta administradora e aguarde a sincronização.'); return; }
+        if (!listaOperadoresGerenciavel()) { alert('Entre na conta administradora e aguarde o carregamento da lista de responsáveis.'); return; }
         const campo=document.getElementById('config-novo-responsavel');
         const nome=campo.value.trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
-        if (!nome) { campo.focus(); alert('Digite o nome do responsável.'); return; }
-        if (nomesOperadoresAtivos().includes(nome)) { alert(`“${nome}” já existe na lista.`); return; }
+        if (!nome) { campo.focus(); alert('Digite o nome do novo responsável. Não precisa selecionar outro nome.'); return; }
         try {
+            const ativosAntes=await recarregarOperadoresParaEdicao();
+            if (ativosAntes.includes(nome)) { alert(`“${nome}” já está na lista.`); return; }
             await confirmarSenhaAdministrador();
             if (!operadoresRef) throw new Error('A lista de responsáveis ainda não sincronizou com o Firebase.');
             const registroNuvem=Object.entries(operadoresFirebaseSnapshot).find(([,item])=>String((item&&item.nome)||'').trim().toLocaleUpperCase('pt-BR')===nome);
@@ -2111,13 +2162,16 @@
             salvarListaLocal('nomes_responsaveis',[...novosLocais,nome]);
             salvarListaLocal(CHAVE_OPERADORES_REMOVIDOS,lerListaLocal(CHAVE_OPERADORES_REMOVIDOS).filter(item=>item!==nome));
             nomesOperadoresFirebase=[...new Set([...nomesOperadoresFirebase,nome])];
+            const jaNoSnapshot=Object.values(operadoresFirebaseSnapshot).some(item=>String(typeof item==='string'?item:(item&&item.nome)||'').trim().toLocaleUpperCase('pt-BR')===nome);
+            if(!jaNoSnapshot){const localKey=Object.keys(operadoresFirebaseSnapshot).length?null:nome; if(localKey) operadoresFirebaseSnapshot[localKey]={nome,ativo:true};}
             sincronizarOperadoresNaTela(); atualizarSeletoresConfiguracoes();
             campo.value=''; document.getElementById('config-message').textContent=`${nome} foi adicionado à lista.`;
-        } catch(error) { document.getElementById('config-message').textContent=error.message; alert(error.message); }
+        } catch(error) { document.getElementById('config-message').textContent='Não concluí a alteração: '+error.message; alert('Não concluí a alteração: '+error.message); }
     }
 
     async function configRenomearResponsavel() {
-        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Somente a conta administradora pode corrigir nomes.'); return; }
+        if (!listaOperadoresGerenciavel()) { alert('Entre na conta administradora e aguarde o carregamento da lista de responsáveis.'); return; }
+        await recarregarOperadoresParaEdicao();
         const antigo=document.getElementById('config-renomear-responsavel').value;
         const campo=document.getElementById('config-nome-corrigido');
         const novo=String(campo.value||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
@@ -2130,8 +2184,8 @@
             await confirmarSenhaAdministrador();
             if(!operadoresRef)throw new Error('A lista de responsáveis ainda não sincronizou com o Firebase.');
             const registros=Object.entries(operadoresFirebaseSnapshot).filter(([,item])=>String((item&&item.nome)||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')===antigo);
-            if(!registros.length)throw new Error('Não encontrei o cadastro ativo para corrigir.');
-            await Promise.all(registros.map(([key])=>operadoresRef.child(key).update({nome:novo,ativo:true})));
+            if(registros.length) await Promise.all(registros.map(([key])=>operadoresRef.child(key).update({nome:novo,ativo:true})));
+            else await operadoresRef.push({nome:novo,ativo:true});
             await atualizarPermissaoOperador(antigo,false);await atualizarPermissaoOperador(novo,true);
             if(String(responsavelAtivoFirebase||'').toLocaleUpperCase('pt-BR')===antigo&&configuracaoRef){await configuracaoRef.child('responsavelAtivo').set(novo);responsavelAtivoFirebase=novo;}
             nomesOperadoresFirebase=nomesOperadoresFirebase.map(n=>String(n).toLocaleUpperCase('pt-BR')===antigo?novo:n);
@@ -2141,10 +2195,11 @@
     }
 
     async function configRemoverResponsavel() {
-        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Entre com a conta administradora e aguarde a sincronização.'); return; }
+        if (!listaOperadoresGerenciavel()) { alert('Entre na conta administradora e aguarde o carregamento da lista de responsáveis.'); return; }
+        await recarregarOperadoresParaEdicao();
         const nome=document.getElementById('config-remover-responsavel').value;
-        if (!nome) { alert('Selecione um responsável para remover.'); return; }
-        if (nome === 'FERNANDO') { alert('FERNANDO é a conta administrativa padrão e não pode ser removido.'); return; }
+        if (!nome) { alert('Escolha na lista o responsável que deseja remover.'); return; }
+        if (nome === 'FERNANDO') { alert('FERNANDO é a conta administradora e não pode ser removido.'); return; }
         if (!confirm(`Remover ${nome} da lista de responsáveis? Os lançamentos antigos continuarão no histórico.`)) return;
         try {
             await confirmarSenhaAdministrador();
@@ -2169,7 +2224,7 @@
     }
 
     async function configDefinirResponsavelAtivo() {
-        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Entre com a conta administradora e aguarde a sincronização.'); return; }
+        if (!listaOperadoresGerenciavel()) { alert('Entre na conta administradora e aguarde o carregamento da lista de responsáveis.'); return; }
         const novo=document.getElementById('config-responsavel-ativo').value;
         if (!novo || !nomesOperadoresAtivos().includes(novo)) { alert('Selecione um responsável válido.'); return; }
         if (novo===responsavelAtivoFirebase) { alert(`${novo} já está como responsável ativo.`); return; }
