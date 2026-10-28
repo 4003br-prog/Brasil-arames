@@ -1181,7 +1181,7 @@
         <div class="recebimento-status" id="rb-status" aria-live="polite"></div>
       </div>
       <div class="recebimento-panel">
-        <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('barras')">Exportar Excel</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
+        <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('barras')">Exportar Excel</button><button class="btn-pdf export-access" type="button" onclick="exportarRecebimentosPDF('barras')">Imprimir / PDF</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rb-linhas"></tbody><tfoot id="rb-totais"></tfoot></table></div>
       </div>
     </section>
@@ -1208,7 +1208,7 @@
         <div class="recebimento-status" id="rbb-status" aria-live="polite"></div>
       </div>
       <div class="recebimento-panel">
-        <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('bobinas')">Exportar Excel</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
+        <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('bobinas')">Exportar Excel</button><button class="btn-pdf export-access" type="button" onclick="exportarRecebimentosPDF('bobinas')">Imprimir / PDF</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rbb-linhas"></tbody><tfoot id="rbb-totais"></tfoot></table></div>
       </div>
     </section>
@@ -2216,6 +2216,82 @@
     async function excluirRecebimento(tipo,id){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Excluir este recebimento?'))return;try{await recebimentosRef.child(`${tipo}/items/${id}`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     async function apagarHistoricoRecebimento(tipo){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Apagar todos os recebimentos desta aba?'))return;try{await recebimentosRef.child(`${tipo}/items`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     function limparFiltrosRecebimento(tipo){const p=tipo==='barras'?'rb':'rbb';document.getElementById(`${p}-inicio`).value='';document.getElementById(`${p}-fim`).value='';renderRecebimentos(tipo)}
+    function exportarRecebimentosPDF(tipo) {
+        if (!usuarioPodeExportar) { alert('Esta conta não pode exportar.'); return; }
+        if (!['barras', 'bobinas'].includes(tipo)) { alert('Tipo de relatório inválido.'); return; }
+        if (!window.jspdf || !window.jspdf.jsPDF) { alert('A biblioteca de PDF não carregou. Confira sua conexão e tente novamente.'); return; }
+        const prefix = tipo === 'barras' ? 'rb' : 'rbb';
+        const inicio = document.getElementById(`${prefix}-inicio`).value;
+        const fim = document.getElementById(`${prefix}-fim`).value;
+        if (inicio && fim && inicio > fim) { alert('A data inicial não pode ser posterior à data final.'); return; }
+        const linhas = recebimentos[tipo]
+            .filter(r => r && /^\d{4}-\d{2}-\d{2}$/.test(String(r.data || '')) && (!inicio || r.data >= inicio) && (!fim || r.data <= fim))
+            .sort((a,b) => String(b.data).localeCompare(String(a.data)) || Number(b.criado || 0) - Number(a.criado || 0));
+        if (!linhas.length) { alert('Não há recebimentos neste período para imprimir.'); return; }
+
+        const pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 8;
+        const cols = [
+            { title: 'Data', width: 20 }, { title: 'Fornecedor', width: 43 },
+            { title: 'Bitola', width: 23 }, { title: 'Etiqueta kg', width: 29 },
+            { title: 'Balança kg', width: 29 }, { title: 'Diferença kg', width: 27 },
+            { title: 'Variação', width: 25 }, { title: 'Observação', width: 78 }
+        ];
+        const totalWidth = cols.reduce((sum,col) => sum + col.width, 0);
+        if (totalWidth > pageWidth - margin * 2) { alert('As colunas não cabem na página PDF.'); return; }
+        const somaEtiqueta = linhas.reduce((sum,r) => sum + (!r.semEtiqueta ? (Number(r.pesoEtiqueta) || 0) : 0), 0);
+        const somaBalancaComEtiqueta = linhas.reduce((sum,r) => sum + (!r.semEtiqueta ? (Number(r.pesoBalanca) || 0) : 0), 0);
+        const somaBalancaTodas = linhas.reduce((sum,r) => sum + (Number(r.pesoBalanca) || 0), 0);
+        const diferencaTotal = somaBalancaComEtiqueta - somaEtiqueta;
+        const percentualTotal = somaEtiqueta ? diferencaTotal / somaEtiqueta * 100 : 0;
+        const periodo = inicio || fim ? `${inicio ? inicio.split('-').reverse().join('/') : 'início'} até ${fim ? fim.split('-').reverse().join('/') : 'hoje'}` : 'Todo o histórico';
+        const titulo = tipo === 'barras' ? 'Recebimento de barras de 12 m' : 'Recebimento de bobinas';
+        const valorPeso = value => Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 3 });
+        let y = 0;
+        const drawHeader = () => {
+            pdf.setFont('helvetica', 'bold'); pdf.setFontSize(15);
+            pdf.text(titulo, margin, 12);
+            pdf.setFont('helvetica', 'normal'); pdf.setFontSize(9);
+            pdf.text(`Período: ${periodo}  |  Gerado em: ${new Date().toLocaleString('pt-BR')}`, margin, 18);
+            pdf.text(`Cargas: ${linhas.length}  |  Etiquetas: ${valorPeso(somaEtiqueta)} kg  |  Balança (todas): ${valorPeso(somaBalancaTodas)} kg`, margin, 23);
+            pdf.text(`Balança comparável (com etiqueta): ${valorPeso(somaBalancaComEtiqueta)} kg  |  Diferença comparável: ${diferencaTotal > 0 ? '+' : ''}${valorPeso(diferencaTotal)} kg (${percentualTotal > 0 ? '+' : ''}${percentualTotal.toLocaleString('pt-BR',{maximumFractionDigits:2})}%)`, margin, 28);
+            y = 33;
+            drawRow(cols.map(col => col.title), true);
+        };
+        const drawRow = (cells, bold=false) => {
+            pdf.setFont('helvetica', bold ? 'bold' : 'normal'); pdf.setFontSize(bold ? 8 : 7.5);
+            const wrapped = cells.map((cell,i) => pdf.splitTextToSize(String(cell ?? ''), cols[i].width - 2));
+            const maxLines = Math.max(1, ...wrapped.map(items => items.length));
+            const rowHeight = Math.max(7, Math.min(28, maxLines * 3.5 + 2));
+            if (y + rowHeight > pageHeight - 8) { pdf.addPage(); drawHeader(); }
+            let x = margin;
+            cells.forEach((_,i) => {
+                pdf.rect(x,y,cols[i].width,rowHeight);
+                const maxVisible = Math.max(1,Math.floor((rowHeight - 2) / 3.5));
+                pdf.text(wrapped[i].slice(0,maxVisible),x+1,y+3.5,{maxWidth:cols[i].width-2});
+                x += cols[i].width;
+            });
+            y += rowHeight;
+        };
+        const rows = linhas.map(r => {
+            const diff = r.semEtiqueta ? null : (Number(r.pesoBalanca) || 0) - (Number(r.pesoEtiqueta) || 0);
+            const pct = !r.semEtiqueta && Number(r.pesoEtiqueta) ? diff / Number(r.pesoEtiqueta) * 100 : null;
+            return [String(r.data || '').split('-').reverse().join('/'), r.fornecedor || '', r.bitola || '', r.semEtiqueta ? 'Sem etiqueta' : `${valorPeso(r.pesoEtiqueta)} kg`, `${valorPeso(r.pesoBalanca)} kg`, diff === null ? '—' : `${diff > 0 ? '+' : ''}${valorPeso(diff)} kg`, pct === null ? '—' : `${pct > 0 ? '+' : ''}${pct.toLocaleString('pt-BR',{maximumFractionDigits:2})}%`, r.observacao || ''];
+        });
+        drawHeader();
+        rows.forEach(row => drawRow(row));
+        const filename = `Recebimento_${tipo}_${dataHojeISO()}.pdf`;
+        try {
+            const blob = pdf.output('blob');
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); link.href = url; link.download = filename; link.style.display = 'none';
+            document.body.appendChild(link); link.click(); link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (error) { alert(error.message || 'Não foi possível gerar o PDF.'); }
+    }
+
     function exportarRecebimentos(tipo){if(!usuarioPodeExportar){alert('Esta conta não pode exportar.');return}if(!window.XLSX){alert('A biblioteca de planilhas não carregou. Confira sua conexão.');return}if(!['barras','bobinas'].includes(tipo)){alert('Tipo de relatório inválido.');return}const p=tipo==='barras'?'rb':'rbb';const ini=document.getElementById(`${p}-inicio`).value,fim=document.getElementById(`${p}-fim`).value;const rows=recebimentos[tipo].filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.data||''))&&(!ini||r.data>=ini)&&(!fim||r.data<=fim)).sort((a,b)=>String(b.data).localeCompare(String(a.data)));if(!rows.length){alert('Não há recebimentos neste período para exportar.');return}const data=rows.map(r=>{const d=r.semEtiqueta?null:Number(r.pesoBalanca)-Number(r.pesoEtiqueta);return{'Data':r.data.split('-').reverse().join('/'),'Fornecedor':escaparCelulaExcel(r.fornecedor),'Bitola':escaparCelulaExcel(r.bitola),'Peso etiqueta (kg)':r.semEtiqueta?'Sem etiqueta':Number(r.pesoEtiqueta),'Peso balança (kg)':Number(r.pesoBalanca),'Diferença (kg)':r.semEtiqueta?'Não calculável':d,'Variação (%)':r.semEtiqueta?'Não calculável':Number(r.pesoEtiqueta)?100*d/Number(r.pesoEtiqueta):0,'Observação':escaparCelulaExcel(r.observacao||'')}});const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(data);XLSX.utils.book_append_sheet(wb,ws,tipo==='barras'?'Barras 12m':'Bobinas');XLSX.writeFile(wb,`Recebimento_${tipo}_${dataHojeISO()}.xlsx`)}
 
     function chaveFornecedorBobina(nome) {
