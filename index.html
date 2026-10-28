@@ -89,28 +89,6 @@
             margin-bottom: 10px;
             text-transform: uppercase;
         }
-        .chips-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-        .chip {
-            background: #e0e7ff;
-            color: var(--primary);
-            border: 1px solid #c7d2fe;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            height: 36px;
-        }
-        .chip:hover { background: #c7d2fe; }
         
         /* Botões de Editar/Apagar (Só aparecem no modo gerenciar) */
         .chip-edit {
@@ -1024,14 +1002,6 @@
     <!-- Formulário -->
     <div class="form-section" id="production-form-section">
         
-        <!-- Área de Botões Rápidos (Estribos Padrões) -->
-        <div class="padroes-section">
-            <h4>Clique em um Estribo Padrão para preencher:</h4>
-            <div class="chips-container" id="chips-container">
-                <!-- Os botões são gerados via JavaScript -->
-            </div>
-        </div>
-
         <div class="form-grid">
             <div class="input-group">
                 <label for="in-data">Data</label>
@@ -1041,8 +1011,9 @@
             <!-- Campo de Produto com AUTOCOMPLETE -->
             <div class="input-group autocomplete-wrapper">
                 <label for="in-produto">Estribo / Produto</label>
-                <input type="text" id="in-produto" maxlength="100" placeholder="Ex: RED 15" autocomplete="off" required>
-                <div id="autocomplete-list" class="autocomplete-items"></div>
+                <input type="text" id="in-produto" maxlength="100" placeholder="Digite o estribo ou produto" autocomplete="off" aria-describedby="produto-ajuda" required>
+                <small id="produto-ajuda" aria-live="polite">Digite o estribo ou produto; um nome novo será guardado automaticamente ao registrar a produção.</small>
+                <div id="autocomplete-list" class="autocomplete-items" aria-hidden="true"></div>
             </div>
 
             <div class="input-group">
@@ -1514,7 +1485,6 @@
         try { padroesLocalUsuario = JSON.parse(localStorage.getItem('estribosPadroes_' + user.uid) || 'null'); } catch (_) {}
         estribosPadroes = Array.isArray(padroesLocalUsuario) ? padroesLocalUsuario : [...padroesIniciaisFirebase];
         renderizarTabela();
-        renderizarEstribosPadroes();
 
         // Os dois usuários leem e trabalham sobre as mesmas referências.
         producaoRef = firebaseDb.ref('producao');
@@ -1728,7 +1698,6 @@
                 firebasePadroesPronto = true;
                 atualizarEstadoSincronizacao();
                 estribosPadroes = [...padroesIniciaisFirebase];
-                renderizarEstribosPadroes();
                 return;
             }
             const payload = snapshot.val() || {};
@@ -1741,7 +1710,6 @@
             aplicandoPadroesFirebase = false;
             firebasePadroesPronto = true;
             atualizarEstadoSincronizacao();
-            renderizarEstribosPadroes();
             // Normaliza também a ordem guardada na nuvem para não reverter ao recarregar.
             if (JSON.stringify(ordemRecebida) !== JSON.stringify(ordemCrescente)) salvarPadroesFirebase();
         }, mostrarErroFirebase);
@@ -1839,39 +1807,39 @@
     const inputProduto = document.getElementById('in-produto');
     const listaAutocomplete = document.getElementById('autocomplete-list');
 
+    function obterSugestoesEstribo() {
+        const nomesDoHistorico = producao.map(item => String(item && item.produto || '').trim()).filter(Boolean);
+        return [...new Set([...estribosPadroes, ...nomesDoHistorico].map(chaveDuplicadoPadrao).filter(Boolean))];
+    }
+
     inputProduto.addEventListener('input', function() {
-        const valorDigitado = this.value.toLocaleUpperCase('pt-BR');
-        closeAllLists(); 
-        
-        if (!valorDigitado) { return false; }
-
-        const correspondentes = estribosPadroes.filter(estribo => estribo.startsWith(valorDigitado));
-
-        if (correspondentes.length > 0) {
-            listaAutocomplete.style.display = 'block';
-            correspondentes.forEach(match => {
-                const div = document.createElement('div');
-                const parteNegrito = match.substring(0, valorDigitado.length);
-                const parteNormal = match.substring(valorDigitado.length);
-                const strong = document.createElement('strong');
-                strong.textContent = parteNegrito;
-                div.appendChild(strong);
-                div.appendChild(document.createTextNode(parteNormal));
-                
-                div.addEventListener('click', function() {
-                    inputProduto.value = match;
-                    closeAllLists();
-                    aplicarAutomacaoAmaciado(match); 
-                    document.getElementById('in-bitola').focus(); 
-                });
-                listaAutocomplete.appendChild(div);
-            });
+        const valorDigitado = this.value.trim().toLocaleUpperCase('pt-BR');
+        closeAllLists();
+        const ajudaProduto = document.getElementById('produto-ajuda');
+        if (!valorDigitado) {
+            ajudaProduto.textContent = 'Digite o estribo ou produto; um nome novo será guardado automaticamente ao registrar a produção.';
+            return;
         }
+        const nomes = obterSugestoesEstribo();
+        const exato = nomes.some(nome => chaveDuplicadoPadrao(nome) === chaveDuplicadoPadrao(valorDigitado));
+        const correspondentes = nomes.filter(nome => nome.includes(valorDigitado) && nome !== valorDigitado).slice(0, 8);
+        ajudaProduto.textContent = exato
+            ? 'Esse estribo já está salvo nos padrões.'
+            : 'Produto novo: será salvo automaticamente quando você registrar a produção.';
+        if (!correspondentes.length) return;
+        correspondentes.forEach(nome => {
+            const sugestao = document.createElement('div');
+            sugestao.textContent = nome;
+            listaAutocomplete.appendChild(sugestao);
+        });
+        listaAutocomplete.style.display = 'block';
     });
 
     document.addEventListener('click', function (e) {
-        if (e.target !== inputProduto) closeAllLists();
+        if (e.target !== inputProduto && !listaAutocomplete.contains(e.target)) closeAllLists();
     });
+    inputProduto.addEventListener('blur', () => setTimeout(closeAllLists, 120));
+
 
     function closeAllLists() {
         listaAutocomplete.innerHTML = '';
@@ -1920,82 +1888,9 @@
         });
     }
 
+    // Os padrões não são mais botões: aparecem como sugestões no campo Produto.
     function renderizarEstribosPadroes() {
-        estribosPadroes = ordenarListaEstribos(estribosPadroes);
-        const container = document.getElementById('chips-container');
-        container.innerHTML = '';
-
-        estribosPadroes.forEach(nome => {
-            const chip = document.createElement('div');
-            chip.className = 'chip';
-            chip.setAttribute('role', modoGerenciar ? 'group' : 'button');
-            if (!modoGerenciar) {
-                chip.tabIndex = 0;
-                chip.setAttribute('aria-label', `Preencher formulário com ${nome}`);
-            }
-            const selecionarChip = () => {
-                if (modoGerenciar) return;
-                document.getElementById('in-produto').value = nome;
-                aplicarAutomacaoAmaciado(nome); 
-                document.getElementById('in-bitola').focus();
-            };
-            chip.onclick = () => { if (!modoGerenciar) selecionarChip(); };
-            chip.onkeydown = event => { if (!modoGerenciar && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); selecionarChip(); } };
-            
-            const label = document.createElement('span');
-            label.textContent = nome;
-            chip.appendChild(label);
-            if (modoGerenciar) {
-                chip.setAttribute('aria-label', `Padrão ${nome}; use os botões para editar ou excluir`);
-                const btnEditar = document.createElement('button');
-                btnEditar.className = 'chip-edit'; btnEditar.type = 'button'; btnEditar.title = 'Renomear'; btnEditar.textContent = '✏️';
-                btnEditar.addEventListener('click', event => editarEstriboPadrao(event, nome));
-                const btnExcluir = document.createElement('button');
-                btnExcluir.className = 'chip-delete'; btnExcluir.type = 'button'; btnExcluir.title = 'Apagar'; btnExcluir.textContent = '×';
-                btnExcluir.addEventListener('click', event => excluirEstriboPadrao(event, nome));
-                chip.append(btnEditar, btnExcluir);
-            }
-            container.appendChild(chip);
-        });
-
-        // BOTÃO DE SALVAR PADRÃO EXPANSÍVEL
-        const btnAdd = document.createElement('button');
-        btnAdd.type = 'button';
-        btnAdd.className = 'add-pattern-box';
-        btnAdd.id = 'btn-add-pattern';
-        btnAdd.setAttribute('aria-label', 'Salvar padrão atual');
-        btnAdd.onclick = (e) => {
-            e.stopPropagation();
-            const box = document.getElementById('btn-add-pattern');
-            box.classList.add('active');
-            
-            setTimeout(() => {
-                adicionarNovoEstriboPadrao();
-                box.classList.remove('active');
-            }, 250);
-        };
-        
-        btnAdd.innerHTML = `
-            <span class="add-icon">+</span>
-            <span class="add-text">Salvar Padrão</span>
-        `;
-        container.appendChild(btnAdd);
-
-        // BOTÃO GERENCIAR EXPANSÍVEL
-        const btnGerenciar = document.createElement('button');
-        btnGerenciar.type = 'button';
-        btnGerenciar.className = modoGerenciar ? 'manage-box active' : 'manage-box';
-        btnGerenciar.setAttribute('aria-label', modoGerenciar ? 'Concluir gerenciamento de padrões' : 'Gerenciar padrões');
-        btnGerenciar.onclick = (e) => {
-            e.stopPropagation();
-            toggleModoGerenciar();
-        };
-        
-        btnGerenciar.innerHTML = `
-            <span class="manage-icon">${modoGerenciar ? '✔️' : '⚙️'}</span>
-            <span class="manage-text">Concluir</span>
-        `;
-        container.appendChild(btnGerenciar);
+        estribosPadroes = ordenarListaEstribos([...new Set(estribosPadroes.map(chaveDuplicadoPadrao).filter(Boolean))]);
     }
 
     function adicionarNovoEstriboPadrao() {
@@ -2009,7 +1904,6 @@
             if (!estribosPadroes.some(item => chaveDuplicadoPadrao(item) === chaveDuplicadoPadrao(nome))) {
                 estribosPadroes = ordenarListaEstribos([...estribosPadroes, nome]);
                 salvarPadroes();
-                renderizarEstribosPadroes();
             } else {
                 alert(`O padrão "${nome}" já está salvo na lista!`);
             }
@@ -2036,7 +1930,6 @@
             estribosPadroes[index] = novoNome;
             estribosPadroes = ordenarListaEstribos(estribosPadroes);
             salvarPadroes();
-            renderizarEstribosPadroes();
         }
     }
 
@@ -2047,7 +1940,6 @@
         if (confirm(`Tem certeza que deseja APAGAR o padrão "${nome}"?`)) {
             estribosPadroes = ordenarListaEstribos(estribosPadroes.filter(item => item !== nome));
             salvarPadroes();
-            renderizarEstribosPadroes();
         }
     }
 
@@ -2556,6 +2448,20 @@
         } catch (error) { alert(error.message); }
     }
 
+    function salvarProdutoNovoComoPadrao(produto) {
+        const nome = chaveDuplicadoPadrao(produto);
+        if (!nome || nome.length > 100 || estribosPadroes.some(item => chaveDuplicadoPadrao(item) === nome)) return false;
+        estribosPadroes = ordenarListaEstribos([...estribosPadroes, nome]);
+        try {
+            const chave = usuarioUidAtual ? 'estribosPadroes_' + usuarioUidAtual : 'estribosPadroes';
+            localStorage.setItem(chave, JSON.stringify(estribosPadroes));
+        } catch (_) {}
+        // Administrador sincroniza o padrão compartilhado. Para produção, a sugestão também
+        // vem do lançamento recém-salvo no histórico Firebase, sem conceder escrita adicional.
+        if (usuarioEhAdmin && firebasePadroesPronto && padroesRef) salvarPadroesFirebase();
+        return true;
+    }
+
     function adicionarRegistro() {
         if (!usuarioPodeLancarProducao) { alert('Esta conta não tem permissão para lançar produção.'); return; }
         if (!firebaseEdicaoLiberada) { alert('Aguarde a sincronização inicial com o Firebase.'); return; }
@@ -2607,6 +2513,7 @@
                     cancelarEdicao();
                     return;
                 }
+                salvarProdutoNovoComoPadrao(produto);
                 cancelarEdicao();
             }).catch(mostrarErroFirebase);
         } else {
@@ -2616,7 +2523,7 @@
             const textoBotao = botao.textContent;
             botao.textContent = 'Salvando…';
             producaoRef.child('items').child(key).set(registro)
-                .then(() => limparFormulario())
+                .then(() => { salvarProdutoNovoComoPadrao(produto); limparFormulario(); })
                 .catch(mostrarErroFirebase)
                 .finally(() => { botao.disabled = !firebaseEdicaoLiberada || !usuarioPodeLancarProducao; botao.textContent = textoBotao; });
         }
@@ -3158,7 +3065,6 @@
     }
 
     // Inicializa a tela e conecta a sincronização em nuvem.
-    renderizarEstribosPadroes();
     renderizarTabela();
 </script>
 
