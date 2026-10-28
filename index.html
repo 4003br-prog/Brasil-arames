@@ -759,6 +759,12 @@
             .table-responsive { max-height:55vh; }
         }
 
+
+        .resumo-busca-producao{margin:0 0 12px;padding:12px 15px;border:1px solid #cbdcff;border-radius:11px;background:#f8fbff;color:#1e3a8a;font-size:14px;line-height:1.5}
+        .resumo-busca-producao:empty{display:none}
+        .resumo-busca-producao strong{font-weight:800}
+        body[data-theme="noite"] .resumo-busca-producao{background:#1b2638;color:#e4eaf5;border-color:#34435b}
+
         .tab-config-icon{min-width:48px;padding-left:13px!important;padding-right:13px!important;font-size:20px!important}
         @media (max-width:700px){
           .header{display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:16px!important}
@@ -1082,11 +1088,12 @@
             <!-- LUPA -->
             <div class="search-box" id="search-box" onclick="expandirBusca()" role="search">
                 <span class="search-icon" aria-hidden="true">🔍</span>
-                <input type="text" id="busca-responsavel" aria-label="Buscar produção pelo nome do operador" placeholder="Buscar operador..." oninput="filtrarPorResponsavel()" onblur="recolherBusca()">
+                <input type="text" id="busca-responsavel" aria-label="Buscar em todos os dados da produção" placeholder="Buscar produto, embalagem ou operador..." oninput="filtrarPorResponsavel()" onblur="recolherBusca()">
             </div>
             
         </div>
 
+        <div id="resumo-busca-producao" class="resumo-busca-producao" aria-live="polite"></div>
         <div class="table-responsive">
             <table id="tabela">
                 <thead>
@@ -1876,8 +1883,38 @@
         }
     }
 
+    function normalizarTextoBusca(valor) {
+        return String(valor ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
+    }
+
+    function registroCorrespondeBusca(item, consulta=filtroAtual) {
+        const termos=normalizarTextoBusca(consulta).split(/\s+/).filter(Boolean);
+        if(!termos.length)return true;
+        const campos=[item.dataFormatada,item.produto,item.bitola,item.embalagem,item.qtdEmb,item.totalEmb,item.totalPecas,item.responsavel];
+        let indice=campos.map(normalizarTextoBusca).join(' ');
+        const embalagem=normalizarTextoBusca(item.embalagem);
+        if(embalagem.includes('m livre') || embalagem.includes('mercadolivre') || embalagem==='mlivre') indice+=' mercado livre mercadolivre mlivre';
+        return termos.every(termo=>indice.includes(termo));
+    }
+
+    function formatarResumoBuscaProducao(registros) {
+        const resumo=document.getElementById('resumo-busca-producao');
+        if(!resumo)return;
+        if(!filtroAtual){resumo.textContent='';return;}
+        const porEmbalagem=new Map();let embalagens=0,pecas=0;
+        registros.forEach(item=>{
+            const embalagem=String(item.embalagem||'Sem embalagem').trim().toLocaleUpperCase('pt-BR');
+            const totalEmb=numeroSeguro(item.totalEmb),totalPecas=numeroSeguro(item.totalPecas);
+            embalagens+=totalEmb;pecas+=totalPecas;
+            const grupo=porEmbalagem.get(embalagem)||{cadastros:0,embalagens:0,pecas:0};
+            grupo.cadastros++;grupo.embalagens+=totalEmb;grupo.pecas+=totalPecas;porEmbalagem.set(embalagem,grupo);
+        });
+        const detalhe=[...porEmbalagem.entries()].sort((a,b)=>a[0].localeCompare(b[0],'pt-BR')).map(([nome,g])=>`${nome}: ${g.embalagens.toLocaleString('pt-BR')} embalagens, ${g.pecas.toLocaleString('pt-BR')} peças (${g.cadastros} lançamento${g.cadastros===1?'':'s'})`).join(' • ');
+        resumo.innerHTML=`Busca por <strong>${escaparHtml(document.getElementById('busca-responsavel').value.trim())}</strong>: <strong>${registros.length.toLocaleString('pt-BR')}</strong> lançamento(s), <strong>${embalagens.toLocaleString('pt-BR')}</strong> embalagens e <strong>${pecas.toLocaleString('pt-BR')}</strong> peças${detalhe?`<br>${escaparHtml(detalhe)}`:''}`;
+    }
+
     function filtrarPorResponsavel() {
-        filtroAtual = document.getElementById('busca-responsavel').value.trim().toUpperCase();
+        filtroAtual = document.getElementById('busca-responsavel').value.trim();
         renderizarTabela();
     }
 
@@ -2594,7 +2631,7 @@
     function gerarArquivoRelatorio(tipo, formato) {
         const dados = tipo === 'bobinas'
             ? ordenarPorDataDesc(dadosBobinasFiltrados())
-            : ordenarPorDataDesc(producao.filter(item => registroNoMes(item, filtroMesAtual) && (filtroAtual === '' || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual))));
+            : ordenarPorDataDesc(producao.filter(item => registroNoMes(item, filtroMesAtual) && registroCorrespondeBusca(item)));
         const titulo = tipo === 'bobinas' ? `Relatorio_Bobinas_${nomeMesArquivo(filtroMesBobinas)}` : `Relatorio_Producao_${nomeMesArquivo(filtroMesAtual)}`;
         if (!dados.length) throw new Error('Não há registros para o mês selecionado.');
         if (formato === 'xlsx') {
@@ -2624,7 +2661,7 @@
             pdf.text(tipo === 'bobinas' ? 'Cadastro mensal de bobinas' : 'Relatório mensal de produção', 14, 12);
             pdf.setFontSize(10);
             pdf.setFont(undefined, 'normal');
-            pdf.text(`Mês: ${mesRelatorio || 'Todos'}${tipo === 'producao' && filtroAtual ? ` — Responsável: ${filtroAtual}` : ''}`, 14, 18);
+            pdf.text(`Mês: ${mesRelatorio || 'Todos'}${tipo === 'producao' && filtroAtual ? ` — Busca: ${filtroAtual}` : ''}`, 14, 18);
         };
         let y = 24;
         const drawRow = (cells, bold=false) => {
@@ -2858,20 +2895,21 @@
 
         let dadosExibicao = [];
         producao.forEach((item, index) => {
-            if ((filtroAtual === "" || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)) && registroNoMes(item, filtroMesAtual)) {
+            if (registroCorrespondeBusca(item) && registroNoMes(item, filtroMesAtual)) {
                 dadosExibicao.push({ ...item, originalIndex: index });
             }
         });
 
         // Ordena por data do lançamento: mais recente primeiro; em empate, último registro primeiro.
         ordenarPorDataDesc(dadosExibicao);
+        formatarResumoBuscaProducao(dadosExibicao);
 
         let lastResponsavel = null;
         let subtotalPecas = 0;
         let subtotalEmb = 0;
 
         dadosExibicao.forEach((item) => {
-            if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
+            if (!filtroAtual && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
                 const trSub = document.createElement('tr');
                 trSub.className = 'linha-subtotal';
                 trSub.innerHTML = `
@@ -2928,7 +2966,7 @@
             tbody.appendChild(tr);
         });
 
-        if (filtroAtual === "" && lastResponsavel !== null) {
+        if (!filtroAtual && lastResponsavel !== null) {
             const trSub = document.createElement('tr');
             trSub.className = 'linha-subtotal';
             trSub.innerHTML = `
@@ -3252,7 +3290,7 @@
 
         const dadosExibicao = producao
             .map((item, indice) => ({ ...item, _indiceOriginal: indice }))
-            .filter(item => (filtroAtual === "" || String(item.responsavel || '').toLocaleUpperCase('pt-BR').includes(filtroAtual)) && registroNoMes(item, filtroMesAtual));
+            .filter(item => registroCorrespondeBusca(item) && registroNoMes(item, filtroMesAtual));
 
         ordenarPorDataDesc(dadosExibicao);
 
@@ -3269,7 +3307,7 @@
         let subtotalEmb = 0;
 
         dadosExibicao.forEach(item => {
-            if (filtroAtual === "" && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
+            if (!filtroAtual && lastResponsavel !== null && item.responsavel !== lastResponsavel) {
                 linhas.push(['', '', '', '', escaparCelulaExcel(`Subtotal - ${lastResponsavel}:`), subtotalEmb, subtotalPecas, '']);
                 subtotalPecas = 0;
                 subtotalEmb = 0;
@@ -3292,7 +3330,7 @@
             ]);
         });
 
-        if (filtroAtual === "" && lastResponsavel !== null) {
+        if (!filtroAtual && lastResponsavel !== null) {
             linhas.push(['', '', '', '', escaparCelulaExcel(`Subtotal - ${lastResponsavel}:`), subtotalEmb, subtotalPecas, '']);
         }
         linhas.push(['', '', '', '', 'TOTAL GERAL:', totalEmbGeral, totalPecasGeral, '']);
