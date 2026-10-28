@@ -1216,12 +1216,15 @@
     <section id="config-page" role="tabpanel" aria-labelledby="tab-configuracoes" hidden>
         <div class="config-section">
             <h2>Configurações do administrador</h2>
-            <p>Somente fernandolisboa.br@gmail.com pode alterar esta lista. A senha da conta é confirmada a cada mudança. ÂNGELO e GENIVAL também podem ser removidos aqui. A alteração do responsável ativo vale para novos lançamentos; o histórico permanece.</p>
+            <p>Somente fernandolisboa.br@gmail.com pode adicionar, corrigir ou remover qualquer responsável. A senha da conta é confirmada a cada mudança. Os lançamentos antigos permanecem no histórico; correções e remoções valem para novos lançamentos.</p>
             <div class="config-grid">
                 <div class="input-group"><label for="config-novo-responsavel">Adicionar responsável</label><input type="text" id="config-novo-responsavel" maxlength="80" placeholder="Nome do responsável"></div>
                 <button class="btn-add" id="config-btn-adicionar" type="button" onclick="configAdicionarResponsavel()">Adicionar à lista</button>
                 <div class="input-group"><label for="config-remover-responsavel">Remover responsável</label><select id="config-remover-responsavel"></select></div>
                 <button class="btn-clear" id="config-btn-remover" type="button" onclick="configRemoverResponsavel()">Remover selecionado</button>
+                <div class="input-group"><label for="config-renomear-responsavel">Corrigir nome cadastrado</label><select id="config-renomear-responsavel"></select></div>
+                <div class="input-group"><label for="config-nome-corrigido">Nome correto</label><input type="text" id="config-nome-corrigido" maxlength="80" placeholder="Digite a grafia correta"></div>
+                <button class="btn-secondary" id="config-btn-renomear" type="button" onclick="configRenomearResponsavel()">Corrigir nome</button>
                 <div class="input-group"><label for="config-responsavel-ativo">Responsável para novos lançamentos</label><select id="config-responsavel-ativo"></select></div>
                 <button class="btn-add" id="config-btn-ativo" type="button" onclick="configDefinirResponsavelAtivo()">Trocar responsável ativo</button>
             </div>
@@ -1268,6 +1271,7 @@
     let padroesRef = null;
     let padroesLegadosRef = null;
     let operadoresRef = null;
+    let operadoresAtivosRef = null;
     let configuracaoRef = null;
     let bobinasRef = null;
     let fornecedoresBobinasRef = null;
@@ -1354,16 +1358,26 @@
     }
 
     function nomesOperadoresAtivos() {
-        const removidosNuvem = new Set(Object.values(operadoresFirebaseSnapshot || {}).filter(item => item && item.ativo === false).map(item => String(item.nome || '').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')));
-        // A lista ativa vem do Firebase; dados locais antigos só são migrados pelo administrador.
-        return [...new Set([...standardOperatorNames, ...nomesOperadoresFirebase]
-            .map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(nome => nome && !removidosNuvem.has(nome)))];
+        return [...new Set(nomesOperadoresFirebase
+            .map(nome => String(nome).trim().replace(/\s+/g, ' ').toLocaleUpperCase('pt-BR')).filter(Boolean))];
+    }
+
+    function chaveOperadorSegura(nome) {
+        const chave=String(nome||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
+        if (!chave || /[.#$\[\]\/]/.test(chave)) throw new Error('Use um nome sem estes caracteres: . # $ [ ] /');
+        return chave;
+    }
+
+    async function atualizarPermissaoOperador(nome, ativo) {
+        if (!operadoresAtivosRef) throw new Error('A lista de permissões dos operadores ainda não sincronizou.');
+        const chave=chaveOperadorSegura(nome);
+        await operadoresAtivosRef.child(chave).set(Boolean(ativo));
     }
 
     function sincronizarOperadoresNaTela() {
         const select = document.getElementById('in-responsavel');
         const atual = select.value;
-        const nomes = usuarioEhAdmin ? nomesOperadoresAtivos() : usuarioPodeLancarProducao ? OPERADORES_PRODUCAO : nomesOperadoresAtivos();
+        const nomes = nomesOperadoresAtivos();
         select.replaceChildren();
         const vazio = document.createElement('option'); vazio.value = ''; vazio.textContent = 'Selecione...'; select.appendChild(vazio);
         nomes.forEach(nome => { const option = document.createElement('option'); option.value = nome; option.textContent = nome; select.appendChild(option); });
@@ -1396,6 +1410,7 @@
             if (producaoRef) producaoRef.off();
             if (padroesRef) padroesRef.off();
             if (operadoresRef) operadoresRef.off();
+            if (operadoresAtivosRef) operadoresAtivosRef.off();
             if (configuracaoRef) configuracaoRef.off();
             if (responsavelAtivoRef) responsavelAtivoRef.off();
             if (bobinasRef) bobinasRef.off();
@@ -1403,7 +1418,7 @@
             if (recebimentosBarrasRef) recebimentosBarrasRef.off();
             if (recebimentosBobinasRef) recebimentosBobinasRef.off();
             if (recebimentosFornecedoresRef) recebimentosFornecedoresRef.off();
-            producaoRef = padroesRef = operadoresRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = recebimentosRef = recebimentosBarrasRef = recebimentosBobinasRef = recebimentosFornecedoresRef = responsavelAtivoRef = null;
+            producaoRef = padroesRef = operadoresRef = operadoresAtivosRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = recebimentosRef = recebimentosBarrasRef = recebimentosBobinasRef = recebimentosFornecedoresRef = responsavelAtivoRef = null;
             recebimentos.barras = []; recebimentos.bobinas = []; fornecedoresRecebimento = [];
             document.querySelectorAll('.recebimentos-tab').forEach(el => el.hidden = true);
             ['receb-barras-page','receb-bobinas-page'].forEach(id => document.getElementById(id).hidden = true);
@@ -1487,6 +1502,7 @@
         padroesRef = firebaseDb.ref('estribosPadroes');
         padroesLegadosRef = firebaseDb.ref('usuarios/' + user.uid + '/estribosPadroes');
         operadoresRef = firebaseDb.ref('operadores');
+        operadoresAtivosRef = firebaseDb.ref('operadoresAtivos');
         configuracaoRef = usuarioEhAdmin ? firebaseDb.ref('configuracao') : null;
         responsavelAtivoRef = configuracaoRef ? configuracaoRef.child('responsavelAtivo') : null;
         if (responsavelAtivoRef) responsavelAtivoRef.on('value', snapshot => {
@@ -1560,19 +1576,32 @@
             bobinas = [];
             renderizarBobinas();
         });
-        operadoresRef.on('value', snapshot => {
+        operadoresRef.on('value', async snapshot => {
             operadoresFirebaseSnapshot = snapshot.val() || {};
-            const removidos = new Set(lerListaLocal(CHAVE_OPERADORES_REMOVIDOS));
-            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).filter(item => item && item.ativo !== false).map(item => String(item.nome || '').trim()).filter(Boolean);
-            sincronizarOperadoresNaTela();
-            if (usuarioPodeLancarProducao && !usuarioEhAdmin) {
-                let nomeProducao = 'ÂNGELO';
+            const temRegistrosOperador=Object.keys(operadoresFirebaseSnapshot).length>0;
+            // Migração única para instalações antigas: os três nomes que já vinham no seletor passam a ser registros normais e editáveis.
+            if (usuarioEhAdmin && !temRegistrosOperador && !localStorage.getItem('operadores_inicializados_v2')) {
                 try {
-                    const salvo = localStorage.getItem('responsavel_producao_arames');
-                    if (OPERADORES_PRODUCAO.includes(salvo)) nomeProducao = salvo;
-                } catch (_) {}
+                    const seed={};
+                    standardOperatorNames.forEach(nome=>{const key=operadoresRef.push().key;seed[key]={nome,ativo:true};});
+                    await operadoresRef.update(seed);
+                    localStorage.setItem('operadores_inicializados_v2','1');
+                    return;
+                } catch(error) { console.warn('Migração inicial dos operadores pendente.',error); }
+            }
+            nomesOperadoresFirebase = Object.values(operadoresFirebaseSnapshot).filter(item => item && item.ativo !== false).map(item => String(item.nome || '').trim().replace(/\s+/g,' ')).filter(Boolean);
+            sincronizarOperadoresNaTela();
+            if (usuarioEhAdmin && operadoresAtivosRef) {
+                const atualizacoes={};
+                Object.values(operadoresFirebaseSnapshot).forEach(item=>{if(item&&item.nome){try{atualizacoes[chaveOperadorSegura(item.nome)]=item.ativo!==false;}catch(_){}}});
+                if(Object.keys(atualizacoes).length) operadoresAtivosRef.update(atualizacoes).catch(error=>console.warn('Permissões para os operadores ainda não foram sincronizadas.',error));
+            }
+            if (usuarioPodeLancarProducao && !usuarioEhAdmin) {
+                let nomeProducao = '';
+                try { nomeProducao = localStorage.getItem('responsavel_producao_arames') || ''; } catch (_) {}
+                if (!nomesOperadoresAtivos().includes(String(nomeProducao).toLocaleUpperCase('pt-BR'))) nomeProducao=nomesOperadoresAtivos()[0]||'';
                 const seletor = document.getElementById('in-responsavel');
-                if (Array.from(seletor.options).some(opcao => opcao.value === nomeProducao)) seletor.value = nomeProducao;
+                if (Array.from(seletor.options).some(opcao => opcao.value === String(nomeProducao).toLocaleUpperCase('pt-BR'))) seletor.value = String(nomeProducao).toLocaleUpperCase('pt-BR');
             }
             firebaseOperadoresPronto = true;
             if (responsavelAtivoRecebidoFirebase) {
@@ -1645,7 +1674,7 @@
             const el = document.getElementById(id);
             if (el) el.disabled = bloqueado;
         });
-        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-ativo'].forEach(id => {
+        ['btn-cancel', 'bobina-data', 'bobina-bitola', 'bobina-kg', 'bobina-fornecedor', 'bobina-quantidade', 'btn-salvar-bobina', 'bobina-novo-fornecedor', 'bobina-btn-adicionar-fornecedor', 'bobina-remover-fornecedor', 'bobina-btn-remover-fornecedor', 'config-novo-responsavel', 'config-remover-responsavel', 'config-renomear-responsavel', 'config-nome-corrigido', 'config-responsavel-ativo', 'config-senha-atual', 'config-btn-adicionar', 'config-btn-remover', 'config-btn-renomear', 'config-btn-ativo'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.disabled = !firebaseEdicaoLiberada || !usuarioEhAdmin;
         });
@@ -1752,7 +1781,7 @@
     campoResumoData.addEventListener('change', renderizarResumoDiario);
     document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR');
     document.getElementById('in-responsavel').addEventListener('change', event => {
-        if (usuarioPodeLancarProducao && !usuarioEhAdmin && OPERADORES_PRODUCAO.includes(event.target.value)) {
+        if (usuarioPodeLancarProducao && !usuarioEhAdmin && nomesOperadoresAtivos().includes(event.target.value)) {
             try { localStorage.setItem('responsavel_producao_arames', event.target.value); } catch (_) {}
         }
     });
@@ -2031,13 +2060,19 @@
         const nomes = nomesOperadoresAtivos();
         const selectRemover = document.getElementById('config-remover-responsavel');
         const selectAtivo = document.getElementById('config-responsavel-ativo');
-        if (!selectRemover || !selectAtivo) return;
+        const selectRenomear = document.getElementById('config-renomear-responsavel');
+        if (!selectRemover || !selectAtivo || !selectRenomear) return;
         const valorRemover = selectRemover.value;
+        const valorRenomear = selectRenomear.value;
         const atual = String(responsavelAtivoFirebase || 'FERNANDO').trim().toLocaleUpperCase('pt-BR');
         selectRemover.replaceChildren();
         const opcaoInicial = document.createElement('option'); opcaoInicial.value = ''; opcaoInicial.textContent = 'Selecione um responsável'; selectRemover.appendChild(opcaoInicial);
         nomes.filter(nome => nome !== 'FERNANDO').forEach(nome => { const o=document.createElement('option'); o.value=nome; o.textContent=nome; selectRemover.appendChild(o); });
         if (nomes.includes(valorRemover)) selectRemover.value = valorRemover;
+        selectRenomear.replaceChildren();
+        const opcaoRenomearInicial=document.createElement('option');opcaoRenomearInicial.value='';opcaoRenomearInicial.textContent='Selecione o nome a corrigir';selectRenomear.appendChild(opcaoRenomearInicial);
+        nomes.forEach(nome=>{const o=document.createElement('option');o.value=nome;o.textContent=nome;selectRenomear.appendChild(o)});
+        if(nomes.includes(valorRenomear))selectRenomear.value=valorRenomear;
         selectAtivo.replaceChildren();
         nomes.forEach(nome => { const o=document.createElement('option'); o.value=nome; o.textContent=nome; selectAtivo.appendChild(o); });
         if (nomes.includes(atual)) selectAtivo.value=atual;
@@ -2071,6 +2106,7 @@
             const registroNuvem=Object.entries(operadoresFirebaseSnapshot).find(([,item])=>String((item&&item.nome)||'').trim().toLocaleUpperCase('pt-BR')===nome);
             if (registroNuvem) await operadoresRef.child(registroNuvem[0]).update({nome,ativo:true});
             else await operadoresRef.push({nome,ativo:true});
+            await atualizarPermissaoOperador(nome,true);
             const novosLocais=lerListaLocal('nomes_responsaveis').filter(item=>item!==nome);
             salvarListaLocal('nomes_responsaveis',[...novosLocais,nome]);
             salvarListaLocal(CHAVE_OPERADORES_REMOVIDOS,lerListaLocal(CHAVE_OPERADORES_REMOVIDOS).filter(item=>item!==nome));
@@ -2078,6 +2114,30 @@
             sincronizarOperadoresNaTela(); atualizarSeletoresConfiguracoes();
             campo.value=''; document.getElementById('config-message').textContent=`${nome} foi adicionado à lista.`;
         } catch(error) { document.getElementById('config-message').textContent=error.message; alert(error.message); }
+    }
+
+    async function configRenomearResponsavel() {
+        if (!usuarioEhAdminFernando() || !firebaseEdicaoLiberada) { alert('Somente a conta administradora pode corrigir nomes.'); return; }
+        const antigo=document.getElementById('config-renomear-responsavel').value;
+        const campo=document.getElementById('config-nome-corrigido');
+        const novo=String(campo.value||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
+        if(!antigo||!novo){alert('Selecione o nome incorreto e digite o nome correto.');return;}
+        if(antigo===novo){alert('O nome escolhido já está igual.');return;}
+        try{chaveOperadorSegura(novo);}catch(error){alert(error.message);return;}
+        if(nomesOperadoresAtivos().includes(novo)){alert(`“${novo}” já consta na lista; use esse cadastro ou escolha outro nome.`);return;}
+        if(!confirm(`Corrigir “${antigo}” para “${novo}”? Os lançamentos antigos não serão alterados; o nome corrigido valerá para novos lançamentos.`))return;
+        try{
+            await confirmarSenhaAdministrador();
+            if(!operadoresRef)throw new Error('A lista de responsáveis ainda não sincronizou com o Firebase.');
+            const registros=Object.entries(operadoresFirebaseSnapshot).filter(([,item])=>String((item&&item.nome)||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')===antigo);
+            if(!registros.length)throw new Error('Não encontrei o cadastro ativo para corrigir.');
+            await Promise.all(registros.map(([key])=>operadoresRef.child(key).update({nome:novo,ativo:true})));
+            await atualizarPermissaoOperador(antigo,false);await atualizarPermissaoOperador(novo,true);
+            if(String(responsavelAtivoFirebase||'').toLocaleUpperCase('pt-BR')===antigo&&configuracaoRef){await configuracaoRef.child('responsavelAtivo').set(novo);responsavelAtivoFirebase=novo;}
+            nomesOperadoresFirebase=nomesOperadoresFirebase.map(n=>String(n).toLocaleUpperCase('pt-BR')===antigo?novo:n);
+            sincronizarOperadoresNaTela();atualizarSeletoresConfiguracoes();campo.value='';
+            document.getElementById('config-message').textContent=`Nome corrigido para ${novo}. Os registros anteriores foram preservados.`;
+        }catch(error){document.getElementById('config-message').textContent=error.message;alert(error.message);}
     }
 
     async function configRemoverResponsavel() {
@@ -2098,6 +2158,7 @@
             }
             const registros=Object.entries(operadoresFirebaseSnapshot).filter(([,item])=>String((item&&item.nome)||'').trim().toLocaleUpperCase('pt-BR')===nome);
             await Promise.all(registros.map(([key,item])=>operadoresRef.child(key).update({nome:item.nome,ativo:false})));
+            await atualizarPermissaoOperador(nome,false);
             salvarListaLocal('nomes_responsaveis',lerListaLocal('nomes_responsaveis').filter(item=>item!==nome));
             salvarListaLocal(CHAVE_OPERADORES_REMOVIDOS,[...lerListaLocal(CHAVE_OPERADORES_REMOVIDOS),nome]);
             nomesOperadoresFirebase=nomesOperadoresFirebase.filter(item=>item.toLocaleUpperCase('pt-BR')!==nome);
@@ -2574,7 +2635,7 @@
         const totalEmb = Number(document.getElementById('in-total-emb').value);
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
         const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
-        if (!usuarioEhAdmin && !OPERADORES_PRODUCAO.includes(responsavel)) { alert('A conta de produção só pode lançar como ÂNGELO ou GENIVAL.'); return; }
+        if (!usuarioEhAdmin && !nomesOperadoresAtivos().includes(String(responsavel||'').toLocaleUpperCase('pt-BR'))) { alert('Selecione um responsável que esteja ativo na lista administrada.'); return; }
         if (!usuarioEhAdmin && registroEmEdicao) { alert('A conta de produção só pode criar lançamentos novos; edição é exclusiva do administrador.'); return; }
 
         const camposObrigatorios = ['in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'];
