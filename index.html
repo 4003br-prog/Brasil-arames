@@ -377,7 +377,6 @@
         #bobinas-page[hidden], #producao-page[hidden] { display:none !important; }
         body[data-theme="noite"] .tab-app, body[data-theme="noite"] .bobinas-form, body[data-theme="noite"] .bobinas-section { background:#1b2638; color:#e4eaf5; border-color:#34435b; }
         body[data-theme="noite"] .tab-app[aria-selected="true"] { background:var(--primary); }
-        .whatsapp-share { background:#168b55 !important; color:#fff !important; border:0 !important; }
         .config-section { background:#fff; padding:22px; border-radius:16px; box-shadow:var(--shadow-soft); margin-bottom:20px; }
         .config-section h2 { color:var(--primary); margin-bottom:8px; }
         .config-section > p { color:#64748b; margin-bottom:16px; }
@@ -572,10 +571,28 @@
             body.impressao-bobinas #print-title-bobinas { display:block !important; }
             body.impressao-producao #bobinas-page { display:none !important; }
             body.impressao-producao #print-title-bobinas { display:none !important; }
+            body.printing-report .tabs-app,body.printing-report .official-mobile-bar,body.printing-report #official-sidebar-overlay,body.printing-report .demo-ribbon,body.printing-report .consulta-banner { display:none!important; }
+            body.printing-report #app-container { display:block!important;max-width:none!important;padding:0!important;margin:0!important; }
+            body.printing-report .print-title { display:none!important; }
+            body.printing-report #print-title-active { display:block!important;text-align:center;font-size:20px;margin:0 0 5px!important;color:#111!important; }
+            .print-generated-at { display:none; }
+            body.printing-report .print-generated-at { display:block!important;text-align:center;font-size:10px;color:#333;margin:0 0 14px!important; }
+            body.printing-report .header,body.printing-report .dashboard,body.printing-report .form-section,body.printing-report .actions,body.printing-report .bobinas-form,body.printing-report .bobinas-actions,body.printing-report .bobinas-dashboard,body.printing-report .recebimento-form,body.printing-report .rb-form,body.printing-report .rbb-form,body.printing-report .recebimento-toolbar .toolbar-group,body.printing-report .config-actions,body.printing-report .config-grid button,body.printing-report .config-section button,body.printing-report .senha-modal { display:none!important; }
+            body.printing-report .table-header { display:none!important; }
+            body.printing-report .recebimento-toolbar { display:block!important; }
+            body.printing-report .recebimento-toolbar h2 { display:none!important; }
+            body.printing-report #producao-page[hidden],body.printing-report #bobinas-page[hidden],body.printing-report #receb-barras-page[hidden],body.printing-report #receb-bobinas-page[hidden],body.printing-report #config-page[hidden] { display:none!important; }
+            body.printing-report #production-form-section,body.printing-report #producao-page>.dashboard,body.printing-report #bobinas-page>.bobinas-dashboard,body.printing-report #bobinas-page>.bobinas-form { display:none!important; }
+            body.printing-report .config-section .config-grid,body.printing-report .config-section .config-actions { display:none!important; }
+            body.printing-report .config-section > p,body.printing-report .auth-message { display:none!important; }
+            body.printing-report .print-config-data { display:block!important; }
+            body.printing-report table { width:100%;font-size:10px; }
+            body.printing-report th,body.printing-report td { padding:5px 6px!important; }
             .linha-subtotal td { font-weight: bold; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
             .linha-total-geral td { font-weight: bold; background-color: #e2e8f0 !important; font-size: 15px; -webkit-print-color-adjust: exact; }
         }
         .print-title { display: none; }
+        .print-config-data { display:none; }
 
         /* Estilos para linhas de Subtotal na tela */
         .linha-subtotal { background-color: #f8fafc; }
@@ -1153,6 +1170,9 @@ tbody tr:hover { background:#f1f6ff; }
         </div>
     </div>
 
+    <h1 class="print-title" id="print-title-active">Relatório oficial</h1>
+    <div class="print-generated-at" id="print-generated-at"></div>
+
     <div id="producao-page" role="tabpanel" aria-labelledby="tab-producao">
     <div class="dashboard">
         <div class="card">
@@ -1190,9 +1210,8 @@ tbody tr:hover { background:#f1f6ff; }
             
             <!-- Campo de Produto com AUTOCOMPLETE -->
             <div class="input-group autocomplete-wrapper">
-                <label for="in-produto">Estribo / Produto</label>
-                <input type="text" id="in-produto" maxlength="100" placeholder="Digite o estribo ou produto" autocomplete="off" aria-describedby="produto-ajuda" required>
-                <small id="produto-ajuda" aria-live="polite">Digite o estribo ou produto; um nome novo será guardado automaticamente ao registrar a produção.</small>
+                <label for="in-produto">Estribo</label>
+                <input type="text" id="in-produto" maxlength="100" placeholder="Digite o estribo ou produto" autocomplete="off" required>
                 <div id="autocomplete-list" class="autocomplete-items" role="listbox" aria-label="Estribos que começam com o texto digitado" aria-hidden="true"></div>
             </div>
 
@@ -1267,7 +1286,7 @@ tbody tr:hover { background:#f1f6ff; }
                 <thead>
                     <tr>
                         <th scope="col">Data</th>
-                        <th scope="col">Estribo/Produto</th>
+                        <th scope="col">Estribo</th>
                         <th scope="col">Bitola</th>
                         <th scope="col">Embalagem</th>
                         <th scope="col">Qtd. Emb.</th>
@@ -1291,10 +1310,8 @@ tbody tr:hover { background:#f1f6ff; }
         <!-- NOVO BOTÃO DE IMPORTAR -->
         <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
         <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> Importar Excel</button>
-        <button class="btn-pdf export-access" type="button" onclick="imprimirRelatorio()" title="Imprimir ou salvar em PDF">Imprimir / PDF</button>
-        <button class="btn-pdf whatsapp-share export-access" type="button" onclick="compartilharRelatorio('producao','pdf')">Compartilhar PDF no WhatsApp</button>
+        <button class="btn-pdf export-access" type="button" onclick="imprimirAbaAtual()" title="Imprimir ou salvar em PDF">Imprimir / PDF</button>
         <button class="btn-excel export-access" type="button" onclick="exportarExcel()" title="Baixar planilha Excel"><span class="excel-icon" aria-hidden="true">▦</span> Exportar Excel</button>
-        <button class="btn-excel whatsapp-share export-access" type="button" onclick="compartilharRelatorio('producao','xlsx')">Compartilhar Excel no WhatsApp</button>
     </div>
     </div><!-- /producao-page -->
 
@@ -1311,7 +1328,7 @@ tbody tr:hover { background:#f1f6ff; }
             <div class="form-grid">
                 <div class="input-group"><label for="bobina-data">Data</label><input type="date" id="bobina-data" required></div>
                 <div class="input-group"><label for="bobina-bitola">Categoria / bitola da bobina</label><select id="bobina-bitola" required><option value="">Selecione...</option><option value="3.8 mm">3,8 mm</option><option value="4.2 mm">4,2 mm</option><option value="5.0 mm">5,0 mm</option><option value="6.0 mm">6,0 mm</option></select></div>
-                <div class="input-group"><label for="bobina-kg">Peso da bobina (kg)</label><input type="text" id="bobina-kg" inputmode="decimal" placeholder="Ex.: 25,5" aria-describedby="bobina-kg-ajuda" required><small id="bobina-kg-ajuda">Aceita vírgula ou ponto decimal (até 3 casas).</small></div>
+
                 <div class="input-group"><label for="bobina-fornecedor">Fornecedor</label><select id="bobina-fornecedor" required><option value="">Selecione um fornecedor...</option></select></div>
                 <div class="input-group"><label for="bobina-quantidade">Quantidade de bobinas</label><input type="number" id="bobina-quantidade" min="1" max="100" step="1" value="1" inputmode="numeric" required><small>Até 100 bobinas por cadastro.</small></div>
                 <button class="btn-add solo-admin" id="btn-salvar-bobina" type="button" onclick="salvarBobina()">+ Adicionar bobinas</button>
@@ -1322,8 +1339,6 @@ tbody tr:hover { background:#f1f6ff; }
                 <div class="input-group"><label for="bobina-remover-fornecedor">Remover fornecedor da lista</label><select id="bobina-remover-fornecedor"><option value="">Selecione...</option></select></div>
                 <button class="btn-clear solo-admin" id="bobina-btn-remover-fornecedor" type="button" onclick="removerFornecedorBobina()">Remover fornecedor</button>
             </div>
-            <small>Remover um fornecedor da lista não apaga os cadastros antigos que já o mencionam.</small>
-            <small>Os registros antigos de bobinas utilizadas permanecem guardados no Firebase; este cadastro passa a registrar bobinas disponíveis para uso.</small>
         </div>
         <div class="bobinas-section">
             <div class="table-header" style="padding:0 0 14px;border:0;flex-wrap:wrap;gap:10px">
@@ -1336,8 +1351,7 @@ tbody tr:hover { background:#f1f6ff; }
             </table></div>
             <div class="bobinas-actions">
                 <button class="btn-excel export-access" type="button" onclick="exportarBobinasExcel()">Exportar bobinas Excel</button>
-                <button class="btn-pdf export-access" type="button" onclick="compartilharRelatorio('bobinas','pdf')">Compartilhar PDF no WhatsApp</button>
-                <button class="btn-excel whatsapp-share export-access" type="button" onclick="compartilharRelatorio('bobinas','xlsx')">Compartilhar Excel no WhatsApp</button>
+                <button class="btn-pdf export-access" type="button" onclick="imprimirAbaAtual()">Imprimir / PDF</button>
             </div>
         </div>
     </section>
@@ -1354,10 +1368,10 @@ tbody tr:hover { background:#f1f6ff; }
         <h2>Receber barras de 12 metros</h2>
         <div class="recebimento-grid">
           <div><label for="rb-data">Data do recebimento</label><input type="date" id="rb-data" required></div>
-          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento('barras')" style="margin-top:5px">Salvar fornecedor</button></div>
+          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist><button class="btn-add" type="button" onclick="salvarFornecedorRecebimento('barras')" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rb-bitola">Bitola</label><select id="rb-bitola"><option value="">Selecione...</option><option>4,2 mm</option><option>5,0 mm</option><option>6,3 mm</option><option>10 mm</option><option>Outra</option></select></div>
           <div id="rb-outra-bitola-wrap" hidden><label for="rb-outra-bitola">Outra bitola</label><input id="rb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
-          <div class="sem-etiqueta-option"><label><input type="checkbox" id="rb-sem-etiqueta"> Material sem etiqueta</label><small>Marque se não houver peso de etiqueta.</small></div><div><label for="rb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
+          <div class="sem-etiqueta-option"><label><input type="checkbox" id="rb-sem-etiqueta"> Material sem etiqueta</label></div><div><label for="rb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
           <div><label for="rb-peso-balanca">Peso total na balança (kg)</label><input id="rb-peso-balanca" inputmode="decimal" placeholder="Ex.: 1.246,800" required></div>
           <div><label for="rb-observacao">Observação</label><input id="rb-observacao" maxlength="200" placeholder="Placa, lote, nota..."></div>
         </div>
@@ -1366,7 +1380,7 @@ tbody tr:hover { background:#f1f6ff; }
         <div class="recebimento-status" id="rb-status" aria-live="polite"></div>
       </div>
       <div class="recebimento-panel">
-        <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('barras')">Exportar Excel</button><button class="btn-pdf export-access" type="button" onclick="exportarRecebimentosPDF('barras')">Imprimir / PDF</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
+        <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('barras')">Exportar Excel</button><button class="btn-pdf export-access" type="button" onclick="imprimirAbaAtual()">Imprimir / PDF</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rb-linhas"></tbody><tfoot id="rb-totais"></tfoot></table></div>
       </div>
     </section>
@@ -1381,10 +1395,10 @@ tbody tr:hover { background:#f1f6ff; }
         <h2>Receber bobinas</h2>
         <div class="recebimento-grid">
           <div><label for="rbb-data">Data do recebimento</label><input type="date" id="rbb-data" required></div>
-          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist><button class="btn-secondary" type="button" onclick="salvarFornecedorRecebimento('bobinas')" style="margin-top:5px">Salvar fornecedor</button></div>
+          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist><button class="btn-add" type="button" onclick="salvarFornecedorRecebimento('bobinas')" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rbb-bitola">Bitola</label><select id="rbb-bitola"><option value="">Selecione...</option><option>3,8 mm</option><option>4,2 mm</option><option>5,0 mm</option><option>6,0 mm</option><option>Outra</option></select></div>
           <div id="rbb-outra-bitola-wrap" hidden><label for="rbb-outra-bitola">Outra bitola</label><input id="rbb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
-          <div class="sem-etiqueta-option"><label><input type="checkbox" id="rbb-sem-etiqueta"> Material sem etiqueta</label><small>Marque se não houver peso de etiqueta.</small></div><div><label for="rbb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rbb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
+          <div class="sem-etiqueta-option"><label><input type="checkbox" id="rbb-sem-etiqueta"> Material sem etiqueta</label></div><div><label for="rbb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rbb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
           <div><label for="rbb-peso-balanca">Peso total na balança (kg)</label><input id="rbb-peso-balanca" inputmode="decimal" placeholder="Ex.: 1.246,800" required></div>
           <div><label for="rbb-observacao">Observação</label><input id="rbb-observacao" maxlength="200" placeholder="Lote, nota..."></div>
         </div>
@@ -1393,7 +1407,7 @@ tbody tr:hover { background:#f1f6ff; }
         <div class="recebimento-status" id="rbb-status" aria-live="polite"></div>
       </div>
       <div class="recebimento-panel">
-        <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('bobinas')">Exportar Excel</button><button class="btn-pdf export-access" type="button" onclick="exportarRecebimentosPDF('bobinas')">Imprimir / PDF</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
+        <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-excel export-access" type="button" onclick="exportarRecebimentos('bobinas')">Exportar Excel</button><button class="btn-pdf export-access" type="button" onclick="imprimirAbaAtual()">Imprimir / PDF</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rbb-linhas"></tbody><tfoot id="rbb-totais"></tfoot></table></div>
       </div>
     </section>
@@ -1401,8 +1415,7 @@ tbody tr:hover { background:#f1f6ff; }
     <section id="config-page" role="tabpanel" aria-labelledby="tab-configuracoes" hidden>
         <div class="config-section">
             <h2>Configurações do administrador</h2>
-            <p class="operadores-ajuda">Para adicionar alguém, digite o nome no primeiro campo e toque em “Adicionar à lista”. Não precisa selecionar ninguém antes. Se pedir, confirme com a senha atual do administrador.</p>
-            <p>Somente fernandolisboa.br@gmail.com pode adicionar, corrigir ou remover qualquer responsável. A senha da conta é confirmada a cada mudança. Os lançamentos antigos permanecem no histórico; correções e remoções valem para novos lançamentos.</p>
+            <div class="print-config-data" id="print-config-data"></div>
             <div class="config-grid">
                 <div class="input-group"><label for="config-novo-responsavel">Adicionar responsável</label><input type="text" id="config-novo-responsavel" maxlength="80" placeholder="Digite o novo nome (não precisa selecionar outro)"></div>
                 <button class="btn-add" id="config-btn-adicionar" type="button" onclick="configAdicionarResponsavel()">Adicionar à lista</button>
@@ -1410,11 +1423,12 @@ tbody tr:hover { background:#f1f6ff; }
                 <button class="btn-clear" id="config-btn-remover" type="button" onclick="configRemoverResponsavel()">Remover selecionado</button>
                 <div class="input-group"><label for="config-renomear-responsavel">Corrigir nome cadastrado</label><select id="config-renomear-responsavel"></select></div>
                 <div class="input-group"><label for="config-nome-corrigido">Nome correto</label><input type="text" id="config-nome-corrigido" maxlength="80" placeholder="Digite a grafia correta"></div>
-                <button class="btn-secondary" id="config-btn-renomear" type="button" onclick="configRenomearResponsavel()">Corrigir nome</button>
+                <button class="btn-add" id="config-btn-renomear" type="button" onclick="configRenomearResponsavel()">Corrigir nome</button>
                 <div class="input-group"><label for="config-responsavel-ativo">Responsável para novos lançamentos</label><select id="config-responsavel-ativo"></select></div>
                 <button class="btn-add" id="config-btn-ativo" type="button" onclick="configDefinirResponsavelAtivo()">Trocar responsável ativo</button>
             </div>
             <p class="auth-message" id="config-message" aria-live="polite"></p>
+            <div class="config-actions"><button class="btn-pdf export-access" type="button" onclick="imprimirAbaAtual()">Imprimir / PDF</button></div>
         </div>
     </section>
     <div id="senha-confirmacao-modal" class="senha-modal" hidden aria-hidden="true">
@@ -1831,7 +1845,6 @@ tbody tr:hover { background:#f1f6ff; }
             nomesOperadoresFirebase = extrairNomesOperadores(operadoresFirebaseSnapshot);
             sincronizarOperadoresNaTela();
             const mensagemLista=document.getElementById('config-message');
-            if(mensagemLista&&usuarioEhAdmin)mensagemLista.textContent=nomesOperadoresFirebase.length?`${nomesOperadoresFirebase.length} responsável(is) carregado(s). Para adicionar, basta digitar um nome no primeiro campo; não precisa selecionar outro.`:'Lista carregada vazia. Digite um novo nome no primeiro campo e toque em “Adicionar à lista”.';
             if (usuarioEhAdmin && operadoresAtivosRef) {
                 const atualizacoes={};
                 Object.values(operadoresFirebaseSnapshot).forEach(item=>{if(item&&item.nome){try{atualizacoes[chaveOperadorSegura(item.nome)]=item.ativo!==false;}catch(_){}}});
@@ -2114,17 +2127,9 @@ tbody tr:hover { background:#f1f6ff; }
     inputProduto.addEventListener('input', function() {
         const valorDigitado = this.value.trim().toLocaleUpperCase('pt-BR');
         closeAllLists();
-        const ajudaProduto = document.getElementById('produto-ajuda');
-        if (!valorDigitado) {
-            ajudaProduto.textContent = 'Digite o estribo ou produto; um nome novo será guardado automaticamente ao registrar a produção.';
-            return;
-        }
+        if (!valorDigitado) return;
         const nomes = obterSugestoesEstribo();
-        const exato = nomes.some(nome => chaveDuplicadoPadrao(nome) === chaveDuplicadoPadrao(valorDigitado));
         const correspondentes = nomes.filter(nome => nome.startsWith(valorDigitado) && nome !== valorDigitado).slice(0, 20);
-        ajudaProduto.textContent = exato
-            ? 'Esse estribo já está salvo nos padrões.'
-            : 'Produto novo: será salvo automaticamente quando você registrar a produção.';
         if (!correspondentes.length) return;
         correspondentes.forEach(nome => {
             const sugestao = document.createElement('button');
@@ -2137,7 +2142,6 @@ tbody tr:hover { background:#f1f6ff; }
             sugestao.addEventListener('click', () => {
                 inputProduto.value = nome;
                 inputProduto.dispatchEvent(new Event('change', { bubbles: true }));
-                document.getElementById('produto-ajuda').textContent = 'Estribo padrão selecionado.';
                 closeAllLists();
                 aplicarAutomacaoAmaciado(nome);
             });
@@ -2772,6 +2776,28 @@ tbody tr:hover { background:#f1f6ff; }
         catch (error) { mostrarErroFirebase(error); }
     }
 
+    function imprimirAbaAtual() {
+        if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para imprimir ou exportar.'); return; }
+        const abas=[['producao','producao-page','Relatório de produção'],['bobinas','bobinas-page','Cadastro de bobinas'],['receb-barras','receb-barras-page','Recebimento de barras de 12 m'],['receb-bobinas','receb-bobinas-page','Recebimento de bobinas'],['configuracoes','config-page','Configurações de responsáveis']];
+        const atual=abas.find(([,id])=>{const el=document.getElementById(id);return el&&!el.hidden;});
+        if(!atual){alert('Não encontrei uma aba aberta para imprimir.');return;}
+        if(atual[0]==='producao'&&!firebaseProducaoPronto){alert('Aguarde o carregamento dos registros antes de gerar o documento.');return;}
+        if(atual[0]==='bobinas'&&!bobinasRef){alert('Aguarde o carregamento dos registros de bobinas antes de gerar o documento.');return;}
+        const titulo=document.getElementById('print-title-active');
+        const data=document.getElementById('print-generated-at');
+        if(titulo)titulo.textContent=atual[2];
+        if(data)data.textContent=`Documento gerado em ${new Date().toLocaleString('pt-BR')}`;
+        if(atual[0]==='configuracoes'){
+            const lista=document.getElementById('print-config-data');
+            const ativos=nomesOperadoresAtivos();
+            if(lista)lista.innerHTML=`<h3>Responsáveis cadastrados</h3><ul>${ativos.map(nome=>`<li>${escaparHtml(nome)}${String(responsavelAtivoFirebase||'').toLocaleUpperCase('pt-BR')===nome.toLocaleUpperCase('pt-BR')?' — responsável ativo':''}</li>`).join('')}</ul>`;
+        }
+        document.body.classList.add('printing-report');
+        window.addEventListener('afterprint',()=>document.body.classList.remove('printing-report'),{once:true});
+        window.print();
+        setTimeout(()=>document.body.classList.remove('printing-report'),2000);
+    }
+
     function imprimirRelatorio() {
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
         if (!firebaseProducaoPronto) { alert('Aguarde o carregamento dos registros antes de gerar o PDF.'); return; }
@@ -2866,29 +2892,6 @@ tbody tr:hover { background:#f1f6ff; }
             drawRow(['TOTAL DO MÊS','','','','',dados.reduce((a,x)=>a+(Number(x.totalEmb)||0),0).toLocaleString('pt-BR'),dados.reduce((a,x)=>a+(Number(x.totalPecas)||0),0).toLocaleString('pt-BR'),''],true);
         }
         return { blob: pdf.output('blob'), filename: `${titulo}.pdf`, mime:'application/pdf' };
-    }
-
-    async function compartilharRelatorio(tipo, formato) {
-        if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar ou compartilhar relatórios.'); return; }
-        if (tipo === 'producao' && !firebaseProducaoPronto) { alert('Aguarde o carregamento dos registros antes de exportar.'); return; }
-        try {
-            const arquivo = gerarArquivoRelatorio(tipo, formato);
-            const file = typeof File === 'function' ? new File([arquivo.blob], arquivo.filename, { type: arquivo.mime }) : null;
-            if (file && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: arquivo.filename, text: 'Relatório do controle de produção.' });
-                return;
-            }
-            const url = URL.createObjectURL(arquivo.blob);
-            const a = document.createElement('a'); a.href=url; a.download=arquivo.filename; document.body.appendChild(a); a.click(); a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 1500);
-            const mesCompartilhado = tipo === 'bobinas' ? filtroMesBobinas : filtroMesAtual;
-            const mensagem = encodeURIComponent(`Relatório ${tipo === 'bobinas' ? 'de bobinas' : 'de produção'} (${mesCompartilhado || 'todos os meses'}) — anexe o arquivo baixado nesta conversa.`);
-            window.open(`https://wa.me/?text=${mensagem}`, '_blank', 'noopener');
-            alert('Arquivo baixado. O WhatsApp foi aberto; anexe o arquivo baixado à conversa ou grupo desejado.');
-        } catch (error) {
-            if (error && error.name === 'AbortError') return;
-            alert(error.message || 'Não foi possível preparar o relatório para compartilhamento.');
-        }
     }
 
     function exportarBobinasExcel() {
