@@ -1069,7 +1069,8 @@ tbody tr:hover { background:#f1f6ff; }
 
 
 /* Official navigation drawer: shared sidebar on desktop and ☰-opened window on mobile. */
-#app-container{display:block!important;width:100%;max-width:none!important;margin:0!important;padding:20px 26px 50px 286px!important;overflow-x:hidden}
+#app-container{display:none!important;width:100%;max-width:none!important;margin:0!important;padding:20px 26px 50px 286px!important;overflow-x:hidden}
+body.authenticated #app-container{display:block!important}
 .official-mobile-bar{display:none}
 .tabs-app{position:fixed!important;left:0!important;top:0!important;bottom:0!important;z-index:60!important;width:260px!important;height:100vh!important;margin:0!important;padding:18px 14px!important;border:0!important;border-radius:0!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:0!important;overflow-y:auto!important;background:linear-gradient(180deg,#073f34,#062f2a)!important;box-shadow:8px 0 26px rgba(7,65,47,.22)!important}
 .tabs-app>.header{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:12px!important;margin:0 0 15px!important;padding:14px!important;border:1px solid rgba(255,255,255,.26)!important;border-radius:12px!important;background:linear-gradient(145deg,#0a5542,#15906a)!important;color:#fff!important;box-shadow:0 4px 0 #043b2c,0 9px 18px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.28)!important}
@@ -1651,6 +1652,7 @@ tbody tr:hover { background:#f1f6ff; }
         const authScreen = document.getElementById('auth-screen');
         const app = document.getElementById('app-container');
         if (!user) {
+            document.body.classList.remove('authenticated');
             if (producaoRef) producaoRef.off();
             if (padroesRef) padroesRef.off();
             if (operadoresRef) operadoresRef.off();
@@ -1722,6 +1724,7 @@ tbody tr:hover { background:#f1f6ff; }
         document.querySelectorAll('.recebimentos-tab').forEach(el => el.hidden = !podeAcessarRecebimentos);
         document.querySelectorAll('.admin-receb-edit').forEach(el => el.hidden = !usuarioEhAdminFernando());
         authScreen.style.display = 'none';
+        document.body.classList.add('authenticated');
         app.style.display = 'block';
         firebaseEdicaoLiberada = false;
         atualizarBloqueioEdicao();
