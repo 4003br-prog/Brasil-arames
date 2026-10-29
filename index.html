@@ -604,6 +604,16 @@
         .auth-screen p { color: #64748b; margin-bottom: 18px; }
         .auth-screen label { display:block; font-size:13px; font-weight:600; margin: 12px 0 5px; }
         .auth-screen input { width:100%; padding:11px; border:1px solid var(--border); border-radius:6px; font-size:15px; background:#fff; }
+        .password-field{position:relative;display:flex;align-items:center}
+        .password-field input{padding-right:48px!important}
+        .password-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:36px;display:grid;place-items:center;border:0;border-radius:7px;background:transparent;color:#59616d;cursor:pointer;padding:0}
+        .password-toggle:hover{background:rgba(100,116,139,.08);color:#424a55}
+        .password-toggle:focus-visible{outline:2px solid #7b8490;outline-offset:1px}
+        .password-toggle svg{width:19px;height:19px;display:block;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+        .password-toggle .eye-slash{display:none}
+        .password-toggle[aria-pressed="true"] .eye-slash{display:block}
+        body[data-theme="noite"] .password-toggle{color:#c4cbd4}
+        body[data-theme="noite"] .password-toggle:hover{background:rgba(255,255,255,.08);color:#e2e6eb}
         .consulta-banner { display:none; margin:0 0 18px; padding:13px 16px; border-radius:12px; color:#1e40af; background:linear-gradient(110deg,#e6efff,#effbff); border:1px solid #cbdcff; box-shadow:0 5px 14px rgba(37,66,139,.08); font-weight:600; }
         body.solo-consulta .consulta-banner,
         body.somente-producao .consulta-banner { display:block; }
@@ -1117,7 +1127,7 @@ body.authenticated #app-container{display:block!important}
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="username" required>
         <label for="auth-password">Senha</label>
-        <input type="password" id="auth-password" autocomplete="current-password" minlength="6" required>
+        <div class="password-field"><input type="password" id="auth-password" autocomplete="current-password" minlength="6" required><button class="password-toggle" id="auth-password-toggle" type="button" aria-label="Mostrar senha" aria-pressed="false" title="Mostrar senha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.3-6 9.5-6 9.5 6 9.5 6-3.3 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/><path class="eye-slash" d="M4 20 20 4"/></svg></button></div>
         <div class="auth-buttons">
             <button class="btn-add" type="submit">Entrar</button>
         </div>
@@ -1630,6 +1640,17 @@ body.authenticated #app-container{display:block!important}
         if (atual && nomes.includes(atual.toLocaleUpperCase('pt-BR'))) select.value = atual.toLocaleUpperCase('pt-BR');
         atualizarSeletoresConfiguracoes();
     }
+
+    const authPasswordInput=document.getElementById('auth-password');
+    const authPasswordToggle=document.getElementById('auth-password-toggle');
+    authPasswordToggle.addEventListener('click',()=>{
+        const mostrar=authPasswordInput.type==='password';
+        authPasswordInput.type=mostrar?'text':'password';
+        authPasswordToggle.setAttribute('aria-label',mostrar?'Ocultar senha':'Mostrar senha');
+        authPasswordToggle.title=mostrar?'Ocultar senha':'Mostrar senha';
+        authPasswordToggle.setAttribute('aria-pressed',String(mostrar));
+        authPasswordInput.focus();
+    });
 
     document.getElementById('auth-form').addEventListener('submit', async event => {
         event.preventDefault();
