@@ -3462,7 +3462,12 @@ body.authenticated #app-container{display:block!important}
             .map((item, indice) => ({ ...item, _indiceOriginal: indice }))
             .filter(item => registroCorrespondeBusca(item) && registroNoMes(item, filtroMesAtual));
 
-        ordenarPorDataDesc(dadosExibicao);
+        // No Excel, liste os lançamentos em ordem cronológica: dia mais antigo primeiro.
+        // A tela continua usando a ordenação decrescente (mais novo primeiro).
+        dadosExibicao.sort((a,b) => {
+            const diferencaData = chaveDataRelatorio(a.dataFormatada).localeCompare(chaveDataRelatorio(b.dataFormatada));
+            return diferencaData || (Number(b._indiceOriginal || 0) - Number(a._indiceOriginal || 0));
+        });
 
         if (!dadosExibicao.length) { alert('Não há registros para o mês e os filtros selecionados.'); return; }
 
