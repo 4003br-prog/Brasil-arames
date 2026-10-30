@@ -1735,6 +1735,10 @@ const CLIENTES_STORAGE_KEY = 'saidaMt_calculadoraMateriaisClientes_v1';
 const MODELOS_STORAGE_KEY = 'saidaMt_calculadoraMateriaisModelosEstribo_v1';
 const KG_POR_CAIXA_ARAME = 20;
 let itens = [];
+// Cache sincronizado a partir de saidaMateriais/auxiliares no Firebase.
+let clientesSaidaFirebase = {};
+let modelosSaidaFirebase = [];
+let ferroSaidaFirebase = '';
 let saidaMtPermissaoEdicao = false;
 let saidaMtPermissaoConsulta = false;
 function exigirPermissaoSaida(){if(!saidaMtPermissaoEdicao){alert('Somente o administrador pode lançar ou alterar dados da Saída MT.');return false;}return true;}
