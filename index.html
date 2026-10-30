@@ -1116,6 +1116,116 @@ body.authenticated #app-container{display:block!important}
  .header-brand{flex:1}
  .tabs-app>.header{margin-bottom:12px!important}
 }
+
+/* Saída MT integrada, com CSS e armazenamento isolados da produção. */
+
+  #saida-mt-root, #saida-mt-root *{ box-sizing: border-box; }
+  #saida-mt-root{ font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; background: #f1f5f9; color: #1e293b; }
+  #saida-mt-root header{ background: linear-gradient(135deg, #1e3a5f, #2d4f7c); color: #fff; padding: 22px 24px; }
+  #saida-mt-root .header-inner{ max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  #saida-mt-root header h1{ margin: 0; font-size: 1.45rem; }
+  #saida-mt-root header p{ margin: 6px 0 0; color: #cbd5e1; font-size: .9rem; }
+  #saida-mt-root .header-conferente{ flex: 0 0 auto; margin-top: 2px; }
+  #saida-mt-root .tabs{ display: flex; gap: 4px; padding: 14px 24px 0; background: #1e3a5f; flex-wrap: nowrap; }
+  #saida-mt-root .tab{ flex: 1 1 0; min-width: 0; text-align: center; padding: 10px 12px; background: #2d4f7c; color: #cbd5e1; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: .95rem; transition: .2s; }
+  #saida-mt-root .tab:hover{ background: #3a5f92; }
+  #saida-mt-root .tab.active{ background: #f1f5f9; color: #1e3a5f; font-weight: 700; }
+  #saida-mt-root main{ padding: 22px 24px; max-width: 1100px; margin: 0 auto; }
+  #saida-mt-root .panel{ display: none; background: #fff; border-radius: 14px; padding: 26px; box-shadow: 0 2px 10px rgba(0,0,0,.06); animation: fade .25s ease; }
+  #saida-mt-root .panel.active{ display: block; }
+  @keyframes fade{ from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  #saida-mt-root .panel h2,#saida-mt-root #saida-cart h2{ margin: 0 0 18px; color: #1e3a5f; font-size: 1.25rem; }
+  #saida-mt-root .cargo-modal{ position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 18px; background: rgba(15, 23, 42, .72); }
+  #saida-mt-root .cargo-modal[hidden]{ display: none; }
+  #saida-mt-root .cargo-dialog{ width: min(100%, 620px); max-height: calc(100vh - 36px); overflow-y: auto; padding: 26px; background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.28); }
+  #saida-mt-root .cargo-dialog h2{ margin: 0 0 8px; color: #1e3a5f; font-size: 1.35rem; }
+  #saida-mt-root .cargo-dialog .hint{ margin: 0 0 20px; }
+  #saida-mt-root .cargo-modal-actions{ display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
+  #saida-mt-root .linha-acoes{ display: flex; gap: 6px; white-space: nowrap; }
+  #saida-mt-root .linha-acoes .btn{ padding: 7px 10px; font-size: .82rem; }
+  #saida-mt-root .btn-danger{ background: #fee2e2; color: #b91c1c; }
+  #saida-mt-root .btn-danger:hover{ background: #fecaca; }
+  #saida-mt-root .cliente-sugestoes{ display: none; margin: -8px 0 16px; padding: 6px; border: 1px solid #cbd5e1; border-radius: 9px; background: #fff; max-height: 180px; overflow-y: auto; }
+  #saida-mt-root .cliente-sugestoes.visivel{ display: block; }
+  #saida-mt-root .cliente-sugestao{ display: block; width: 100%; padding: 10px 12px; border: 0; border-radius: 6px; background: #fff; color: #334155; text-align: left; font: inherit; cursor: pointer; }
+  #saida-mt-root .cliente-sugestao:hover,#saida-mt-root .cliente-sugestao:focus{ background: #f1f5f9; outline: none; }
+  #saida-mt-root.modal-open{ overflow: hidden; }
+  @media (max-width: 640px){ #saida-mt-root .cargo-dialog{ padding: 20px; } #saida-mt-root .cargo-modal-actions .btn{ flex: 1; } }
+  #saida-mt-root .field{ margin-bottom: 16px; }
+  #saida-mt-root .field label{ display: block; font-weight: 600; margin-bottom: 6px; font-size: .88rem; color: #334155; }
+  #saida-mt-root .field input,#saida-mt-root .field select,#saida-mt-root .field textarea{ width: 100%; padding: 11px 13px; border: 1px solid #cbd5e1; border-radius: 9px; font-size: 1rem; background: #fff; transition: .15s; }
+  #saida-mt-root .field input:focus,#saida-mt-root .field select:focus,#saida-mt-root .field textarea:focus{ outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+  #saida-mt-root .required::after{ content: ' *'; color: #dc2626; }
+  #saida-mt-root .row{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  #saida-mt-root .hint{ font-size: .82rem; color: #64748b; margin: 6px 0 14px; }
+  #saida-mt-root .btn{ padding: 12px 22px; border: none; border-radius: 9px; font-size: .98rem; font-weight: 700; cursor: pointer; transition: .15s; }
+  #saida-mt-root .btn-primary{ background: #2563eb; color: #fff; }
+  #saida-mt-root .btn-primary:hover{ background: #1d4ed8; }
+  #saida-mt-root .btn-success{ background: #16a34a; color: #fff; }
+  #saida-mt-root .btn-success:hover{ background: #15803d; }
+  #saida-mt-root .btn-secondary{ background: #e2e8f0; color: #1e3a5f; }
+  #saida-mt-root .btn-secondary:hover{ background: #cbd5e1; }
+  #saida-mt-root .result{ margin-top: 18px; padding: 16px 18px; background: #ecfdf5; border-left: 5px solid #10b981; border-radius: 10px; display: none; font-size: .95rem; }
+  #saida-mt-root .result.show{ display: block; animation: fade .25s; }
+  #saida-mt-root .result strong{ color: #065f46; }
+  #saida-mt-root #saida-cart{ max-width: 1100px; margin: 0 auto 40px; background: #fff; border-radius: 14px; padding: 26px; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+  #saida-mt-root .group-row td{ background: #eaf0f7; color: #1e3a5f; font-weight: 700; border-top: 2px solid #cbd5e1; }
+  #saida-mt-root #saida-bobina-pesos{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+  #saida-mt-root .bobina-total-previa{ margin: 4px 0 18px; padding: 14px 16px; background: #ecfdf5; border-left: 5px solid #10b981; border-radius: 9px; color: #065f46; font-size: 1.05rem; }
+  #saida-mt-root .table-wrap{ width: 100%; overflow-x: auto; }
+  #saida-mt-root table{ width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 760px; }
+  #saida-mt-root th,#saida-mt-root td{ padding: 11px 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+  #saida-mt-root th{ background: #f8fafc; font-weight: 700; color: #334155; font-size: .84rem; text-transform: uppercase; }
+  #saida-mt-root tbody tr:hover{ background: #f8fafc; }
+  #saida-mt-root tfoot th{ background: #f1f5f9; border-top: 2px solid #cbd5e1; }
+  #saida-mt-root .empty{ color: #94a3b8; text-align: center; padding: 26px; }
+  #saida-mt-root .del{ background: #fee2e2; color: #dc2626; border: none; padding: 7px 12px; border-radius: 7px; cursor: pointer; font-weight: 600; }
+  #saida-mt-root .del:hover{ background: #fecaca; }
+  #saida-mt-root .actions{ display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  #saida-mt-root .print-header{ display: none; }
+  @media (max-width: 640px){
+    #saida-mt-root .row{ grid-template-columns: 1fr; }
+    #saida-mt-root header{ padding: 22px 18px; }
+    #saida-mt-root .header-inner{ gap: 8px; }
+    #saida-mt-root header h1{ font-size: 1.25rem; }
+    #saida-mt-root .header-conferente{ padding: 9px 12px; }
+    #saida-mt-root main{ padding: 16px 12px; }
+    #saida-mt-root .tabs{ padding-left: 12px; padding-right: 12px; }
+    #saida-mt-root .tab{ flex: 1 1 0; min-width: 0; padding: 10px 3px; font-size: .78rem; white-space: normal; }
+    #saida-mt-root .panel,#saida-mt-root #saida-cart{ padding: 18px; }
+    #saida-mt-root #saida-cart{ margin-left: 12px; margin-right: 12px; }
+    #saida-mt-root .actions .btn{ flex: 1; }
+  }
+  @media print{
+    #saida-mt-root header,#saida-mt-root .tabs,#saida-mt-root main,#saida-mt-root .actions,#saida-mt-root .no-print,#saida-mt-root .del,#saida-mt-root .cargo-modal{ display: none !important; }
+    #saida-mt-root{ background: #fff; font-size: 12px; }
+    #saida-mt-root .print-header{ display: block; margin-bottom: 22px; border-bottom: 2px solid #1e3a5f; padding-bottom: 10px; }
+    #saida-mt-root .print-header h1{ font-size: 1.5rem; margin: 0; color: #1e3a5f; }
+    #saida-mt-root .print-header p{ margin: 4px 0 0; color: #555; }
+    #saida-mt-root #saida-cart{ box-shadow: none; padding: 0; margin: 0; max-width: none; }
+    #saida-mt-root .table-wrap{ overflow: visible; }
+    #saida-mt-root table{ font-size: 11px; min-width: 0; }
+    #saida-mt-root th,#saida-mt-root td{ padding: 6px 4px; }
+  }
+
+body.saida-modal-open{overflow:hidden!important}
+#saida-mt-root.saida-somente-leitura .saida-admin-only{display:none!important}
+#saida-mt-root.saida-somente-leitura #saida-cart th:last-child,
+#saida-mt-root.saida-somente-leitura #saida-cart td:last-child{display:none!important}
+#saida-mt-root #saida-firebase-status{margin:0 0 12px;padding:9px 12px;border-radius:8px;background:#f8fafc;color:#334155}
+#saida-mt-root.saida-sem-acesso{display:none!important}
+@media(max-width:850px){#tab-saida-mt{grid-column:1/-1!important}}
+@media print{
+ @page{size:landscape;margin:10mm}
+ body.printing-saida #app-container>:not(#saida-mt-page){display:none!important}
+ body.printing-saida #saida-mt-page{display:block!important}
+ body.printing-saida #saida-mt-root header,body.printing-saida #saida-mt-root .tabs,body.printing-saida #saida-mt-root main,body.printing-saida #saida-mt-root .actions,body.printing-saida #saida-mt-root .no-print,body.printing-saida #saida-mt-root .cargo-modal{display:none!important}
+ body.printing-saida #saida-mt-root #saida-cart{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;box-shadow:none!important}
+ body.printing-saida #saida-mt-root .print-header{display:block!important}
+ body.printing-saida #saida-mt-root table{width:100%!important;min-width:0!important;font-size:8.5px!important;table-layout:auto}
+ body.printing-saida #saida-mt-root th,body.printing-saida #saida-mt-root td{padding:4px 5px!important;white-space:normal!important;overflow-wrap:anywhere}
+ body.printing-saida #saida-mt-root #saida-cart tr>*:last-child{display:none!important}
+}
 </style>
 </head>
 <body>
@@ -1172,6 +1282,8 @@ body.authenticated #app-container{display:block!important}
             <button type="button" class="tab-app" id="tab-producao" role="tab" aria-selected="true" aria-controls="producao-page" onclick="selecionarAba('producao')">Produção de estribos</button>
             <button type="button" class="tab-app" id="tab-bobinas" role="tab" aria-selected="false" aria-controls="bobinas-page" onclick="selecionarAba('bobinas')">Bobinas</button>
         </div>
+        
+        <div class="tabs-row tabs-row-extra"><button type="button" class="tab-app" id="tab-saida-mt" role="tab" aria-selected="false" hidden aria-controls="saida-mt-page" onclick="selecionarAba('saida-mt')">Saída MT</button></div>
         <div class="tabs-row tabs-row-recebimentos">
             <button type="button" class="tab-app recebimentos-tab" id="tab-receb-barras" role="tab" aria-selected="false" aria-controls="receb-barras-page" onclick="selecionarAba('receb-barras')" hidden>Receb. barras 12 m</button>
             <button type="button" class="tab-app recebimentos-tab" id="tab-receb-bobinas" role="tab" aria-selected="false" aria-controls="receb-bobinas-page" onclick="selecionarAba('receb-bobinas')" hidden>Receb. bobinas</button>
@@ -1326,6 +1438,164 @@ body.authenticated #app-container{display:block!important}
     </div>
     </div><!-- /producao-page -->
 
+    <section id="saida-mt-page" class="saida-mt-page" role="tabpanel" aria-labelledby="tab-saida-mt" hidden><div id="saida-mt-root">
+<header>
+  <div class="header-inner">
+    <div>
+      <h1>Retirada de Materiais</h1>
+    </div>
+    <button class="btn btn-secondary header-conferente no-print saida-admin-only" type="button" onclick="saidaUi_abrirModalCarga(true)">Conferente</button>
+  </div>
+</header>
+<p id="saida-firebase-status" class="hint" role="status" aria-live="polite">Aguardando autorização do Firebase…</p>
+<div class="cargo-modal" id="saida-carga-modal" hidden role="dialog" aria-modal="true" aria-labelledby="saida-cargo-title">
+  <form class="cargo-dialog" id="saida-carga-form">
+    <h2 id="saida-cargo-title">Dados da carga</h2>
+    <p class="hint">Preencha os campos obrigatórios para abrir a calculadora.</p>
+    <div class="row">
+      <div class="field"><label class="required" for="saida-carga-data">Data da carga</label><input type="date" id="saida-carga-data" required></div>
+      <div class="field"><label class="required" for="saida-carga-cliente">Cliente ou destino</label><input type="text" id="saida-carga-cliente" autocomplete="off" required maxlength="120" placeholder="Nome do cliente ou local de entrega">
+        <div class="cliente-sugestoes" id="saida-cliente-sugestoes" role="listbox" aria-label="Clientes salvos"></div>
+        <small class="hint" id="saida-cliente-hint" aria-live="polite"></small></div>
+    </div>
+    <div class="row">
+      <div class="field"><label class="required" for="saida-carga-veiculo">Veículo</label><input type="text" id="saida-carga-veiculo" required maxlength="80" placeholder="Placa, modelo ou identificação"></div>
+      <div class="field"><label class="required" for="saida-carga-responsavel">Responsável por carregar e conferir</label><input type="text" id="saida-carga-responsavel" required maxlength="120" placeholder="Nome do responsável"></div>
+    </div>
+    <div class="cargo-modal-actions">
+      <button class="btn btn-secondary" id="saida-carga-cancelar" type="button" onclick="saidaUi_fecharModalCarga()" hidden>Cancelar</button>
+      <button class="btn btn-primary" type="submit">Confirmar e abrir calculadora</button>
+    </div>
+  </form>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Tipos de material">
+  <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="estribo" onclick="saidaUi_switchTab('estribo')">Estribo</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" data-tab="barras" onclick="saidaUi_switchTab('barras')">Barras</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" data-tab="arame" onclick="saidaUi_switchTab('arame')">Arame</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" data-tab="tela" onclick="saidaUi_switchTab('tela')">Tela Pop</button>
+  <button class="tab" type="button" role="tab" aria-selected="false" data-tab="bobina" onclick="saidaUi_switchTab('bobina')">Bobina</button>
+</div>
+<main>
+  <section class="panel saida-admin-only active" id="saida-estribo" role="tabpanel">
+    <h2>Estribo</h2>
+    <div class="field"><label class="required" for="saida-estribo-modelo">Modelo</label><input type="text" id="saida-estribo-modelo" autocomplete="off" required maxlength="100" placeholder="Digite o modelo do estribo"><div class="cliente-sugestoes" id="saida-modelos-sugestoes" role="listbox" aria-label="Modelos salvos"></div><small class="hint" id="saida-modelo-hint" aria-live="polite"></small></div>
+    <div class="field"><label class="required" for="saida-estribo-ferro">Ferro (mm)</label>
+      <select id="saida-estribo-ferro"><option value="">Selecione…</option><option value="3.8">3,8 mm</option><option value="4.2">4,2 mm</option><option value="5.0">5,0 mm</option><option value="6.0">6,0 mm</option></select>
+    </div>
+    <div class="row">
+      <div class="field"><label class="required" for="saida-estribo-qtd">Quantidade de peças</label><input type="number" id="saida-estribo-qtd" min="1" step="1" placeholder="Ex.: 100"></div>
+      <div class="field"><label class="required" for="saida-estribo-peso">Peso total (kg)</label><input type="text" inputmode="decimal" id="saida-estribo-peso" placeholder="Ex.: 12.5" class="peso-input"></div>
+    </div>
+    <div class="bobina-total-previa" id="saida-total-previa-estribo" aria-live="polite">Total: aguardando peso</div>
+    <div class="field"><label for="saida-comentario-estribo">Comentário (opcional)</label><textarea class="comentario-item" id="saida-comentario-estribo" data-comentario="estribo" rows="2" maxlength="500" placeholder="Observação deste produto"></textarea></div>
+    <button class="btn btn-primary" type="button" onclick="saidaUi_calcEstribo()">Adicionar</button><div class="result" id="saida-estribo-result" aria-live="polite"></div>
+  </section>
+  <section class="panel saida-admin-only" id="saida-barras" role="tabpanel">
+    <h2>Barras</h2>
+    <div class="field"><label class="required" for="saida-barras-mm">Diâmetro (mm)</label>
+      <select id="saida-barras-mm"><option value="">Selecione…</option><option value="4.2">4,2 mm</option><option value="5.0">5,0 mm</option><option value="6.3">6,3 mm</option><option value="8">8,0 mm</option><option value="10">10,0 mm</option></select>
+    </div>
+    <div class="row">
+      <div class="field"><label for="saida-barras-peso">Peso do pacote (kg)</label><input type="text" inputmode="decimal" id="saida-barras-peso" placeholder="Ex.: 1000" class="peso-input"></div>
+      <div class="field"><label for="saida-barras-qtd">Quantidade de barras</label><input type="number" id="saida-barras-qtd" min="1" step="1" placeholder="Ex.: 50"></div>
+    </div>
+    <p class="hint">Informe pelo menos um dos dois campos: peso do pacote ou quantidade de barras. Se informar os dois, o peso unitário será calculado.</p>
+    <div class="bobina-total-previa" id="saida-total-previa-barras" aria-live="polite">Total: aguardando peso</div>
+    <div class="field"><label for="saida-comentario-barras">Comentário (opcional)</label><textarea class="comentario-item" id="saida-comentario-barras" data-comentario="barras" rows="2" maxlength="500" placeholder="Observação deste produto"></textarea></div>
+    <button class="btn btn-primary" type="button" onclick="saidaUi_calcBarras()">Adicionar</button><div class="result" id="saida-barras-result" aria-live="polite"></div>
+  </section>
+  <section class="panel saida-admin-only" id="saida-arame" role="tabpanel">
+    <h2>Arame</h2>
+    <div class="row">
+      <div class="field"><label class="required" for="saida-arame-mm">Milímetro</label><select id="saida-arame-mm"><option value="">Selecione…</option><option value="12">12 mm</option><option value="18">18 mm</option></select></div>
+      <div class="field"><label class="required" for="saida-arame-tipo">Tipo</label><select id="saida-arame-tipo"><option value="">Selecione…</option><option value="Torcido">Torcido</option><option value="Liso">Liso</option></select></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="saida-arame-caixas">Quantidade de caixas</label><input type="number" inputmode="numeric" id="saida-arame-caixas" min="1" step="1" placeholder="Ex.: 5"></div>
+      <div class="field"><label for="saida-arame-kg">Quantidade em kg</label><input type="number" inputmode="numeric" id="saida-arame-kg" min="1" step="1" placeholder="Ex.: 100"></div>
+    </div>
+    <p class="hint">Cada caixa equivale a 20 kg. Informe valores inteiros; o peso em kg precisa corresponder a caixas inteiras (múltiplos de 20 kg).</p>
+    <div class="bobina-total-previa" id="saida-total-previa-arame" aria-live="polite">Total: aguardando peso</div>
+    <div class="field"><label for="saida-comentario-arame">Comentário (opcional)</label><textarea class="comentario-item" id="saida-comentario-arame" data-comentario="arame" rows="2" maxlength="500" placeholder="Observação deste produto"></textarea></div>
+    <button class="btn btn-primary" type="button" onclick="saidaUi_calcArame()">Adicionar</button><div class="result" id="saida-arame-result" aria-live="polite"></div>
+  </section>
+  <section class="panel saida-admin-only" id="saida-tela" role="tabpanel">
+    <h2>Tela Pop</h2>
+    <div class="field"><label class="required" for="saida-tela-modelo">Modelo</label>
+      <select id="saida-tela-modelo"><option value="">Selecione…</option><option value="15x15 — 3.4 mm">15x15 — 3,4 mm</option><option value="15x15 — 4.2 mm">15x15 — 4,2 mm</option><option value="20x20 — 3.4 mm">20x20 — 3,4 mm</option><option value="10x10 — 4.2 mm">10x10 — 4,2 mm</option></select>
+    </div>
+    <div class="row">
+      <div class="field"><label class="required" for="saida-tela-qtd">Quantidade de unidades</label><input type="number" id="saida-tela-qtd" min="1" step="1" placeholder="Ex.: 10"></div>
+      <div class="field"><label for="saida-tela-kg">Peso total em kg <span style="font-weight:400;color:#64748b">(opcional)</span></label><input type="text" inputmode="decimal" id="saida-tela-kg" placeholder="Ex.: 50" class="peso-input"></div>
+    </div>
+    <p class="hint">Sem informar o peso, a unidade será adicionada ao relatório com peso não informado.</p>
+    <div class="bobina-total-previa" id="saida-total-previa-tela" aria-live="polite">Total: aguardando peso</div>
+    <div class="field"><label for="saida-comentario-tela">Comentário (opcional)</label><textarea class="comentario-item" id="saida-comentario-tela" data-comentario="tela" rows="2" maxlength="500" placeholder="Observação deste produto"></textarea></div>
+    <button class="btn btn-primary" type="button" onclick="saidaUi_calcTela()">Adicionar</button><div class="result" id="saida-tela-result" aria-live="polite"></div>
+  </section>
+  <section class="panel saida-admin-only" id="saida-bobina" role="tabpanel">
+    <h2>Bobina</h2>
+    <div class="field"><label class="required" for="saida-bobina-produto">Produto (mm)</label>
+      <select id="saida-bobina-produto" required><option value="">Selecione…</option><option value="3.8">3,8 mm</option><option value="4.2">4,2 mm</option><option value="5.0">5,0 mm</option><option value="6.0">6,0 mm</option></select>
+    </div>
+    <div class="field"><label class="required" for="saida-bobina-unidades">Quantidade</label><input type="number" id="saida-bobina-unidades" min="1" max="100" step="1" placeholder="Ex.: 4 bobinas" required></div>
+    <p class="hint">Informe o peso (kg) de cada bobina. O total será a soma dos pesos individuais.</p>
+    <div id="saida-bobina-pesos" aria-live="polite"></div>
+    <div class="bobina-total-previa" id="saida-bobina-total-previa" aria-live="polite">Total: 0,00 kg</div>
+    <div class="field"><label for="saida-comentario-bobina">Comentário (opcional)</label><textarea class="comentario-item" id="saida-comentario-bobina" data-comentario="bobina" rows="2" maxlength="500" placeholder="Observação deste produto"></textarea></div>
+    <button class="btn btn-primary" type="button" onclick="saidaUi_calcBobina()">Adicionar</button><div class="result" id="saida-bobina-result" aria-live="polite"></div>
+  </section>
+</main>
+<section id="saida-cart">
+  <div class="print-header"><h1>Relatório de Materiais</h1><p>Emitido em: <span id="saida-print-date"></span></p><div id="saida-print-cargo"></div></div>
+  <h2>Produtos Adicionados</h2>
+  <div class="field no-print"><label for="saida-busca-relatorio">Pesquisar no documento</label><input type="search" id="saida-busca-relatorio" placeholder="Busque cliente, data, veículo, conferente ou material"></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Data da carga</th><th>Cliente/destino</th><th>Veículo</th><th>Conferente</th><th>Tipo</th><th>Descrição</th><th>Quantidade</th><th>Unidade</th><th>Peso unitário (kg)</th><th>Peso total (kg)</th><th>Comentário</th><th class="no-print">Ação</th></tr></thead>
+    <tbody id="saida-cart-body"><tr><td colspan="12" class="empty">Nenhum produto adicionado.</td></tr></tbody>
+    <tfoot><tr><th colspan="9" style="text-align:right;">Total geral (pesos informados):</th><th id="saida-total-kg">0,000 kg</th><th></th><th class="no-print"></th></tr></tfoot>
+  </table></div>
+  <p class="hint" id="saida-peso-hint" aria-live="polite"></p>
+  <div class="actions">
+    <button class="btn btn-success" type="button" onclick="saidaUi_abrirSelecaoRelatorio()">Gerar relatório</button>
+    <button class="btn btn-secondary saida-admin-only" type="button" onclick="saidaUi_limparTudo()">Limpar tudo</button>
+  </div>
+</section>
+<div class="cargo-modal" id="saida-editar-modal" role="dialog" aria-modal="true" aria-labelledby="saida-editar-title" hidden>
+  <form class="cargo-dialog" id="saida-editar-form">
+    <h2 id="saida-editar-title">Editar produto</h2>
+    <div class="field"><label for="saida-editar-descricao">Descrição</label><input id="saida-editar-descricao" type="text" maxlength="160" required></div>
+    <div class="row">
+      <div class="field"><label for="saida-editar-quantidade">Quantidade</label><input id="saida-editar-quantidade" type="number" min="0" step="any" required></div>
+      <div class="field"><label for="saida-editar-unidade">Unidade</label><input id="saida-editar-unidade" type="text" maxlength="20"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="saida-editar-peso-unitario">Peso unitário (kg)</label><input id="saida-editar-peso-unitario" type="text" inputmode="decimal" class="peso-input"></div>
+      <div class="field"><label for="saida-editar-peso-total">Peso total (kg)</label><input id="saida-editar-peso-total" type="text" inputmode="decimal" class="peso-input"></div>
+    </div>
+    <div class="field"><label for="saida-editar-comentario">Comentário</label><textarea id="saida-editar-comentario" rows="2" maxlength="500"></textarea></div>
+    <div class="cargo-modal-actions">
+      <button class="btn btn-secondary" type="button" onclick="saidaUi_fecharEdicao()">Cancelar</button>
+      <button class="btn btn-primary" type="submit">Salvar alterações</button>
+    </div>
+  </form>
+</div>
+<div class="cargo-modal" id="saida-exportar-modal" role="dialog" aria-modal="true" aria-labelledby="saida-exportar-title" hidden>
+  <form class="cargo-dialog" id="saida-exportar-form">
+    <h2 id="saida-exportar-title">Exportar relatório</h2>
+    <p class="hint">Escolha o formato, o cliente e os dias para gerar o relatório.</p>
+    <div class="field"><label class="required" for="saida-exportar-formato">Formato</label><select id="saida-exportar-formato" required><option value="">Selecione…</option><option value="excel">Excel</option><option value="pdf">PDF</option></select></div>
+    <div class="field"><label class="required" for="saida-exportar-cliente">Cliente</label><select id="saida-exportar-cliente" required><option value="">Selecione…</option><option value="__todos__">Todos os clientes</option></select></div>
+    <div class="field"><label>Dias</label><label style="display:flex;align-items:center;gap:8px;margin:0 0 8px;font-weight:500"><input type="checkbox" id="saida-exportar-todos-dias" checked> Todos os dias</label><div id="saida-exportar-dias" class="cliente-sugestoes visivel" style="max-height:190px;margin:0"></div></div>
+    <div class="cargo-modal-actions">
+      <button class="btn btn-secondary" type="button" onclick="saidaUi_fecharExportacao()">Cancelar</button>
+      <button class="btn btn-success" type="submit">Gerar relatório</button>
+    </div>
+  </form>
+</div>
+</div></section>
+
     <section id="bobinas-page" role="tabpanel" aria-labelledby="tab-bobinas" hidden>
         <h1 class="print-title" id="print-title-bobinas">Cadastro mensal de bobinas</h1>
         <p id="bobinas-status" role="status" aria-live="polite" style="margin:0 0 12px;color:#64748b"></p>
@@ -1456,6 +1726,814 @@ body.authenticated #app-container{display:block!important}
 </div>
 
 <script>
+(function(){
+
+'use strict';
+const STORAGE_KEY = 'saidaMt_calculadoraMateriaisItens_v1';
+const CARGO_STORAGE_KEY = 'saidaMt_calculadoraMateriaisDadosCarga_v1';
+const CLIENTES_STORAGE_KEY = 'saidaMt_calculadoraMateriaisClientes_v1';
+const MODELOS_STORAGE_KEY = 'saidaMt_calculadoraMateriaisModelosEstribo_v1';
+const KG_POR_CAIXA_ARAME = 20;
+let itens = [];
+let saidaMtPermissaoEdicao = false;
+let saidaMtPermissaoConsulta = false;
+function exigirPermissaoSaida(){if(!saidaMtPermissaoEdicao){alert('Somente o administrador pode lançar ou alterar dados da Saída MT.');return false;}return true;}
+function definirItensFirebase(registros){itens=Array.isArray(registros)?registros.filter(x=>x&&typeof x==='object'):[];renderCart();}
+function atualizarStatusSaida(texto, erro=false){const el=document.getElementById('saida-firebase-status');if(el){el.textContent=texto;el.style.color=erro?'#b91c1c':'#334155';}}
+window.saidaMTConfigurar=function({admin=false,consulta=false}={}){saidaMtPermissaoEdicao=Boolean(admin);saidaMtPermissaoConsulta=Boolean(consulta);const root=document.getElementById('saida-mt-root');if(root){root.classList.toggle('saida-somente-leitura',!admin);root.classList.toggle('saida-sem-acesso',!admin&&!consulta);} };
+window.saidaMTDefinirItens=definirItensFirebase;
+window.saidaMTDefinirAuxiliares=function({clientes={},modelos=[],ferro=''}={}){clientesSaidaFirebase=clientes&&typeof clientes==='object'&&!Array.isArray(clientes)?clientes:{};modelosSaidaFirebase=Array.isArray(modelos)?modelos.filter(x=>typeof x==='string'):[];ferroSaidaFirebase=String(ferro||'');if(document.getElementById('saida-carga-cliente').value)atualizarListaClientes(document.getElementById('saida-carga-cliente').value);if(document.getElementById('saida-estribo-modelo').value)atualizarSugestoesModelos(document.getElementById('saida-estribo-modelo').value);if(saidaMtPermissaoEdicao && document.getElementById('saida-estribo-ferro')){const sel=document.getElementById('saida-estribo-ferro');if([...sel.options].some(o=>o.value===ferroSaidaFirebase))sel.value=ferroSaidaFirebase;}};
+window.saidaMTGuardarClientes=null;window.saidaMTGuardarModelos=null;window.saidaMTGuardarFerro=null;
+window.saidaMTDefinirCarga=function(d){if(!d||typeof d!=='object')return;const map={data:'saida-carga-data',cliente:'saida-carga-cliente',veiculo:'saida-carga-veiculo',responsavel:'saida-carga-responsavel'};for(const [k,id] of Object.entries(map)){const el=document.getElementById(id);if(el && document.activeElement!==el)el.value=String(d[k]||'');}};
+window.saidaMTSalvarCarga=null;
+window.saidaMTGuardarItens=null;
+
+const fmt = (n, d = 3) => Number(n).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+function parseDecimal(raw) {
+  let value = String(raw ?? '').trim().replace(/\s/g, '');
+  if (!value) return null;
+  if (value.includes(',')) value = value.replace(/\./g, '').replace(',', '.');
+  else if (/^-?\d{1,3}(?:\.\d{3})+$/.test(value)) value = value.replace(/\./g, '');
+  const number = Number(value);
+  return Number.isFinite(number) ? number : NaN;
+}
+function parseNum(id) { return parseDecimal(document.getElementById(id).value); }
+function formatarPesoDuranteDigitacao(campo) {
+  const original = campo.value;
+  const posicao = campo.selectionStart ?? original.length;
+  let texto = original.replace(/[^0-9,.]/g, '');
+  if (!texto) { campo.value = ''; return; }
+  let inteiro, decimal = '', temDecimal = false;
+  if (texto.includes(',')) {
+    const partes = texto.split(',');
+    inteiro = partes.shift().replace(/[,.]/g, '');
+    decimal = partes.join('').replace(/\D/g, '');
+    temDecimal = true;
+  } else {
+    const pontos = (texto.match(/\./g) || []).length;
+    const agrupamentoMilhar = /^\d{1,3}(?:\.\d{3})+$/.test(texto);
+    if (pontos && !agrupamentoMilhar) {
+      const indice = texto.lastIndexOf('.');
+      inteiro = texto.slice(0, indice).replace(/\D/g, '');
+      decimal = texto.slice(indice + 1).replace(/\D/g, '');
+      temDecimal = true;
+    } else inteiro = texto.replace(/\D/g, '');
+  }
+  inteiro = inteiro.replace(/^0+(?=\d)/, '');
+  const inteiroFormatado = inteiro ? Number(inteiro).toLocaleString('pt-BR', {maximumFractionDigits:0}) : '';
+  const novo = inteiroFormatado + (temDecimal ? ',' + decimal : '');
+  const digitosAntes = original.slice(0, posicao).replace(/\D/g, '').length;
+  campo.value = novo;
+  let novoCursor = 0, vistos = 0;
+  while (novoCursor < novo.length && vistos < digitosAntes) {
+    if (/\d/.test(novo[novoCursor])) vistos++;
+    novoCursor++;
+  }
+  if (temDecimal && original.slice(0, posicao).includes(',') && novoCursor < novo.length && novo[novoCursor] === ',') novoCursor++;
+  try { campo.setSelectionRange(novoCursor, novoCursor); } catch {}
+}
+function formatarCampoPeso(campo) {
+  const valor = parseDecimal(campo.value);
+  if (valor === null || !Number.isFinite(valor)) return;
+  campo.value = valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function prepararEdicaoPeso(campo) {
+  const texto = campo.value.trim();
+  if (!texto) return;
+  // Ao editar, tira só os separadores de milhar; preserva a vírgula decimal.
+  if (texto.includes(',')) campo.value = texto.replace(/\./g, '');
+}
+function validarPositivo(value, label, inteiro = false) {
+  if (value === null || !Number.isFinite(value) || value <= 0 || (inteiro && !Number.isInteger(value))) {
+    alert(`${label}: informe um valor ${inteiro ? 'inteiro ' : ''}maior que zero.`);
+    return false;
+  }
+  return true;
+}
+function normalizarBusca(value) { return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR'); }
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function switchTab(id) {
+  document.querySelectorAll('#saida-mt-root .tab').forEach(t => {
+    const active = t.dataset.tab === id;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-selected', String(active));
+  });
+  document.querySelectorAll('#saida-mt-root .panel').forEach(p => p.classList.toggle('active', p.id === 'saida-' + id));
+}
+function carregarItens() { return []; }
+function salvarItens() {
+  if (!exigirPermissaoSaida()) return;
+  if (typeof window.saidaMTGuardarItens !== 'function') { atualizarStatusSaida('Aguardando sincronização com Firebase…', true); return; }
+  atualizarStatusSaida('Salvando no Firebase…');
+  window.saidaMTGuardarItens(itens).then(()=>atualizarStatusSaida('Sincronizado com Firebase. Alterações visíveis nos aparelhos autorizados.')).catch(e=>{console.error('Saída MT Firebase',e);atualizarStatusSaida('Falha ao salvar no Firebase. Confira conexão e regras.',true);});
+}
+function obterDadosCarga() {
+  return {
+    data: document.getElementById('saida-carga-data').value,
+    cliente: document.getElementById('saida-carga-cliente').value.trim(),
+    veiculo: document.getElementById('saida-carga-veiculo').value.trim(),
+    responsavel: document.getElementById('saida-carga-responsavel').value.trim()
+  };
+}
+function salvarDadosCarga() {
+  if (saidaMtPermissaoEdicao && typeof window.saidaMTSalvarCarga === 'function') window.saidaMTSalvarCarga(obterDadosCarga());
+}
+function carregarClientesSalvos() { return clientesSaidaFirebase; }
+function chaveCliente(nome) { return nome.trim().toLocaleLowerCase('pt-BR'); }
+function atualizarListaClientes(filtro = '') {
+  const container = document.getElementById('saida-cliente-sugestoes');
+  const registros = Object.values(carregarClientesSalvos())
+    .filter(registro => registro && registro.nome)
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const termo = filtro.trim().toLocaleLowerCase('pt-BR');
+  if (!termo) {
+    container.innerHTML = '';
+    container.classList.remove('visivel');
+    return;
+  }
+  const correspondentes = registros.filter(registro => registro.nome.toLocaleLowerCase('pt-BR').includes(termo));
+  if (!correspondentes.length) {
+    container.innerHTML = '<div class="hint" style="padding:8px 10px;margin:0">Nenhum cliente salvo com esse nome.</div>';
+    container.classList.add('visivel');
+    return;
+  }
+  container.innerHTML = correspondentes.map(registro => `<button class="cliente-sugestao" type="button" role="option" data-cliente="${escapeHTML(registro.nome)}">${escapeHTML(registro.nome)}</button>`).join('');
+  container.classList.add('visivel');
+}
+function selecionarClienteSalvo(nome) {
+  const input = document.getElementById('saida-carga-cliente');
+  input.value = nome;
+  preencherDadosCliente();
+  document.getElementById('saida-cliente-sugestoes').classList.remove('visivel');
+  document.getElementById('saida-carga-veiculo').focus();
+}
+function carregarModelosEstribo() { return modelosSaidaFirebase; }
+function atualizarSugestoesModelos(filtro = '') {
+  const container = document.getElementById('saida-modelos-sugestoes');
+  const termo = filtro.trim().toLocaleLowerCase('pt-BR');
+  if (!termo) { container.innerHTML = ''; container.classList.remove('visivel'); return; }
+  const modelos = carregarModelosEstribo().filter(modelo => modelo.toLocaleLowerCase('pt-BR').includes(termo));
+  if (!modelos.length) {
+    container.innerHTML = '<div class="hint" style="padding:8px 10px;margin:0">Modelo novo: será salvo quando adicionar o estribo.</div>';
+  } else {
+    container.innerHTML = modelos.map(modelo => `<button class="cliente-sugestao" type="button" role="option" data-modelo="${escapeHTML(modelo)}">${escapeHTML(modelo)}</button>`).join('');
+  }
+  container.classList.add('visivel');
+}
+function selecionarModeloEstribo(modelo) {
+  document.getElementById('saida-estribo-modelo').value = modelo;
+  document.getElementById('saida-modelos-sugestoes').classList.remove('visivel');
+  document.getElementById('saida-estribo-ferro').focus();
+}
+function salvarModeloEstribo(modelo) {
+  const modelos = carregarModelosEstribo();
+  const chave = modelo.trim().toLocaleLowerCase('pt-BR');
+  if (!modelos.some(item => item.toLocaleLowerCase('pt-BR') === chave)) modelos.push(modelo.trim());
+  modelosSaidaFirebase=modelos; if(window.saidaMTGuardarModelos)window.saidaMTGuardarModelos(modelos);
+}
+function preencherDadosCliente() {
+  const nome = document.getElementById('saida-carga-cliente').value.trim();
+  if (!nome) return;
+  const registro = carregarClientesSalvos()[chaveCliente(nome)];
+  const dica = document.getElementById('saida-cliente-hint');
+  if (registro) {
+    document.getElementById('saida-carga-veiculo').value = registro.veiculo || '';
+    document.getElementById('saida-carga-responsavel').value = registro.responsavel || '';
+    dica.textContent = 'Cliente encontrado: veículo e responsável preenchidos com os dados salvos. Você pode alterá-los.';
+  } else {
+    dica.textContent = '';
+  }
+  salvarDadosCarga();
+}
+function salvarCliente() {
+  const dados = obterDadosCarga();
+  const registros = carregarClientesSalvos();
+  registros[chaveCliente(dados.cliente)] = {
+    nome: dados.cliente,
+    veiculo: dados.veiculo,
+    responsavel: dados.responsavel
+  };
+  clientesSaidaFirebase=registros; if(window.saidaMTGuardarClientes)window.saidaMTGuardarClientes(registros);
+  atualizarListaClientes();
+}
+function carregarDadosCarga() {
+  const hoje = new Date();
+  const dataLocal = new Date(hoje.getTime() - hoje.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  document.getElementById('saida-carga-data').value = dataLocal;
+}
+let modalCargaEmEdicao = false;
+function abrirModalCarga(edicao = false) {
+  modalCargaEmEdicao = edicao;
+  document.getElementById('saida-carga-cancelar').hidden = !edicao;
+  document.getElementById('saida-carga-modal').hidden = false;
+  document.body.classList.add('saida-modal-open');
+  const primeiroVazio = ['saida-carga-data','saida-carga-cliente','saida-carga-veiculo','saida-carga-responsavel'].find(id => !document.getElementById(id).value.trim());
+  document.getElementById(primeiroVazio || 'saida-carga-data').focus();
+}
+function fecharModalCarga() {
+  document.getElementById('saida-carga-modal').hidden = true;
+  document.body.classList.remove('saida-modal-open');
+  modalCargaEmEdicao = false;
+}
+function confirmarDadosCarga(event) {
+  event.preventDefault();
+  if (!validarDadosCarga()) return;
+  salvarCliente();
+  fecharModalCarga();
+}
+function validarDadosCarga() {
+  if (!exigirPermissaoSaida()) return false;
+  const dados = obterDadosCarga();
+  const campos = [
+    ['saida-carga-data', dados.data, 'Selecione a data da carga.'],
+    ['saida-carga-cliente', dados.cliente, 'Informe o cliente ou destino.'],
+    ['saida-carga-veiculo', dados.veiculo, 'Informe o veículo.'],
+    ['saida-carga-responsavel', dados.responsavel, 'Informe quem será responsável por carregar e conferir.']
+  ];
+  for (const [id, value, mensagem] of campos) {
+    if (!value) {
+      abrirModalCarga(true);
+      alert(`${mensagem}`);
+      document.getElementById(id).focus();
+      return false;
+    }
+  }
+  salvarDadosCarga();
+  return true;
+}
+function formatarDataCarga(data) {
+  if (!data) return '';
+  const [ano, mes, dia] = data.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+function atualizarDadosImpressao() {
+  const d = obterDadosCarga();
+  document.getElementById('saida-print-cargo').innerHTML = `<p><strong>Data da carga:</strong> ${escapeHTML(formatarDataCarga(d.data))} &nbsp; <strong>Cliente/destino:</strong> ${escapeHTML(d.cliente)}</p><p><strong>Veículo:</strong> ${escapeHTML(d.veiculo)} &nbsp; <strong>Responsável por carregar e conferir:</strong> ${escapeHTML(d.responsavel)}</p>`;
+}
+function carregarSugestaoEstribo() {
+  try {
+    const ultimo = ferroSaidaFirebase;
+    if (ultimo && [...document.getElementById('saida-estribo-ferro').options].some(o => o.value === ultimo)) {
+      document.getElementById('saida-estribo-ferro').value = ultimo;
+    }
+  } catch { /* armazenamento indisponível */ }
+}
+function mostrarResultado(id, html) {
+  const el = document.getElementById(id);
+  el.innerHTML = html;
+  el.classList.add('show');
+}
+function obterCargaDoItem(item) { return item.carga && typeof item.carga === 'object' ? item.carga : {data:'', cliente:'Cliente não informado', veiculo:'', responsavel:''}; }
+function adicionarItem(item) {
+  const campoComentario = document.querySelector(`#${item.tipo === 'Estribo' ? 'saida-comentario-estribo' : item.tipo === 'Barra' ? 'saida-comentario-barras' : item.tipo === 'Arame' ? 'saida-comentario-arame' : item.tipo === 'Tela Pop' ? 'saida-comentario-tela' : 'saida-comentario-bobina'}`);
+  item.comentario = campoComentario?.value.trim() || '';
+  item.carga = {...obterDadosCarga()};
+  itens.push(item); salvarItens(); renderCart();
+  if (campoComentario) campoComentario.value = '';
+}
+
+function calcEstribo() {
+  if (!validarDadosCarga()) return;
+  const modelo = document.getElementById('saida-estribo-modelo').value.trim();
+  const ferro = document.getElementById('saida-estribo-ferro').value;
+  const qtd = parseNum('saida-estribo-qtd');
+  const peso = parseNum('saida-estribo-peso');
+  if (!modelo) { alert('Estribo: informe o modelo.'); document.getElementById('saida-estribo-modelo').focus(); return; }
+  if (!ferro) { alert('Estribo: selecione o diâmetro do ferro.'); return; }
+  if (!validarPositivo(qtd, 'Quantidade de peças', true) || !validarPositivo(peso, 'Peso total')) return;
+  const kgPeca = peso / qtd;
+  ferroSaidaFirebase=ferro; if(window.saidaMTGuardarFerro)window.saidaMTGuardarFerro(ferro);
+  document.getElementById('saida-modelo-hint').textContent = `Modelo salvo: ${modelo}`;
+  salvarModeloEstribo(modelo);
+  mostrarResultado('saida-estribo-result', `<strong>Resultado Estribo:</strong> ${escapeHTML(modelo)} — Ferro ${escapeHTML(ferro)} mm — ${qtd} pç(s) — ${fmt(peso, 2)} kg total<br><strong>${fmt(kgPeca, 3)} kg por peça</strong>`);
+  adicionarItem({ tipo:'Estribo', descricao:`${modelo} — Ferro ${ferro} mm`, quantidade:qtd, unidade:'pç', pesoUnitario:kgPeca, pesoTotal:peso });
+  document.getElementById('saida-estribo-modelo').value = '';
+  document.getElementById('saida-modelos-sugestoes').classList.remove('visivel');
+  document.getElementById('saida-estribo-qtd').value = '';
+  document.getElementById('saida-estribo-peso').value = '';
+}
+function calcBarras() {
+  if (!validarDadosCarga()) return;
+  const mm = document.getElementById('saida-barras-mm').value;
+  const peso = parseNum('saida-barras-peso');
+  const qtd = parseNum('saida-barras-qtd');
+  if (!mm) { alert('Barras: selecione o diâmetro.'); return; }
+  if (peso === null && qtd === null) { alert('Barras: informe o peso do pacote, a quantidade de barras ou ambos.'); return; }
+  if (peso !== null && !validarPositivo(peso, 'Peso do pacote')) return;
+  if (qtd !== null && !validarPositivo(qtd, 'Quantidade de barras', true)) return;
+  const pesoUnit = peso !== null && qtd !== null ? peso / qtd : null;
+  let msg = `<strong>Resultado Barra Ø ${escapeHTML(mm)} mm:</strong> `;
+  if (pesoUnit !== null) msg += `${fmt(pesoUnit, 3)} kg por barra (${fmt(peso)} kg ÷ ${qtd} barras).`;
+  else if (peso !== null) msg += `peso do pacote informado: ${fmt(peso, 2)} kg (quantidade não informada).`;
+  else msg += `quantidade informada: ${qtd} barra(s) (peso não informado).`;
+  mostrarResultado('saida-barras-result', msg);
+  adicionarItem({ tipo:'Barra', descricao:`Ø ${mm} mm`, quantidade:qtd ?? 0, unidade:qtd !== null ? 'un' : '—', pesoUnitario:pesoUnit, pesoTotal:peso });
+  document.getElementById('saida-barras-peso').value = '';
+  document.getElementById('saida-barras-qtd').value = '';
+}
+function calcArame() {
+  if (!validarDadosCarga()) return;
+  const mm = document.getElementById('saida-arame-mm').value;
+  const tipo = document.getElementById('saida-arame-tipo').value;
+  const caixas = parseNum('saida-arame-caixas');
+  const kg = parseNum('saida-arame-kg');
+  if (!mm || !tipo) { alert('Arame: selecione o milímetro e o tipo (torcido ou liso).'); return; }
+  if (caixas === null && kg === null) { alert('Arame: informe a quantidade de caixas ou a quantidade em kg.'); return; }
+  if (caixas !== null && (!validarPositivo(caixas, 'Quantidade de caixas', true))) return;
+  if (kg !== null && (!validarPositivo(kg, 'Quantidade em kg', true))) return;
+  if (kg !== null && kg % KG_POR_CAIXA_ARAME !== 0) {
+    alert(`A quantidade em kg precisa ser múltipla de ${KG_POR_CAIXA_ARAME} kg para corresponder a caixas inteiras.`);
+    document.getElementById('saida-arame-kg').focus();
+    return;
+  }
+  if (caixas !== null && kg !== null && Math.abs(caixas * KG_POR_CAIXA_ARAME - kg) > 0.011) {
+    alert(`Os valores não correspondem. Cada caixa equivale a ${KG_POR_CAIXA_ARAME} kg. Ajuste caixas ou kg.`);
+    return;
+  }
+  const kgFinal = kg !== null ? kg : caixas * KG_POR_CAIXA_ARAME;
+  const caixasFinal = caixas !== null ? caixas : kg / KG_POR_CAIXA_ARAME;
+  mostrarResultado('saida-arame-result', `<strong>Resultado Arame ${escapeHTML(mm)} mm ${escapeHTML(tipo)}:</strong><br><strong>${fmt(kgFinal, 0)} kg</strong><br><strong>${fmt(caixasFinal, 0)} caixa(s)</strong> (1 caixa = 20 kg)`);
+  adicionarItem({ tipo:'Arame', descricao:`${mm} mm ${tipo}`, quantidade:caixasFinal, unidade:'cx', pesoUnitario:KG_POR_CAIXA_ARAME, pesoTotal:kgFinal });
+  document.getElementById('saida-arame-caixas').value = '';
+  document.getElementById('saida-arame-kg').value = '';
+}
+function calcTela() {
+  if (!validarDadosCarga()) return;
+  const modelo = document.getElementById('saida-tela-modelo').value;
+  const qtd = parseNum('saida-tela-qtd');
+  const peso = parseNum('saida-tela-kg');
+  if (!modelo) { alert('Tela Pop: selecione o modelo.'); return; }
+  if (!validarPositivo(qtd, 'Quantidade de unidades', true)) return;
+  if (peso !== null && !validarPositivo(peso, 'Peso total')) return;
+  const pesoUnit = peso !== null ? peso / qtd : null;
+  const resumoPeso = peso !== null ? `${fmt(peso, 2)} kg total — ${fmt(pesoUnit, 3)} kg por unidade` : 'peso não informado';
+  mostrarResultado('saida-tela-result', `<strong>Resultado Tela Pop:</strong> ${escapeHTML(modelo)} — ${qtd} unidade(s) — ${resumoPeso}.`);
+  adicionarItem({ tipo:'Tela Pop', descricao:modelo, quantidade:qtd, unidade:'un', pesoUnitario:pesoUnit, pesoTotal:peso });
+  document.getElementById('saida-tela-qtd').value = '';
+  document.getElementById('saida-tela-kg').value = '';
+}
+function atualizarCamposPesoBobina() {
+  const quantidade = Number(document.getElementById('saida-bobina-unidades').value);
+  const container = document.getElementById('saida-bobina-pesos');
+  const valoresAnteriores = [...container.querySelectorAll('.peso-bobina')].map(campo => campo.value);
+  if (!Number.isInteger(quantidade) || quantidade < 1 || quantidade > 100) {
+    container.innerHTML = '';
+    atualizarTotalBobinas();
+    return;
+  }
+  container.innerHTML = Array.from({length: quantidade}, (_, i) => `
+    <div class="field"><label class="required" for="saida-bobina-peso-${i+1}">Kg da bobina ${i+1}</label>
+      <input type="text" inputmode="decimal" id="saida-bobina-peso-${i+1}" class="peso-bobina peso-input" placeholder="Ex.: ${200+i} kg" value="${escapeHTML(valoresAnteriores[i] || '')}" required>
+    </div>`).join('');
+  atualizarTotalBobinas();
+}
+function sincronizarArame(campoAlterado) {
+  const campoCaixas = document.getElementById('saida-arame-caixas');
+  const campoKg = document.getElementById('saida-arame-kg');
+  const origem = campoAlterado === 'caixas' ? campoCaixas : campoKg;
+  const destino = campoAlterado === 'caixas' ? campoKg : campoCaixas;
+  const valor = parseDecimal(origem.value);
+  if (valor === null) {
+    destino.value = '';
+    atualizarPreviaArea('saida-arame');
+    return;
+  }
+  if (!Number.isFinite(valor) || valor < 0) return;
+  if (!Number.isInteger(valor)) return;
+  if (campoAlterado === 'caixas') {
+    destino.value = String(valor * KG_POR_CAIXA_ARAME);
+  } else if (valor % KG_POR_CAIXA_ARAME === 0) {
+    destino.value = String(valor / KG_POR_CAIXA_ARAME);
+  } else {
+    destino.value = '';
+  }
+  atualizarPreviaArea('saida-arame');
+}
+function atualizarPreviaArea(area) {
+  const el = document.getElementById(`saida-total-previa-${area.replace(/^saida-/, '')}`);
+  if (!el) return;
+  let pesoTotal = null, quantidade = null, pesoUnitario = null;
+  if (area === 'saida-estribo') {
+    pesoTotal = parseNum('saida-estribo-peso');
+    quantidade = parseNum('saida-estribo-qtd');
+    if (Number.isFinite(pesoTotal) && pesoTotal > 0 && Number.isInteger(quantidade) && quantidade > 0) pesoUnitario = pesoTotal / quantidade;
+  } else if (area === 'saida-barras') {
+    pesoTotal = parseNum('saida-barras-peso');
+    quantidade = parseNum('saida-barras-qtd');
+    if (Number.isFinite(pesoTotal) && pesoTotal > 0 && Number.isInteger(quantidade) && quantidade > 0) pesoUnitario = pesoTotal / quantidade;
+  } else if (area === 'saida-arame') {
+    const caixas = parseNum('saida-arame-caixas');
+    const kg = parseNum('saida-arame-kg');
+    if (Number.isFinite(kg) && kg > 0) pesoTotal = kg;
+    else if (Number.isFinite(caixas) && caixas > 0) pesoTotal = caixas * KG_POR_CAIXA_ARAME;
+  } else if (area === 'saida-tela') {
+    pesoTotal = parseNum('saida-tela-kg');
+    quantidade = parseNum('saida-tela-qtd');
+    if (Number.isFinite(pesoTotal) && pesoTotal > 0 && Number.isInteger(quantidade) && quantidade > 0) pesoUnitario = pesoTotal / quantidade;
+  }
+  if (!Number.isFinite(pesoTotal) || pesoTotal <= 0) {
+    el.textContent = 'Total: aguardando peso';
+    return;
+  }
+  if (area === 'saida-arame') {
+    const caixas = parseNum('saida-arame-caixas');
+    el.innerHTML = `<strong>Total: ${fmt(pesoTotal, 0)} kg</strong>${Number.isInteger(caixas) && caixas > 0 ? ` — ${caixas} caixa(s)` : ' — informe um peso múltiplo de 20 kg para mostrar caixas inteiras'}`;
+    return;
+  }
+  el.innerHTML = `<strong>Total: ${fmt(pesoTotal, 2)} kg</strong>${Number.isFinite(pesoUnitario) ? ` — ${fmt(pesoUnitario, 3)} kg por unidade` : ''}`;
+}
+function atualizarTotalBobinas() {
+  const campos = [...document.querySelectorAll('#saida-bobina-pesos .peso-bobina')];
+  const valores = campos.map(campo => campo.value.trim() ? parseDecimal(campo.value) : null);
+  const soma = valores.reduce((total, peso) => total + (Number.isFinite(peso) && peso > 0 ? peso : 0), 0);
+  const totalEl = document.getElementById('saida-bobina-total-previa');
+  if (!totalEl) return;
+  const completos = campos.length > 0 && valores.every(peso => Number.isFinite(peso) && peso > 0);
+  totalEl.innerHTML = completos
+    ? `<strong>Total: ${fmt(soma, 2)} kg</strong>`
+    : `Total informado: ${fmt(soma, 2)} kg${campos.length ? ` — preencha os ${campos.length - valores.filter(peso => Number.isFinite(peso) && peso > 0).length} peso(s) restante(s)` : ''}`;
+}
+function calcBobina() {
+  if (!validarDadosCarga()) return;
+  const produto = document.getElementById('saida-bobina-produto').value;
+  const unidades = parseNum('saida-bobina-unidades');
+  if (!produto) { alert('Bobina: selecione o produto.'); document.getElementById('saida-bobina-produto').focus(); return; }
+  if (!validarPositivo(unidades, 'Quantidade de bobinas', true) || unidades > 100) {
+    if (unidades > 100) alert('Informe no máximo 100 bobinas por vez.');
+    return;
+  }
+  const camposPeso = [...document.querySelectorAll('#saida-bobina-pesos .peso-bobina')];
+  if (camposPeso.length !== unidades) atualizarCamposPesoBobina();
+  const pesos = [...document.querySelectorAll('#saida-bobina-pesos .peso-bobina')].map((campo, i) => {
+    const valor = parseDecimal(campo.value);
+    if (!campo.value.trim() || !Number.isFinite(valor) || valor <= 0) {
+      alert(`Informe um peso válido para a bobina ${i+1}.`);
+      campo.focus();
+      return null;
+    }
+    return valor;
+  });
+  if (pesos.length !== unidades || pesos.some(peso => peso === null)) return;
+  const carga = {...obterDadosCarga()};
+  const comentario = document.getElementById('saida-comentario-bobina').value.trim();
+  pesos.forEach((peso, i) => itens.push({
+    tipo:'Bobina', descricao:`Produto ${produto} mm — Bobina ${i+1}/${unidades}`,
+    quantidade:1, unidade:'saida-bobina', pesoUnitario:peso, pesoTotal:peso, comentario, carga:{...carga}
+  }));
+  salvarItens();
+  renderCart();
+  mostrarResultado('saida-bobina-result', `<strong>Pesos registrados:</strong> ${pesos.map((p, i) => `Bobina ${i+1}: ${fmt(p, 2)} kg`).join(' — ')}. Os campos ficaram preenchidos para conferência.`);
+}
+
+function renderCart() {
+  const tbody = document.getElementById('saida-cart-body');
+  const termo = normalizarBusca(document.getElementById('saida-busca-relatorio')?.value || '');
+  const filtrados = itens.map((item, index) => ({item, index})).filter(({item}) => {
+    if (!termo) return true;
+    const cargaItem = obterCargaDoItem(item);
+    const campos = [item.tipo, item.descricao, item.quantidade, item.unidade,
+      item.pesoUnitario, item.pesoTotal, cargaItem.data, formatarDataCarga(cargaItem.data),
+      cargaItem.cliente, cargaItem.veiculo, cargaItem.responsavel, item.comentario];
+    return normalizarBusca(campos.join(' ')).includes(termo);
+  });
+  if (!filtrados.length) {
+    tbody.innerHTML = `<tr><td colspan="12" class="empty">${itens.length ? 'Nenhum resultado para essa pesquisa.' : 'Nenhum produto adicionado.'}</td></tr>`;
+  } else {
+    const gruposRelatorio = new Map();
+    filtrados.forEach(({item, index}) => {
+      const cargaItem = obterCargaDoItem(item);
+      const cliente = cargaItem.cliente || 'Cliente não informado';
+      const data = cargaItem.data || '';
+      const chave = `${data}::${chaveCliente(cliente)}`;
+      if (!gruposRelatorio.has(chave)) gruposRelatorio.set(chave, {cliente, data, linhas:[]});
+      gruposRelatorio.get(chave).linhas.push({item,index});
+    });
+    const gruposOrdenados = [...gruposRelatorio.values()].sort((a,b) => a.data.localeCompare(b.data) || a.cliente.localeCompare(b.cliente, 'pt-BR'));
+    tbody.innerHTML = gruposOrdenados.map(grupo => {
+      const titulo = `${formatarDataCarga(grupo.data) || 'Data não informada'} — ${grupo.cliente}`;
+      const linhas = grupo.linhas.map(({item,index}) => {
+        const cargaItem=obterCargaDoItem(item);
+        return `<tr>
+        <td>${escapeHTML(formatarDataCarga(cargaItem.data)||'—')}</td><td>${escapeHTML(cargaItem.cliente||'Cliente não informado')}</td><td>${escapeHTML(cargaItem.veiculo||'—')}</td><td>${escapeHTML(cargaItem.responsavel||'—')}</td>
+        <td>${escapeHTML(item.tipo)}</td><td>${escapeHTML(item.descricao)}</td>
+        <td>${Number(item.quantidade || 0).toLocaleString('pt-BR', {maximumFractionDigits: 3})}</td><td>${escapeHTML(item.unidade || '—')}</td>
+        <td>${Number.isFinite(item.pesoUnitario) ? `${fmt(item.pesoUnitario, 3)} kg` : '—'}</td>
+        <td>${Number.isFinite(item.pesoTotal) ? `${fmt(item.pesoTotal, 2)} kg` : '—'}</td><td>${escapeHTML(item.comentario||'—')}</td>
+        <td class="no-print"><div class="linha-acoes"><button class="btn btn-secondary" type="button" onclick="saidaUi_editarItem(${index})">Editar</button><button class="btn btn-danger" type="button" onclick="saidaUi_removerItem(${index})">Excluir</button></div></td>
+      </tr>`}).join('');
+      return `<tr class="group-row"><td colspan="12">${escapeHTML(titulo)}</td></tr>${linhas}`;
+    }).join('');
+  }
+  const total = filtrados.reduce((sum, {item}) => sum + (Number.isFinite(item.pesoTotal) ? item.pesoTotal : 0), 0);
+  const semPeso = filtrados.filter(({item}) => !Number.isFinite(item.pesoTotal)).length;
+  document.getElementById('saida-total-kg').textContent = `${fmt(total, 2)} kg`;
+  document.getElementById('saida-peso-hint').textContent = `${termo ? `Exibindo ${filtrados.length} de ${itens.length} item(ns). ` : ''}${semPeso ? `Há ${semPeso} item(ns) sem peso informado; eles não entram no total.` : ''}`;
+  document.getElementById('saida-print-date').textContent = new Date().toLocaleString('pt-BR');
+}
+let indiceEmEdicao = null;
+function editarItem(index) {
+  if (!exigirPermissaoSaida()) return;
+  if (!Number.isInteger(index) || index < 0 || index >= itens.length) return;
+  const item = itens[index];
+  indiceEmEdicao = index;
+  document.getElementById('saida-editar-descricao').value = item.descricao || '';
+  document.getElementById('saida-editar-quantidade').value = item.quantidade ?? '';
+  document.getElementById('saida-editar-unidade').value = item.unidade || '';
+  document.getElementById('saida-editar-peso-unitario').value = Number.isFinite(item.pesoUnitario) ? item.pesoUnitario : '';
+  document.getElementById('saida-editar-peso-total').value = Number.isFinite(item.pesoTotal) ? item.pesoTotal : '';
+  document.getElementById('saida-editar-comentario').value = item.comentario || '';
+  document.getElementById('saida-editar-modal').hidden = false;
+  document.body.classList.add('saida-modal-open');
+  document.getElementById('saida-editar-descricao').focus();
+}
+function fecharEdicao() {
+  document.getElementById('saida-editar-modal').hidden = true;
+  document.body.classList.remove('saida-modal-open');
+  indiceEmEdicao = null;
+}
+function salvarEdicao(event) {
+  event.preventDefault();
+  if (!exigirPermissaoSaida()) return;
+  if (!Number.isInteger(indiceEmEdicao) || !itens[indiceEmEdicao]) return;
+  const descricao = document.getElementById('saida-editar-descricao').value.trim();
+  const quantidade = Number(document.getElementById('saida-editar-quantidade').value);
+  const unidade = document.getElementById('saida-editar-unidade').value.trim();
+  const pesoUnitarioRaw = document.getElementById('saida-editar-peso-unitario').value.trim();
+  const pesoTotalRaw = document.getElementById('saida-editar-peso-total').value.trim();
+  const pesoUnitario = pesoUnitarioRaw === '' ? null : parseDecimal(pesoUnitarioRaw);
+  const pesoTotal = pesoTotalRaw === '' ? null : parseDecimal(pesoTotalRaw);
+  if (!descricao || !Number.isFinite(quantidade) || quantidade < 0 ||
+      (pesoUnitario !== null && (!Number.isFinite(pesoUnitario) || pesoUnitario < 0)) ||
+      (pesoTotal !== null && (!Number.isFinite(pesoTotal) || pesoTotal < 0))) {
+    alert('Confira a descrição, quantidade e pesos informados. Os valores não podem ser negativos.');
+    return;
+  }
+  const comentario = document.getElementById('saida-editar-comentario').value.trim();
+  itens[indiceEmEdicao] = {...itens[indiceEmEdicao], descricao, quantidade, unidade:unidade || '—', pesoUnitario, pesoTotal, comentario};
+  salvarItens();
+  fecharEdicao();
+  renderCart();
+}
+function removerItem(index) {
+  if (!exigirPermissaoSaida()) return;
+  if (!Number.isInteger(index) || index < 0 || index >= itens.length) return;
+  if (!confirm('Excluir este produto do relatório?')) return;
+  itens.splice(index, 1);
+  salvarItens();
+  renderCart();
+}
+function abrirSelecaoRelatorio() {
+  if (!itens.length) { alert('Adicione pelo menos um produto antes de gerar o relatório.'); return; }
+  document.getElementById('saida-exportar-formato').value = '';
+  document.getElementById('saida-exportar-formato').focus();
+  preencherClientesExportacao();
+  document.getElementById('saida-exportar-modal').hidden = false;
+  document.body.classList.add('saida-modal-open');
+  document.getElementById('saida-exportar-cliente').focus();
+  atualizarDiasExportacao();
+}
+function exportExcel() { abrirSelecaoRelatorio(); }
+function preencherClientesExportacao() {
+  const select = document.getElementById('saida-exportar-cliente');
+  const clientes = new Map();
+  itens.forEach(item => {
+    const nome = obterCargaDoItem(item).cliente || 'Cliente não informado';
+    const chave = chaveCliente(nome);
+    if (!clientes.has(chave)) clientes.set(chave, nome);
+  });
+  select.innerHTML = '<option value="">Selecione…</option><option value="__todos__">Todos os clientes</option>' +
+    [...clientes.entries()].sort((a,b) => a[1].localeCompare(b[1], 'pt-BR'))
+      .map(([chave,nome]) => `<option value="${escapeHTML(chave)}">${escapeHTML(nome)}</option>`).join('');
+  atualizarDiasExportacao();
+}
+function atualizarDiasExportacao() {
+  const cliente = document.getElementById('saida-exportar-cliente').value;
+  const container = document.getElementById('saida-exportar-dias');
+  const anteriores = new Set([...container.querySelectorAll('input[name="exportar-dia"]:checked')].map(el => el.value));
+  const datas = [...new Set(itens.filter(item => cliente === '__todos__' || chaveCliente(obterCargaDoItem(item).cliente || 'Cliente não informado') === cliente)
+    .map(item => obterCargaDoItem(item).data).filter(Boolean))].sort((a,b) => b.localeCompare(a));
+  if (!datas.length) {
+    container.innerHTML = '<span class="hint">Não há datas salvas para esta seleção.</span>';
+  } else {
+    container.innerHTML = datas.map(data => `<label class="cliente-sugestao" style="display:flex;align-items:center;gap:10px"><input type="checkbox" name="exportar-dia" value="${escapeHTML(data)}" ${anteriores.has(data) ? 'checked' : ''}> ${escapeHTML(formatarDataCarga(data))}</label>`).join('');
+  }
+  const todos = document.getElementById('saida-exportar-todos-dias');
+  todos.checked = anteriores.size === 0 || datas.length > 0 && datas.every(data => anteriores.has(data));
+  atualizarSelecaoDias();
+}
+function atualizarSelecaoDias() {
+  const todos = document.getElementById('saida-exportar-todos-dias');
+  document.querySelectorAll('#saida-mt-root input[name="exportar-dia"]').forEach(input => {
+    input.disabled = todos.checked;
+    if (todos.checked) input.checked = false;
+  });
+}
+function obterDiasSelecionados() {
+  if (document.getElementById('saida-exportar-todos-dias').checked) return '__todos__';
+  return [...document.querySelectorAll('#saida-mt-root input[name="exportar-dia"]:checked')].map(input => input.value);
+}
+function fecharExportacao() {
+  document.getElementById('saida-exportar-modal').hidden = true;
+  document.body.classList.remove('saida-modal-open');
+}
+function obterItensSelecionados(selecao, dias) {
+  return itens.filter(item => {
+    const carga = obterCargaDoItem(item);
+    const clienteOk = selecao === '__todos__' || chaveCliente(carga.cliente || 'Cliente não informado') === selecao;
+    const diaOk = dias === '__todos__' || dias.includes(carga.data);
+    return clienteOk && diaOk;
+  });
+}
+function confirmarExportacao(event) {
+  event.preventDefault();
+  const formato = document.getElementById('saida-exportar-formato').value;
+  if (!formato) { alert('Selecione Excel ou PDF.'); return; }
+  if (formato === 'excel' && typeof XLSX === 'undefined') { alert('A biblioteca de Excel não carregou. Verifique a conexão e tente novamente.'); return; }
+  const selecao = document.getElementById('saida-exportar-cliente').value;
+  if (!selecao) { alert('Selecione um cliente ou Todos os clientes.'); return; }
+  const dias = obterDiasSelecionados();
+  if (Array.isArray(dias) && !dias.length) { alert('Selecione pelo menos um dia ou marque Todos os dias.'); return; }
+  const itensSelecionados = obterItensSelecionados(selecao, dias);
+  if (!itensSelecionados.length) { alert('Não há produtos para essa seleção.'); return; }
+  fecharExportacao();
+  if (formato === 'excel') gerarExcel(selecao, dias);
+  else gerarPDF(itensSelecionados);
+}
+function gerarExcel(selecao, dias = '__todos__') {
+  const itensExportados = itens.filter(item => {
+    const carga = obterCargaDoItem(item);
+    const clienteOk = selecao === '__todos__' || chaveCliente(carga.cliente || 'Cliente não informado') === selecao;
+    const diaOk = dias === '__todos__' || dias.includes(carga.data);
+    return clienteOk && diaOk;
+  });
+  if (!itensExportados.length) { alert('Não há produtos para exportar nessa seleção.'); return; }
+  const grupos = new Map();
+  itensExportados.forEach(item => {
+    const cargaItem = obterCargaDoItem(item);
+    const nomeCliente = cargaItem.cliente || 'Cliente não informado';
+    const chave = `${cargaItem.data || ''}::${chaveCliente(nomeCliente)}`;
+    if (!grupos.has(chave)) grupos.set(chave, {nome:nomeCliente, data:cargaItem.data || '', itens:[]});
+    grupos.get(chave).itens.push({item, carga:cargaItem});
+  });
+  const wb = XLSX.utils.book_new();
+  const nomesAbas = new Set();
+  for (const grupo of grupos.values()) {
+    const dados = grupo.itens.map(({item, carga}) => ({
+      'Data da carga': formatarDataCarga(carga.data),
+      'Cliente ou destino': carga.cliente,
+      'Veículo': carga.veiculo,
+      'Conferente': carga.responsavel,
+      'Tipo': item.tipo,
+      'Descrição': item.descricao,
+      'Quantidade': item.quantidade,
+      'Unidade': item.unidade,
+      'Peso unitário (kg)': Number.isFinite(item.pesoUnitario) ? item.pesoUnitario : '',
+      'Peso total (kg)': Number.isFinite(item.pesoTotal) ? item.pesoTotal : '',
+      'Comentário do produto': item.comentario || ''
+    }));
+    const totalCliente = grupo.itens.reduce((s, registro) => s + (Number.isFinite(registro.item.pesoTotal) ? registro.item.pesoTotal : 0), 0);
+    dados.push({'Data da carga':'', 'Cliente ou destino':'', 'Veículo':'', 'Conferente':'', 'Tipo':'', 'Descrição':'TOTAL DO CLIENTE', 'Quantidade':'', 'Unidade':'', 'Peso unitário (kg)':'', 'Peso total (kg)':totalCliente});
+    const ws = XLSX.utils.json_to_sheet(dados);
+    ws['!cols'] = [{wch:15},{wch:26},{wch:20},{wch:25},{wch:14},{wch:32},{wch:13},{wch:10},{wch:20},{wch:18},{wch:34}];
+    Object.keys(ws).filter(ref => /^[I-J]\d+$/.test(ref)).forEach(ref => {
+      if (typeof ws[ref].v === 'number') ws[ref].z = ref[0] === 'I' ? '0.000' : '0.00';
+    });
+    const dataAba = grupo.data ? ` ${grupo.data.replace(/-/g, '')}` : '';
+    const base = `${String(grupo.nome).replace(/[\\/?*\[\]:]/g, ' ').trim()}${dataAba}`.slice(0, 31) || 'Cliente';
+    let nomeAba = base, sufixo = 2;
+    while (nomesAbas.has(nomeAba.toLocaleLowerCase('pt-BR'))) {
+      const fim = ` ${sufixo++}`;
+      nomeAba = `${base.slice(0,31-fim.length)}${fim}`;
+    }
+    nomesAbas.add(nomeAba.toLocaleLowerCase('pt-BR'));
+    XLSX.utils.book_append_sheet(wb, ws, nomeAba);
+  }
+  XLSX.writeFile(wb, `relatorio-materiais-por-cliente-e-dia-${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+let itensAntesDaImpressao = null;
+let buscaAntesDaImpressao = null;
+function printPDF() { abrirSelecaoRelatorio(); }
+function gerarPDF(itensSelecionados) {
+  if (!itensSelecionados.length) { alert('Não há produtos para imprimir.'); return; }
+  itensAntesDaImpressao = itens;
+  buscaAntesDaImpressao = document.getElementById('saida-busca-relatorio').value;
+  document.getElementById('saida-busca-relatorio').value = '';
+  itens = itensSelecionados;
+  document.getElementById('saida-print-date').textContent = new Date().toLocaleString('pt-BR');
+  const nomes = [...new Set(itensSelecionados.map(item => obterCargaDoItem(item).cliente || 'Cliente não informado'))];
+  const dias = [...new Set(itensSelecionados.map(item => formatarDataCarga(obterCargaDoItem(item).data)).filter(Boolean))];
+  document.getElementById('saida-print-cargo').innerHTML = `<p><strong>Clientes:</strong> ${escapeHTML(nomes.join(', '))} &nbsp; <strong>Datas:</strong> ${escapeHTML(dias.join(', ') || 'Não informada')}</p>`;
+  renderCart();
+  window.addEventListener('afterprint', restaurarRelatorioImpressao, {once:true});
+  document.body.classList.add('printing-saida');
+  window.addEventListener('afterprint', () => document.body.classList.remove('printing-saida'), {once:true});
+  window.print();
+}
+function restaurarRelatorioImpressao() {
+  if (!itensAntesDaImpressao) return;
+  itens = itensAntesDaImpressao;
+  itensAntesDaImpressao = null;
+  document.getElementById('saida-busca-relatorio').value = buscaAntesDaImpressao || '';
+  buscaAntesDaImpressao = null;
+  document.getElementById('saida-print-cargo').innerHTML = '';
+  renderCart();
+}
+function limparTudo() {
+  if (!exigirPermissaoSaida()) return;
+  if (!itens.length) { alert('O relatório já está vazio.'); return; }
+  if (!confirm('Tem certeza de que deseja remover todos os produtos do relatório?')) return;
+  itens = [];
+  salvarItens();
+  renderCart();
+  document.querySelectorAll('#saida-mt-root .result').forEach(el => { el.classList.remove('show'); el.textContent = ''; });
+}
+document.querySelectorAll('#saida-carga-data, #saida-carga-cliente, #saida-carga-veiculo, #saida-carga-responsavel').forEach(el => el.addEventListener('input', salvarDadosCarga));
+document.getElementById('saida-carga-cliente').addEventListener('input', event => { salvarDadosCarga(); atualizarListaClientes(event.target.value); });
+document.getElementById('saida-carga-cliente').addEventListener('change', preencherDadosCliente);
+document.getElementById('saida-cliente-sugestoes').addEventListener('click', event => {
+  const botao = event.target.closest('[data-cliente]');
+  if (botao) selecionarClienteSalvo(botao.dataset.cliente);
+});
+document.getElementById('saida-carga-cliente').addEventListener('focus', event => { if (event.target.value.trim()) atualizarListaClientes(event.target.value); });
+document.getElementById('saida-carga-cliente').addEventListener('keydown', event => {
+  if (event.key === 'Escape') document.getElementById('saida-cliente-sugestoes').classList.remove('visivel');
+});
+[['saida-estribo-peso','saida-estribo-qtd'], ['saida-barras-peso','saida-barras-qtd'], ['saida-arame-caixas','saida-arame-kg'], ['saida-tela-kg','saida-tela-qtd']].forEach((ids, i) => {
+  const area = ['saida-estribo','saida-barras','saida-arame','saida-tela'][i];
+  ids.forEach(id => document.getElementById(id).addEventListener('input', () => atualizarPreviaArea(area)));
+});
+document.addEventListener('input', event => {
+  if (event.target.closest('#saida-mt-root') && event.target.matches('.peso-input, .peso-bobina')) {
+    formatarPesoDuranteDigitacao(event.target);
+    if (event.target.classList.contains('peso-bobina')) atualizarTotalBobinas();
+    else {
+      const area = event.target.id.startsWith('saida-estribo-') ? 'saida-estribo' : event.target.id.startsWith('saida-barras-') ? 'saida-barras' : event.target.id.startsWith('saida-arame-') ? 'saida-arame' : event.target.id.startsWith('saida-tela-') ? 'saida-tela' : '';
+      if (area) atualizarPreviaArea(area);
+    }
+  }
+});
+document.addEventListener('focusin', event => {
+  if (event.target.closest('#saida-mt-root') && event.target.matches('.peso-input, .peso-bobina')) prepararEdicaoPeso(event.target);
+});
+document.addEventListener('focusout', event => {
+  if (event.target.closest('#saida-mt-root') && event.target.matches('.peso-input, .peso-bobina')) formatarCampoPeso(event.target);
+});
+document.getElementById('saida-arame-caixas').addEventListener('input', () => sincronizarArame('caixas'));
+document.getElementById('saida-arame-kg').addEventListener('input', () => sincronizarArame('kg'));
+document.getElementById('saida-bobina-unidades').addEventListener('input', atualizarCamposPesoBobina);
+document.getElementById('saida-bobina-pesos').addEventListener('input', atualizarTotalBobinas);
+document.getElementById('saida-estribo-modelo').addEventListener('input', event => atualizarSugestoesModelos(event.target.value));
+document.getElementById('saida-estribo-modelo').addEventListener('focus', event => { if (event.target.value.trim()) atualizarSugestoesModelos(event.target.value); });
+document.getElementById('saida-modelos-sugestoes').addEventListener('click', event => {
+  const botao = event.target.closest('[data-modelo]');
+  if (botao) selecionarModeloEstribo(botao.dataset.modelo);
+});
+document.getElementById('saida-estribo-modelo').addEventListener('keydown', event => {
+  if (event.key === 'Escape') document.getElementById('saida-modelos-sugestoes').classList.remove('visivel');
+});
+document.getElementById('saida-busca-relatorio').addEventListener('input', renderCart);
+document.getElementById('saida-editar-form').addEventListener('submit', salvarEdicao);
+document.getElementById('saida-exportar-form').addEventListener('submit', confirmarExportacao);
+document.getElementById('saida-exportar-cliente').addEventListener('change', atualizarDiasExportacao);
+document.getElementById('saida-exportar-todos-dias').addEventListener('change', atualizarSelecaoDias);
+document.getElementById('saida-exportar-dias').addEventListener('change', event => {
+  if (event.target.matches('input[name="exportar-dia"]')) {
+    const datas = [...document.querySelectorAll('#saida-mt-root input[name="exportar-dia"]')];
+    document.getElementById('saida-exportar-todos-dias').checked = datas.length > 0 && datas.every(input => input.checked);
+    atualizarSelecaoDias();
+  }
+});
+document.getElementById('saida-carga-form').addEventListener('submit', confirmarDadosCarga);
+carregarDadosCarga();
+document.getElementById('saida-cliente-sugestoes').classList.remove('visivel');
+carregarSugestaoEstribo();
+['saida-estribo','saida-barras','saida-arame','saida-tela'].forEach(atualizarPreviaArea);
+renderCart();
+
+window.saidaUi_abrirModalCarga=abrirModalCarga;
+window.saidaUi_abrirSelecaoRelatorio=abrirSelecaoRelatorio;
+window.saidaUi_calcArame=calcArame;
+window.saidaUi_calcBarras=calcBarras;
+window.saidaUi_calcBobina=calcBobina;
+window.saidaUi_calcEstribo=calcEstribo;
+window.saidaUi_calcTela=calcTela;
+window.saidaUi_fecharEdicao=fecharEdicao;
+window.saidaUi_fecharExportacao=fecharExportacao;
+window.saidaUi_fecharModalCarga=fecharModalCarga;
+window.saidaUi_limparTudo=limparTudo;
+window.saidaUi_editarItem=editarItem;
+window.saidaUi_removerItem=removerItem;
+window.saidaUi_switchTab=switchTab;
+
+let saidaMtPrimeiraAbertura=false;
+window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimeiraAbertura=true;if(!saidaMtPermissaoEdicao)return;const modal=document.getElementById('saida-carga-modal');if(modal){modal.hidden=false;document.body.classList.add('saida-modal-open')}const campo=document.getElementById('saida-carga-data');if(campo&&!campo.value){const d=new Date();campo.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}}};
+
+})();
+</script>
+
+<script>
     // Configuração pública do Firebase Web: NÃO é controle de acesso.
     // Proteja /producao, /estribosPadroes, /operadores, /bobinas e /configuracao com regras do Realtime Database.
     // Regras do Firebase precisam ser configuradas no Console e não podem ser impostas por este HTML.
@@ -1533,6 +2611,46 @@ body.authenticated #app-container{display:block!important}
     let erroFirebaseAtivo = false;
     let usuarioUidAtual = null;
     let versaoTransicaoAuth = 0;
+    let saidaMtItensRef = null, saidaMtCargaRef = null, saidaMtAuxRef = null, saidaMtItensListener = null, saidaMtCargaListener = null, saidaMtAuxListener = null;
+    let saidaMtSalvarCargaTimer = null;
+    window.saidaMTDetach = function(){
+        if(saidaMtItensRef && saidaMtItensListener) saidaMtItensRef.off('value',saidaMtItensListener);
+        if(saidaMtCargaRef && saidaMtCargaListener) saidaMtCargaRef.off('value',saidaMtCargaListener);
+        if(saidaMtAuxRef && saidaMtAuxListener) saidaMtAuxRef.off('value',saidaMtAuxListener);
+        saidaMtItensRef=saidaMtCargaRef=saidaMtAuxRef=saidaMtItensListener=saidaMtCargaListener=saidaMtAuxListener=null;
+        window.saidaMTGuardarItens=null;window.saidaMTSalvarCarga=null;window.saidaMTGuardarClientes=window.saidaMTGuardarModelos=window.saidaMTGuardarFerro=null;
+        if(window.saidaMTDefinirItens)window.saidaMTDefinirItens([]);if(window.saidaMTDefinirAuxiliares)window.saidaMTDefinirAuxiliares({});
+        const status=document.getElementById('saida-firebase-status');if(status)status.textContent='Aguardando autorização do Firebase…';
+    };
+    function iniciarSincronizacaoSaidaMT(esAdmin){
+        window.saidaMTDetach();
+        if(!usuarioEhAdminFernando() && (!usuarioAtualFirebase || String(usuarioAtualFirebase.email||'').trim().toLowerCase()!==EMAIL_EXPORTADOR))return;
+        saidaMtItensRef=firebaseDb.ref('saidaMateriais/itens');
+        saidaMtCargaRef=firebaseDb.ref('saidaMateriais/cargaAtual');
+        saidaMtAuxRef=firebaseDb.ref('saidaMateriais/auxiliares');
+        saidaMtItensListener=snapshot=>{
+            const raw=snapshot.val()||{};
+            const list=Array.isArray(raw)?raw:Object.entries(raw).map(([key,item])=>item&&typeof item==='object'?{...item,_firebaseKey:key}:null).filter(Boolean);
+            window.saidaMTDefinirItens(list);
+            const status=document.getElementById('saida-firebase-status');if(status)status.textContent='Sincronizado com Firebase. A versão compartilhada aparece nos aparelhos autorizados.';
+        };
+        saidaMtItensRef.on('value',saidaMtItensListener,error=>{console.error('Saída MT leitura Firebase',error);const status=document.getElementById('saida-firebase-status');if(status){status.textContent='Sem acesso aos dados Saída MT. Confira as regras do Firebase.';status.style.color='#b91c1c';}});
+        saidaMtCargaListener=snapshot=>{if(snapshot.exists()&&window.saidaMTDefinirCarga)window.saidaMTDefinirCarga(snapshot.val());};
+        saidaMtCargaRef.on('value',saidaMtCargaListener,error=>console.warn('Saída MT carga Firebase',error));
+        saidaMtAuxListener=snapshot=>{const raw=snapshot.val()||{};window.saidaMTDefinirAuxiliares({clientes:raw.clientes||{},modelos:raw.modelos||[],ferro:raw.ferro||''});};
+        saidaMtAuxRef.on('value',saidaMtAuxListener,error=>console.warn('Saída MT auxiliares Firebase',error));
+        if(esAdmin){
+            window.saidaMTGuardarItens=items=>{
+                const next={};
+                (Array.isArray(items)?items:[]).forEach(item=>{let key=item._firebaseKey;if(!key)key=saidaMtItensRef.push().key;const copy={...item};delete copy._firebaseKey;next[key]=copy;item._firebaseKey=key;});
+                return saidaMtItensRef.set(next);
+            };
+            window.saidaMTSalvarCarga=dados=>{clearTimeout(saidaMtSalvarCargaTimer);saidaMtSalvarCargaTimer=setTimeout(()=>saidaMtCargaRef&&saidaMtCargaRef.set(dados).catch(e=>{console.error(e);const status=document.getElementById('saida-firebase-status');if(status){status.textContent='Não foi possível sincronizar os dados da carga.';status.style.color='#b91c1c';}}),350);};
+            window.saidaMTGuardarClientes=data=>saidaMtAuxRef.child('clientes').set(data);
+            window.saidaMTGuardarModelos=data=>saidaMtAuxRef.child('modelos').set(data);
+            window.saidaMTGuardarFerro=value=>saidaMtAuxRef.child('ferro').set(value);
+        }
+    }
     const padroesIniciaisFirebase = ["9x15", "9x20", "RED 20", "HEXA 20", "7x17", "7x27", "15x15", "10x20"];
 
     function mostrarErroFirebase(error) {
@@ -1675,6 +2793,9 @@ body.authenticated #app-container{display:block!important}
         const app = document.getElementById('app-container');
         if (!user) {
             document.body.classList.remove('authenticated');
+            document.getElementById('tab-saida-mt').hidden = true;
+            window.saidaMTConfigurar({admin:false,consulta:false});
+            if (window.saidaMTDetach) window.saidaMTDetach();
             if (producaoRef) producaoRef.off();
             if (padroesRef) padroesRef.off();
             if (operadoresRef) operadoresRef.off();
@@ -1732,11 +2853,15 @@ body.authenticated #app-container{display:block!important}
 
         usuarioEhAdmin = email === EMAIL_ADMIN;
         usuarioPodeExportar = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
+        const podeVerSaidaMT = usuarioEhAdmin || email === EMAIL_EXPORTADOR;
+        document.getElementById('tab-saida-mt').hidden = !podeVerSaidaMT;
         usuarioPodeLancarProducao = usuarioEhAdmin || email === EMAIL_PRODUCAO;
         document.body.classList.remove('somente-consulta-basica');
         document.body.classList.toggle('somente-producao', email === EMAIL_PRODUCAO);
         usuarioAtualFirebase = user;
         usuarioUidAtual = user.uid;
+        window.saidaMTConfigurar({admin:usuarioEhAdminFernando(),consulta:email===EMAIL_EXPORTADOR});
+        iniciarSincronizacaoSaidaMT(usuarioEhAdminFernando());
         document.body.classList.toggle('solo-consulta', email === EMAIL_EXPORTADOR);
         document.getElementById('tab-bobinas').hidden = true;
         document.getElementById('tab-configuracoes').hidden = true;
@@ -2519,17 +3644,22 @@ body.authenticated #app-container{display:block!important}
 
     function selecionarAba(aba) {
         if (aba === 'configuracoes' && !usuarioEhAdminFernando()) { aba = 'producao'; }
+        if (aba === 'saida-mt' && !(usuarioEhAdminFernando() || String((usuarioAtualFirebase&&usuarioAtualFirebase.email)||'').trim().toLowerCase()===EMAIL_EXPORTADOR)) aba='producao';
         if ((aba === 'receb-barras' || aba === 'receb-bobinas') && !(usuarioEhAdmin || (usuarioAtualFirebase && String(usuarioAtualFirebase.email||'').trim().toLowerCase() === EMAIL_EXPORTADOR))) aba='producao';
         if (aba === 'bobinas' && !(usuarioEhAdmin || (usuarioAtualFirebase && String(usuarioAtualFirebase.email || '').trim().toLowerCase() === EMAIL_EXPORTADOR))) aba = 'producao';
         const bobinasAtiva = aba === 'bobinas';
+        const saidaAtiva = aba === 'saida-mt';
         const configAtiva = aba === 'configuracoes';
         const rb=aba==='receb-barras', rbb=aba==='receb-bobinas';
-        document.getElementById('producao-page').hidden = bobinasAtiva || configAtiva || rb || rbb;
+        document.getElementById('producao-page').hidden = bobinasAtiva || configAtiva || rb || rbb || saidaAtiva;
+        document.getElementById('saida-mt-page').hidden = !saidaAtiva;
         document.getElementById('bobinas-page').hidden = !bobinasAtiva;
         document.getElementById('config-page').hidden = !configAtiva;
         document.getElementById('receb-barras-page').hidden = !rb;
         document.getElementById('receb-bobinas-page').hidden = !rbb;
-        document.getElementById('tab-producao').setAttribute('aria-selected', String(!bobinasAtiva && !configAtiva && !rb && !rbb));
+        document.getElementById('tab-producao').setAttribute('aria-selected', String(!bobinasAtiva && !configAtiva && !rb && !rbb && !saidaAtiva));
+        document.getElementById('tab-saida-mt').setAttribute('aria-selected', String(saidaAtiva));
+        if (saidaAtiva && window.saidaMtAtivarPainel) window.saidaMtAtivarPainel();
         document.getElementById('tab-bobinas').setAttribute('aria-selected', String(bobinasAtiva));
         document.getElementById('tab-configuracoes').setAttribute('aria-selected', String(configAtiva));
         document.getElementById('tab-receb-barras').setAttribute('aria-selected', String(rb));
