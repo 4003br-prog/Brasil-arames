@@ -1125,6 +1125,7 @@ body.authenticated #app-container{display:block!important}
   #saida-mt-root .header-inner{ max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
   #saida-mt-root header h1{ margin: 0; font-size: 1.45rem; }
   #saida-mt-root header p{ margin: 6px 0 0; color: #cbd5e1; font-size: .9rem; }
+  #saida-mt-root header p.saida-carga-data-resumo{display:inline-flex;align-items:center;margin-top:10px;padding:5px 10px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;font-size:.86rem;letter-spacing:.01em;}
   #saida-mt-root .header-conferente{ flex: 0 0 auto; margin-top: 2px; }
   #saida-mt-root .tabs{ display: flex; gap: 4px; padding: 14px 24px 0; background: #1e3a5f; flex-wrap: nowrap; }
   #saida-mt-root .tab{ flex: 1 1 0; min-width: 0; text-align: center; padding: 10px 12px; background: #2d4f7c; color: #cbd5e1; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: .95rem; transition: .2s; }
@@ -1862,6 +1863,7 @@ body[data-theme="saida-mt"] .autocomplete-items, body[data-theme="saida-mt"] .au
   <div class="header-inner">
     <div>
       <h1>Retirada de Materiais</h1>
+      <p id="saida-carga-data-resumo" class="saida-carga-data-resumo" aria-live="polite">Data da carga: —</p>
     </div>
     <button class="btn btn-secondary header-conferente no-print saida-admin-only" type="button" onclick="saidaUi_abrirModalCarga(true)">Conferente</button>
   </div>
@@ -2288,7 +2290,7 @@ window.saidaMTConfigurar=function({admin=false,consulta=false}={}){saidaMtPermis
 window.saidaMTDefinirItens=definirItensFirebase;
 window.saidaMTDefinirAuxiliares=function({clientes={},modelos=[],ferro=''}={}){clientesSaidaFirebase=clientes&&typeof clientes==='object'&&!Array.isArray(clientes)?clientes:{};modelosSaidaFirebase=Array.isArray(modelos)?modelos.filter(x=>typeof x==='string'):[];ferroSaidaFirebase=String(ferro||'');if(document.getElementById('saida-carga-cliente').value)atualizarListaClientes(document.getElementById('saida-carga-cliente').value);if(document.getElementById('saida-estribo-modelo').value)atualizarSugestoesModelos(document.getElementById('saida-estribo-modelo').value);if(saidaMtPermissaoEdicao && document.getElementById('saida-estribo-ferro')){const sel=document.getElementById('saida-estribo-ferro');if([...sel.options].some(o=>o.value===ferroSaidaFirebase))sel.value=ferroSaidaFirebase;}};
 window.saidaMTGuardarClientes=null;window.saidaMTGuardarModelos=null;window.saidaMTGuardarFerro=null;
-window.saidaMTDefinirCarga=function(d){if(!d||typeof d!=='object')return;const map={data:'saida-carga-data',cliente:'saida-carga-cliente',veiculo:'saida-carga-veiculo',responsavel:'saida-carga-responsavel'};for(const [k,id] of Object.entries(map)){const el=document.getElementById(id);if(el && document.activeElement!==el)el.value=String(d[k]||'');}};
+window.saidaMTDefinirCarga=function(d){if(!d||typeof d!=='object')return;const map={data:'saida-carga-data',cliente:'saida-carga-cliente',veiculo:'saida-carga-veiculo',responsavel:'saida-carga-responsavel'};for(const [k,id] of Object.entries(map)){const el=document.getElementById(id);if(el && document.activeElement!==el)el.value=String(d[k]||'');}atualizarResumoDataCarga();};
 window.saidaMTSalvarCarga=null;
 window.saidaMTGuardarItens=null;
 
@@ -2382,6 +2384,7 @@ function obterDadosCarga() {
   };
 }
 function salvarDadosCarga() {
+  atualizarResumoDataCarga();
   if (saidaMtPermissaoEdicao && typeof window.saidaMTSalvarCarga === 'function') window.saidaMTSalvarCarga(obterDadosCarga());
 }
 function carregarClientesSalvos() { return clientesSaidaFirebase; }
@@ -2462,10 +2465,16 @@ function salvarCliente() {
   clientesSaidaFirebase=registros; if(window.saidaMTGuardarClientes)window.saidaMTGuardarClientes(registros);
   atualizarListaClientes();
 }
+function atualizarResumoDataCarga() {
+  const campo=document.getElementById('saida-carga-data'),resumo=document.getElementById('saida-carga-data-resumo');
+  if(!resumo)return;
+  resumo.textContent=`Data da carga: ${campo&&campo.value?formatarDataCarga(campo.value):'—'}`;
+}
 function carregarDadosCarga() {
   const hoje = new Date();
   const dataLocal = new Date(hoje.getTime() - hoje.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   document.getElementById('saida-carga-data').value = dataLocal;
+  atualizarResumoDataCarga();
 }
 let modalCargaEmEdicao = false;
 function abrirModalCarga(edicao = false) {
@@ -2993,7 +3002,7 @@ function limparTudo() {
   renderCart();
   document.querySelectorAll('#saida-mt-root .result').forEach(el => { el.classList.remove('show'); el.textContent = ''; });
 }
-document.querySelectorAll('#saida-carga-data, #saida-carga-cliente, #saida-carga-veiculo, #saida-carga-responsavel').forEach(el => el.addEventListener('input', salvarDadosCarga));
+document.querySelectorAll('#saida-carga-data, #saida-carga-cliente, #saida-carga-veiculo, #saida-carga-responsavel').forEach(el => { el.addEventListener('input', salvarDadosCarga); el.addEventListener('change', salvarDadosCarga); });
 document.getElementById('saida-carga-cliente').addEventListener('input', event => { salvarDadosCarga(); atualizarListaClientes(event.target.value); });
 document.getElementById('saida-carga-cliente').addEventListener('change', preencherDadosCliente);
 document.getElementById('saida-cliente-sugestoes').addEventListener('click', event => {
