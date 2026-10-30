@@ -591,23 +591,6 @@
             .linha-responsavel-total td { font-weight: bold; background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
             .linha-total-geral td { font-weight: bold; background-color: #e2e8f0 !important; font-size: 15px; -webkit-print-color-adjust: exact; }
         }
-        .export-menu{position:relative;display:inline-flex;align-items:flex-start}
-        .export-menu-toggle{background:linear-gradient(135deg,#087a5b,#056247);color:#fff;border:0;border-radius:9px;padding:12px 18px;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 3px 0 rgba(0,50,36,.2)}
-        .export-menu-toggle:hover{filter:brightness(1.08)}
-        .export-menu-options{position:absolute;right:0;top:calc(100% + 7px);z-index:1000;min-width:190px;padding:6px;border:1px solid var(--border);border-radius:10px;background:#fff;box-shadow:0 12px 28px rgba(15,23,42,.18)}
-        .export-menu-options[hidden]{display:none!important}
-        .export-menu-options button{display:block;width:100%;padding:10px 12px;border:0;border-radius:7px;background:transparent;color:#1e293b;text-align:left;font:600 14px 'Segoe UI',sans-serif;cursor:pointer}
-        .export-menu-options button:hover{background:#edf4f1;color:#056247}
-        body[data-theme="noite"] .export-menu-options{background:#1b2638;border-color:#354258}
-        body[data-theme="noite"] .export-menu-options button{color:#e4eaf5}
-        body[data-theme="noite"] .export-menu-options button:hover{background:#243b36}
-
-        .icon-line{display:inline-block;width:18px;height:18px;vertical-align:middle;fill:none;stroke:#111827;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
-        .official-theme-toggle .icon-line{width:21px;height:21px}
-        .btn-icon-square .icon-line{width:22px;height:22px}
-        .search-icon .icon-line{width:17px;height:17px}
-        .export-menu-toggle .icon-line,.export-menu-options .icon-line,.btn-import .icon-line{margin-right:6px}
-        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
         .print-title { display: none; }
         .print-config-data { display:none; }
 
@@ -1227,9 +1210,7 @@ body.authenticated #app-container{display:block!important}
 
 body.saida-modal-open{overflow:hidden!important}
 #saida-mt-root.saida-somente-leitura .saida-admin-only{display:none!important}
-#saida-mt-root.saida-somente-leitura #saida-cart th:last-child,
-#saida-mt-root.saida-somente-leitura #saida-cart td:last-child{display:none!important}
-#saida-mt-root #saida-firebase-status{margin:0 0 12px;padding:9px 12px;border-radius:8px;background:#f8fafc;color:#334155}
+#saida-mt-root.saida-somente-leitura #saida-cart .no-print{display:none!important}
 #saida-mt-root.saida-sem-acesso{display:none!important}
 @media(max-width:850px){#tab-saida-mt{grid-column:1/-1!important}}
 @media print{
@@ -1241,183 +1222,401 @@ body.saida-modal-open{overflow:hidden!important}
  body.printing-saida #saida-mt-root .print-header{display:block!important}
  body.printing-saida #saida-mt-root table{width:100%!important;min-width:0!important;font-size:8.5px!important;table-layout:auto}
  body.printing-saida #saida-mt-root th,body.printing-saida #saida-mt-root td{padding:4px 5px!important;white-space:normal!important;overflow-wrap:anywhere}
- body.printing-saida #saida-mt-root #saida-cart tr>*:last-child{display:none!important}
+ body.printing-saida #saida-mt-root #saida-cart .no-print{display:none!important}
+ body.printing-saida #saida-mt-root #saida-cart tr.group-row td{display:table-cell!important}
+ body.printing-saida #saida-mt-root #saida-cart tr:not(.group-row)>th:nth-child(11),body.printing-saida #saida-mt-root #saida-cart tr:not(.group-row)>td:nth-child(11){display:table-cell!important}
 }
 
-/* Saída MT: alinhamento visual com os painéis, campos e abas globais do sistema. */
-#saida-mt-root{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:transparent;color:var(--text-main);padding:0 0 18px}
-#saida-mt-root header{background:linear-gradient(120deg,#0f172a 0%,#1e3a8a 62%,#2563eb 100%);color:#fff;padding:19px 22px;border:1px solid rgba(255,255,255,.45);border-radius:12px;box-shadow:var(--shadow-soft);margin:0 0 12px}
-#saida-mt-root header h1{font-size:20px;font-weight:750;letter-spacing:-.02em}
-#saida-mt-root header p{color:rgba(255,255,255,.82)}
-#saida-mt-root main{max-width:none;padding:12px 0;margin:0}
-#saida-mt-root .tabs{gap:7px;padding:7px;border:1px solid var(--border);border-radius:11px;background:var(--surface,#fff);box-shadow:var(--shadow-soft);flex-wrap:wrap}
-#saida-mt-root .tab{min-height:42px;padding:9px 13px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text-main);font:650 13px 'Segoe UI',Tahoma,sans-serif;transition:background .15s,color .15s,border-color .15s}
-#saida-mt-root .tab:hover{background:var(--bg-color);color:var(--primary)}
-#saida-mt-root .tab.active{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:750;box-shadow:0 3px 8px rgba(15,23,42,.12)}
-#saida-mt-root .panel,#saida-mt-root #saida-cart{background:var(--surface,#fff);color:var(--text-main);border:1px solid var(--border);border-radius:12px;padding:22px;box-shadow:var(--shadow-soft)}
-#saida-mt-root .panel h2,#saida-mt-root #saida-cart h2{color:var(--primary);font-size:18px;font-weight:750}
-#saida-mt-root .field label{color:var(--text-main);font-weight:650}
-#saida-mt-root .field input,#saida-mt-root .field select,#saida-mt-root .field textarea{border-color:var(--border);border-radius:7px;background:var(--surface,#fff);color:var(--text-main);font:inherit}
-#saida-mt-root .field input:focus,#saida-mt-root .field select:focus,#saida-mt-root .field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 16%,transparent)}
-#saida-mt-root .btn{border-radius:7px;font:700 14px 'Segoe UI',Tahoma,sans-serif;box-shadow:var(--shadow-soft)}
-#saida-mt-root .btn-primary{background:var(--primary);color:#fff}
-#saida-mt-root .btn-primary:hover{background:var(--primary-hover)}
-#saida-mt-root .btn-success{background:var(--success);color:#fff}
-#saida-mt-root .btn-secondary{background:var(--bg-color);color:var(--text-main);border:1px solid var(--border)}
-#saida-mt-root .result,#saida-mt-root .bobina-total-previa{background:var(--bg-color);border-left-color:var(--success);color:var(--text-main);border-radius:8px}
-#saida-mt-root .result strong{color:var(--primary)}
-#saida-mt-root .group-row td{background:var(--bg-color);color:var(--primary);border-color:var(--border)}
-#saida-mt-root th{background:var(--bg-color);color:var(--text-main);border-color:var(--border)}
-#saida-mt-root td{color:var(--text-main);border-color:var(--border)}
-#saida-mt-root tbody tr:hover{background:var(--bg-color)}
-#saida-mt-root tfoot th{background:var(--bg-color);border-color:var(--border)}
-#saida-mt-root .empty{color:#64748b}
-#saida-mt-root #saida-firebase-status{background:var(--bg-color);color:var(--text-main);border:1px solid var(--border);border-radius:8px}
-#saida-mt-root .cargo-dialog{background:var(--surface,#fff);color:var(--text-main);border:1px solid var(--border);border-radius:12px}
-#saida-mt-root .cargo-dialog h2{color:var(--primary)}
-#saida-mt-root .cliente-sugestoes,#saida-mt-root .cliente-sugestao{background:var(--surface,#fff);color:var(--text-main);border-color:var(--border)}
-#saida-mt-root .cliente-sugestao:hover,#saida-mt-root .cliente-sugestao:focus{background:var(--bg-color)}
-body[data-theme="noite"] #saida-mt-root .panel,body[data-theme="noite"] #saida-mt-root #saida-cart,body[data-theme="noite"] #saida-mt-root .cargo-dialog{background:#1b2638;color:#e4eaf5;border-color:#34435b}
-body[data-theme="noite"] #saida-mt-root .field input,body[data-theme="noite"] #saida-mt-root .field select,body[data-theme="noite"] #saida-mt-root .field textarea,body[data-theme="noite"] #saida-mt-root .cliente-sugestoes,body[data-theme="noite"] #saida-mt-root .cliente-sugestao{background:#121c2b;color:#e4eaf5;border-color:#3b4a63}
-body[data-theme="noite"] #saida-mt-root .tab{color:#d4dced}
-body[data-theme="noite"] #saida-mt-root .tab.active{background:var(--primary);color:#111827}
-body[data-theme="esmeralda-real"] #saida-mt-root header{background:linear-gradient(115deg,#073f34 0%,#087a5b 50%,#33a879 100%);border-color:rgba(255,255,255,.4)}
-body[data-theme="esmeralda-real"] #saida-mt-root .tab.active{background:linear-gradient(100deg,#16936b,#c69b43);border-color:#087a5b}
-body[data-theme="verde-nobre"] #saida-mt-root header{background:linear-gradient(145deg,#004b33 0%,#006341 62%,#087653 100%)}
-body[data-theme="verde-nobre"] #saida-mt-root .tab.active{background:linear-gradient(180deg,#0b8058,#00583c)}
-body[data-theme="aurora-lux"] #saida-mt-root header{background:linear-gradient(115deg,#171b3f 0%,#35336f 48%,#167f86 100%)}
-body[data-theme="aurora-lux"] #saida-mt-root .tab.active{background:linear-gradient(120deg,#6655df,#138c83)}
-@media(max-width:700px){#saida-mt-root header{padding:15px!important}#saida-mt-root .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}#saida-mt-root .tab{min-height:44px;padding:8px 6px;font-size:12px;white-space:normal}#saida-mt-root .panel,#saida-mt-root #saida-cart{padding:16px}#saida-mt-root .header-inner{align-items:center}#saida-mt-root .header-conferente{padding:9px 12px}}
+        /* Tema Saída MT: paleta da calculadora aplicada ao sistema inteiro. */
+        body[data-theme="saida-mt"] {
+            --primary:#2563eb; --primary-hover:#1d4ed8; --bg-color:#f1f5f9; --text-main:#1e293b; --border:#cbd5e1;
+            --success:#16a34a; --info:#2563eb; --warning:#d97706; --danger:#dc2626; --surface:#fff;
+            background:linear-gradient(145deg,#f1f5f9 0%,#e8eef5 52%,#f8fafc 100%)!important;
+            color:#1e293b!important;
+        }
+        body[data-theme="saida-mt"] .header,
+        body[data-theme="saida-mt"] #saida-mt-root>header {
+            color:#fff!important;background:linear-gradient(135deg,#1e3a5f,#2d4f7c)!important;
+            border-color:#294b70!important;box-shadow:0 12px 28px rgba(30,58,95,.22)!important;
+        }
+        body[data-theme="saida-mt"] .header h1,body[data-theme="saida-mt"] .header p,
+        body[data-theme="saida-mt"] .header-brand h1,body[data-theme="saida-mt"] .header-brand p,
+        body[data-theme="saida-mt"] .header>div:last-child p {color:#fff!important}
+        body[data-theme="saida-mt"] .tabs-app {
+            background:linear-gradient(180deg,#1e3a5f,#172d48)!important;border-color:#294b70!important;
+            box-shadow:8px 0 26px rgba(30,58,95,.22)!important;
+        }
+        body[data-theme="saida-mt"] .tabs-app>.header {
+            background:linear-gradient(145deg,#1e3a5f,#2d4f7c)!important;border:1px solid rgba(255,255,255,.22)!important;
+            box-shadow:0 4px 0 #152a43,0 9px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.22)!important;
+        }
+        body[data-theme="saida-mt"] .tabs-app>.header .header-brand h1,
+        body[data-theme="saida-mt"] .tabs-app>.header .header-brand p,
+        body[data-theme="saida-mt"] .tabs-app>.header>div:last-child p {color:#fff!important}
+        body[data-theme="saida-mt"] .tabs-app .theme-picker-label {color:#fff!important}
+        body[data-theme="saida-mt"] .tabs-app .tab-app {color:#dbeafe!important}
+        body[data-theme="saida-mt"] .tabs-app .tab-app:hover {background:#2d4f7c!important;color:#fff!important}
+        body[data-theme="saida-mt"] .tabs-app .tab-app[aria-selected="true"] {
+            color:#fff!important;background:linear-gradient(100deg,#2563eb,#10b981)!important;
+            border-color:rgba(255,255,255,.15)!important;box-shadow:0 4px 0 #18385c,0 7px 14px rgba(15,23,42,.24)!important;
+        }
+        body[data-theme="saida-mt"] .official-mobile-bar {color:#1e3a5f!important}
+        body[data-theme="saida-mt"] #official-menu-btn {color:#1e3a5f!important;border-color:#cbd5e1!important}
+        body[data-theme="saida-mt"] .card,body[data-theme="saida-mt"] .form-section,
+        body[data-theme="saida-mt"] .table-section,body[data-theme="saida-mt"] .daily-summary,
+        body[data-theme="saida-mt"] .bobinas-form,body[data-theme="saida-mt"] .bobinas-section,
+        body[data-theme="saida-mt"] .recebimento-panel,body[data-theme="saida-mt"] .recebimento-kpi,
+        body[data-theme="saida-mt"] .config-section,body[data-theme="saida-mt"] .auth-screen {
+            color:#1e293b!important;background:#fff!important;border-color:#cbd5e1!important;
+            box-shadow:0 8px 22px rgba(30,58,95,.09)!important;
+        }
+        body[data-theme="saida-mt"] .table-header,body[data-theme="saida-mt"] th {
+            color:#334155!important;background:#eaf0f7!important;border-color:#cbd5e1!important;
+        }
+        body[data-theme="saida-mt"] td,body[data-theme="saida-mt"] .input-group label,
+        body[data-theme="saida-mt"] .config-section h2,body[data-theme="saida-mt"] .daily-summary-header h3 {color:#1e3a5f!important}
+        body[data-theme="saida-mt"] tbody tr:hover {background:#eff6ff!important}
+        body[data-theme="saida-mt"] input,body[data-theme="saida-mt"] select,body[data-theme="saida-mt"] textarea {
+            color:#1e293b!important;background:#fff!important;border-color:#cbd5e1!important;
+        }
+        body[data-theme="saida-mt"] input:focus,body[data-theme="saida-mt"] select:focus,body[data-theme="saida-mt"] textarea:focus {
+            border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.15)!important;
+        }
+        body[data-theme="saida-mt"] .btn-add,body[data-theme="saida-mt"] .btn-primary,
+        body[data-theme="saida-mt"] .btn-success {
+            color:#fff!important;background:linear-gradient(135deg,#2563eb,#1d4ed8)!important;border-color:#1d4ed8!important;
+            box-shadow:0 4px 0 #173e91,0 7px 14px rgba(37,99,235,.2)!important;
+        }
+        body[data-theme="saida-mt"] .btn-secondary,body[data-theme="saida-mt"] .btn-cancel {
+            color:#1e3a5f!important;background:#e2e8f0!important;border-color:#cbd5e1!important;
+        }
+        body[data-theme="saida-mt"] .btn-excel {color:#fff!important;background:#16a34a!important}
+        body[data-theme="saida-mt"] .btn-pdf {color:#fff!important;background:#334155!important}
+        body[data-theme="saida-mt"] .consulta-banner {color:#1e3a5f!important;background:#eaf0f7!important;border-color:#cbd5e1!important}
+        body[data-theme="saida-mt"] #saida-mt-root {color:#1e293b!important;background:#f1f5f9!important}
+        body[data-theme="saida-mt"] #saida-mt-root>header {border-radius:14px!important}
+        body[data-theme="saida-mt"] #saida-mt-root .tabs {background:#1e3a5f!important}
+        body[data-theme="saida-mt"] #saida-mt-root .tab {color:#dbeafe!important;background:#2d4f7c!important}
+        body[data-theme="saida-mt"] #saida-mt-root .tab:hover {background:#3a5f92!important}
+        body[data-theme="saida-mt"] #saida-mt-root .tab.active {color:#1e3a5f!important;background:#f1f5f9!important}
+        body[data-theme="saida-mt"] #saida-mt-root .panel,body[data-theme="saida-mt"] #saida-mt-root #saida-cart {
+            color:#1e293b!important;background:#fff!important;border-color:#cbd5e1!important;
+        }
+        body[data-theme="saida-mt"] #saida-mt-root .panel h2,body[data-theme="saida-mt"] #saida-mt-root #saida-cart h2 {color:#1e3a5f!important}
+        body[data-theme="saida-mt"] #saida-mt-root .field label {color:#334155!important}
+        body[data-theme="saida-mt"] #saida-mt-root .hint {color:#64748b!important}
+        body[data-theme="saida-mt"] #saida-mt-root th {color:#334155!important;background:#f8fafc!important}
+        body[data-theme="saida-mt"] #saida-mt-root .group-row td {color:#1e3a5f!important;background:#eaf0f7!important}
+        body[data-theme="saida-mt"] #saida-mt-root .bobina-total-previa,
+        body[data-theme="saida-mt"] #saida-mt-root .result {color:#065f46!important;background:#ecfdf5!important;border-color:#10b981!important}
+        body[data-theme="saida-mt"] #saida-mt-root .cargo-dialog {color:#1e293b!important;background:#fff!important}
+        body[data-theme="saida-mt"] #saida-mt-root .cargo-dialog h2 {color:#1e3a5f!important}
+        body[data-theme="saida-mt"] #saida-mt-root .cliente-sugestoes,
+        body[data-theme="saida-mt"] #saida-mt-root .cliente-sugestao {color:#334155!important;background:#fff!important;border-color:#cbd5e1!important}
+        body[data-theme="saida-mt"] #saida-mt-root tbody tr:hover {background:#f8fafc!important}
 
 
-.production-report-actions{display:flex;justify-content:flex-start;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 24px}
-.production-report-actions>.btn{min-width:145px;min-height:46px;padding:12px 22px;border:0;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
-.production-report-actions>.btn-success,.production-report-dialog-actions>.btn-success{background:var(--success,#16a34a);color:#fff;box-shadow:0 4px 0 rgba(22,101,52,.14),0 7px 14px rgba(22,101,52,.14)}
-.production-report-actions>.btn-success:hover,.production-report-dialog-actions>.btn-success:hover{filter:brightness(.95);transform:translateY(-1px)}
-.production-report-actions>.btn-secondary,.production-report-dialog-actions>.btn-secondary{background:var(--bg-color,#e2e8f0);color:var(--text-main,#1e293b);border:1px solid var(--border,#cbd5e1);box-shadow:0 2px 5px rgba(15,23,42,.07)}
-.production-report-modal[hidden]{display:none!important}
-.production-report-modal{position:fixed;inset:0;z-index:9998;display:flex;align-items:center;justify-content:center;padding:18px}
-.production-report-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.62)}
-.production-report-dialog{position:relative;width:min(100%,620px);max-height:calc(100vh - 36px);overflow-y:auto;padding:26px;background:var(--surface,#fff);color:var(--text-main);border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;gap:12px}
-.production-report-dialog h2{color:var(--primary);font-size:20px;margin:0}
-.production-report-dialog p{color:#64748b;line-height:1.45;margin:0 0 3px}
-.production-report-dialog label{font-size:13px;font-weight:700}
-.production-report-dialog select{width:100%;min-height:44px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;background:var(--surface,#fff);color:var(--text-main);font:inherit}
-.production-report-dialog-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:8px}
-.production-report-dialog-actions>.btn{min-height:42px;padding:10px 20px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer}
-body[data-theme="noite"] .production-report-dialog{background:#1b2638;color:#e4eaf5;border-color:#34435b}
-body[data-theme="noite"] .production-report-dialog p{color:#aab8d0}
-body[data-theme="noite"] .production-report-dialog select{background:#121c2b;color:#e4eaf5;border-color:#3b4a63}
-@media(max-width:600px){.production-report-actions>.btn{flex:1 1 0;min-width:0;padding:12px 10px}.production-report-dialog{padding:19px}}
+        /* Aurora Lux também cobre os estilos internos da tela Retirada de Materiais. */
+        body[data-theme="aurora-lux"] #saida-mt-root { color:#202443!important; background:linear-gradient(145deg,#edf0ff 0%,#f4f3ff 46%,#e8f7f7 100%)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root>header { background:linear-gradient(115deg,#171b3f 0%,#35336f 48%,#167f86 100%)!important; border:1px solid rgba(255,255,255,.42)!important; box-shadow:0 5px 0 #c5c9eb,0 16px 32px rgba(39,42,103,.22),inset 0 1px 0 rgba(255,255,255,.35)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root>header h1 { color:#fff!important;text-shadow:0 1px 0 #8584c5,0 3px 0 #27244e,0 7px 15px rgba(0,0,0,.3)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root>header p { color:#d9f9f4!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .tabs { background:linear-gradient(90deg,#202348,#35336f,#167f86)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .tab { color:#e2e6ff!important;background:#35336f!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .tab:hover { color:#fff!important;background:linear-gradient(90deg,#414477,#285f70)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .tab.active { color:#302c68!important;background:#f4f3ff!important;box-shadow:0 -3px 0 #16a5a1 inset!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root main { color:#202443!important;background:transparent!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .panel,body[data-theme="aurora-lux"] #saida-mt-root #saida-cart { color:#202443!important;background:linear-gradient(150deg,#fff 0%,#f7f7ff 72%,#effbfa 100%)!important;border-color:#d9def5!important;box-shadow:0 3px 0 #d8dcf3,0 10px 24px rgba(45,54,118,.10),inset 0 1px 0 #fff!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .panel h2,body[data-theme="aurora-lux"] #saida-mt-root #saida-cart h2 { color:#343270!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .field label { color:#45466f!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .hint { color:#62698c!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root input,body[data-theme="aurora-lux"] #saida-mt-root select,body[data-theme="aurora-lux"] #saida-mt-root textarea { color:#202443!important;background:#fff!important;border-color:#d9def5!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root input:focus,body[data-theme="aurora-lux"] #saida-mt-root select:focus,body[data-theme="aurora-lux"] #saida-mt-root textarea:focus { border-color:#6655df!important;box-shadow:0 0 0 3px rgba(102,85,223,.17)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .btn-primary,body[data-theme="aurora-lux"] #saida-mt-root .btn-success { color:#fff!important;background:linear-gradient(135deg,#8374f4,#6655df 55%,#167f86)!important;border:1px solid #5141c0!important;box-shadow:0 4px 0 #4134a2,0 8px 14px rgba(83,69,200,.24),inset 0 1px 0 rgba(255,255,255,.48)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .btn-secondary { color:#343270!important;background:linear-gradient(145deg,#fff,#e8fbf8)!important;border:1px solid #d3d5ee!important;box-shadow:0 3px 0 #dfe1f5,0 6px 13px rgba(45,54,118,.09),inset 0 1px 0 #fff!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root th { color:#45466f!important;background:linear-gradient(180deg,#f1f2ff,#e7e9fb)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .group-row td { color:#343270!important;background:linear-gradient(90deg,#f1f2ff,#e8fbf8)!important;border-color:#d9def5!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root tbody tr:hover { background:#f0f6ff!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .bobina-total-previa,body[data-theme="aurora-lux"] #saida-mt-root .result { color:#285c67!important;background:linear-gradient(145deg,#effbfa,#f0f1ff)!important;border-color:#18a49b!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .cargo-dialog { color:#202443!important;background:linear-gradient(150deg,#fff,#f4f3ff 70%,#effbfa)!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .cargo-dialog h2 { color:#343270!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .cliente-sugestoes,body[data-theme="aurora-lux"] #saida-mt-root .cliente-sugestao { color:#343270!important;background:#fff!important;border-color:#d9def5!important; }
+        body[data-theme="aurora-lux"] #saida-mt-root .cliente-sugestao:hover { background:#edfafa!important;color:#167f86!important; }
+
+/* Unified global theme layer: all app sections, nested screens, dialogs, and controls share one palette. */
+body[data-theme="azul"] { --ui-page:#f1f5f9; --ui-surface:#ffffff; --ui-surface-2:#f8fafc; --ui-text:#1e293b; --ui-muted:#64748b; --ui-border:#d6deea; --ui-primary:#2563eb; --ui-primary-deep:#1d4ed8; --ui-nav:#162d5b; --ui-nav-2:#24478c; --ui-active:#2563eb; --ui-soft:#e8efff; --ui-shadow:rgba(37,99,235,.14); color:#1e293b!important; background:#f1f5f9!important; }
+body[data-theme="azul"] #app-container, body[data-theme="azul"] #app-container .recebimento-page { color:#1e293b!important; background:transparent!important; }
+body[data-theme="azul"] .header, body[data-theme="azul"] .tabs-app>.header, body[data-theme="azul"] #saida-mt-root>header { background:linear-gradient(115deg,#162d5b,#24478c)!important; color:#fff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] .header h1, body[data-theme="azul"] .header p, body[data-theme="azul"] .tabs-app>.header .header-brand h1, body[data-theme="azul"] .tabs-app>.header .header-brand p, body[data-theme="azul"] .tabs-app>.header>div:last-child p, body[data-theme="azul"] .tabs-app .theme-picker-label, body[data-theme="azul"] #saida-mt-root>header h1, body[data-theme="azul"] #saida-mt-root>header p { color:#fff!important; }
+body[data-theme="azul"] .tabs-app { background:linear-gradient(180deg,#162d5b,#24478c)!important; border-color:#d6deea!important; }
+body[data-theme="azul"] .tabs-app .tabs-row .tab-app { background:transparent!important; color:#ffffff!important; border-color:transparent!important; box-shadow:none!important; }
+body[data-theme="azul"] .tabs-app .tabs-row .tab-app:hover { background:#24478c!important; color:#fff!important; }
+body[data-theme="azul"] .tabs-app .tabs-row .tab-app[aria-selected="true"] { background:linear-gradient(100deg,#2563eb,#1d4ed8)!important; color:#fff!important; border-color:rgba(255,255,255,.2)!important; }
+body[data-theme="azul"] .official-mobile-bar, body[data-theme="azul"] .official-mobile-bar span { color:#1d4ed8!important; }
+body[data-theme="azul"] #official-menu-btn, body[data-theme="azul"] .official-theme-toggle { color:#1d4ed8!important; border-color:#d6deea!important; background:#ffffff!important; }
+body[data-theme="azul"] .theme-picker { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] .card, body[data-theme="azul"] .form-section, body[data-theme="azul"] .table-section, body[data-theme="azul"] .daily-summary, body[data-theme="azul"] .bobinas-form, body[data-theme="azul"] .bobinas-section, body[data-theme="azul"] .recebimento-panel, body[data-theme="azul"] .recebimento-kpi, body[data-theme="azul"] .config-section, body[data-theme="azul"] .padroes-section, body[data-theme="azul"] .add-pattern-box, body[data-theme="azul"] .manage-box, body[data-theme="azul"] .search-box, body[data-theme="azul"] .resumo-busca-producao { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; box-shadow:0 4px 14px rgba(37,99,235,.14)!important; }
+body[data-theme="azul"] .card h3, body[data-theme="azul"] .card p, body[data-theme="azul"] .table-header h3, body[data-theme="azul"] .daily-summary-header h3, body[data-theme="azul"] .config-section h2, body[data-theme="azul"] .bobinas-section h3, body[data-theme="azul"] .recebimento-toolbar h2, body[data-theme="azul"] .recebimento-kpi strong { color:#1d4ed8!important; }
+body[data-theme="azul"] .card h3, body[data-theme="azul"] .form-section label, body[data-theme="azul"] .recebimento-panel label, body[data-theme="azul"] .config-section label, body[data-theme="azul"] .input-group label, body[data-theme="azul"] .field label { color:#1e293b!important; }
+body[data-theme="azul"] .table-header, body[data-theme="azul"] th, body[data-theme="azul"] .recebimento-table th, body[data-theme="azul"] tfoot td, body[data-theme="azul"] .daily-summary-header { color:#1e293b!important; background:#f8fafc!important; border-color:#d6deea!important; }
+body[data-theme="azul"] td, body[data-theme="azul"] .recebimento-table td, body[data-theme="azul"] tbody tr, body[data-theme="azul"] .recebimento-table { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] tbody tr:hover, body[data-theme="azul"] .recebimento-table tbody tr:hover { background:#e8efff!important; }
+body[data-theme="azul"] input:not([type="checkbox"]):not([type="radio"]), body[data-theme="azul"] select, body[data-theme="azul"] textarea, body[data-theme="azul"] .input-group input, body[data-theme="azul"] .input-group select, body[data-theme="azul"] .field input, body[data-theme="azul"] .field select, body[data-theme="azul"] .field textarea, body[data-theme="azul"] .recebimento-toolbar input { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] input::placeholder, body[data-theme="azul"] textarea::placeholder { color:#64748b!important; }
+body[data-theme="azul"] input:focus, body[data-theme="azul"] select:focus, body[data-theme="azul"] textarea:focus { border-color:#2563eb!important; box-shadow:0 0 0 3px rgba(37,99,235,.14)!important; }
+body[data-theme="azul"] button.btn-add, body[data-theme="azul"] button.btn-primary, body[data-theme="azul"] button.btn-success, body[data-theme="azul"] button.btn-import, body[data-theme="azul"] #saida-mt-root .btn-primary, body[data-theme="azul"] #saida-mt-root .btn-success { color:#fff!important; background:linear-gradient(135deg,#2563eb,#1d4ed8)!important; border-color:#1d4ed8!important; }
+body[data-theme="azul"] button.btn-secondary, body[data-theme="azul"] button.btn-cancel, body[data-theme="azul"] button.btn-excel, body[data-theme="azul"] button.btn-pdf, body[data-theme="azul"] #saida-mt-root .btn-secondary { border-color:#d6deea!important; }
+body[data-theme="azul"] .consulta-banner, body[data-theme="azul"] .recebimento-preview, body[data-theme="azul"] .demo-ribbon { color:#1d4ed8!important; background:#e8efff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] #saida-mt-root { color:#1e293b!important; background:#f1f5f9!important; }
+body[data-theme="azul"] #saida-mt-root .tabs { background:#162d5b!important; }
+body[data-theme="azul"] #saida-mt-root .tab { color:#fff!important; background:#24478c!important; border-color:transparent!important; }
+body[data-theme="azul"] #saida-mt-root .tab:hover, body[data-theme="azul"] #saida-mt-root .tab.active { color:#fff!important; background:#2563eb!important; }
+body[data-theme="azul"] #saida-mt-root main { color:#1e293b!important; background:transparent!important; }
+body[data-theme="azul"] #saida-mt-root .panel, body[data-theme="azul"] #saida-mt-root #saida-cart, body[data-theme="azul"] #saida-mt-root .cargo-dialog { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; box-shadow:0 6px 22px rgba(37,99,235,.14)!important; }
+body[data-theme="azul"] #saida-mt-root .panel h2, body[data-theme="azul"] #saida-mt-root #saida-cart h2, body[data-theme="azul"] #saida-mt-root .cargo-dialog h2 { color:#1d4ed8!important; }
+body[data-theme="azul"] #saida-mt-root .hint { color:#64748b!important; }
+body[data-theme="azul"] #saida-mt-root th, body[data-theme="azul"] #saida-mt-root .group-row td { color:#1e293b!important; background:#f8fafc!important; border-color:#d6deea!important; }
+body[data-theme="azul"] #saida-mt-root td { color:#1e293b!important; border-color:#d6deea!important; }
+body[data-theme="azul"] #saida-mt-root .cliente-sugestoes, body[data-theme="azul"] #saida-mt-root .cliente-sugestao { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] .senha-modal-card, body[data-theme="azul"] .senha-modal .senha-modal-card { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; }
+body[data-theme="azul"] .autocomplete-items, body[data-theme="azul"] .autocomplete-items .autocomplete-option { color:#1e293b!important; background:#ffffff!important; border-color:#d6deea!important; }
+body[data-theme="noite"] { --ui-page:#101827; --ui-surface:#1b2638; --ui-surface-2:#202c40; --ui-text:#e4eaf5; --ui-muted:#aab8d0; --ui-border:#354258; --ui-primary:#728cff; --ui-primary-deep:#4c66dc; --ui-nav:#101a2c; --ui-nav-2:#253b61; --ui-active:#4c66dc; --ui-soft:#253149; --ui-shadow:rgba(0,0,0,.28); color:#e4eaf5!important; background:#101827!important; }
+body[data-theme="noite"] #app-container, body[data-theme="noite"] #app-container .recebimento-page { color:#e4eaf5!important; background:transparent!important; }
+body[data-theme="noite"] .header, body[data-theme="noite"] .tabs-app>.header, body[data-theme="noite"] #saida-mt-root>header { background:linear-gradient(115deg,#101a2c,#253b61)!important; color:#fff!important; border-color:#354258!important; }
+body[data-theme="noite"] .header h1, body[data-theme="noite"] .header p, body[data-theme="noite"] .tabs-app>.header .header-brand h1, body[data-theme="noite"] .tabs-app>.header .header-brand p, body[data-theme="noite"] .tabs-app>.header>div:last-child p, body[data-theme="noite"] .tabs-app .theme-picker-label, body[data-theme="noite"] #saida-mt-root>header h1, body[data-theme="noite"] #saida-mt-root>header p { color:#fff!important; }
+body[data-theme="noite"] .tabs-app { background:linear-gradient(180deg,#101a2c,#253b61)!important; border-color:#354258!important; }
+body[data-theme="noite"] .tabs-app .tabs-row .tab-app { background:transparent!important; color:#dbe4f5!important; border-color:transparent!important; box-shadow:none!important; }
+body[data-theme="noite"] .tabs-app .tabs-row .tab-app:hover { background:#253b61!important; color:#fff!important; }
+body[data-theme="noite"] .tabs-app .tabs-row .tab-app[aria-selected="true"] { background:linear-gradient(100deg,#4c66dc,#4c66dc)!important; color:#fff!important; border-color:rgba(255,255,255,.2)!important; }
+body[data-theme="noite"] .official-mobile-bar, body[data-theme="noite"] .official-mobile-bar span { color:#4c66dc!important; }
+body[data-theme="noite"] #official-menu-btn, body[data-theme="noite"] .official-theme-toggle { color:#4c66dc!important; border-color:#354258!important; background:#1b2638!important; }
+body[data-theme="noite"] .theme-picker { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; }
+body[data-theme="noite"] .card, body[data-theme="noite"] .form-section, body[data-theme="noite"] .table-section, body[data-theme="noite"] .daily-summary, body[data-theme="noite"] .bobinas-form, body[data-theme="noite"] .bobinas-section, body[data-theme="noite"] .recebimento-panel, body[data-theme="noite"] .recebimento-kpi, body[data-theme="noite"] .config-section, body[data-theme="noite"] .padroes-section, body[data-theme="noite"] .add-pattern-box, body[data-theme="noite"] .manage-box, body[data-theme="noite"] .search-box, body[data-theme="noite"] .resumo-busca-producao { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; box-shadow:0 4px 14px rgba(0,0,0,.28)!important; }
+body[data-theme="noite"] .card h3, body[data-theme="noite"] .card p, body[data-theme="noite"] .table-header h3, body[data-theme="noite"] .daily-summary-header h3, body[data-theme="noite"] .config-section h2, body[data-theme="noite"] .bobinas-section h3, body[data-theme="noite"] .recebimento-toolbar h2, body[data-theme="noite"] .recebimento-kpi strong { color:#4c66dc!important; }
+body[data-theme="noite"] .card h3, body[data-theme="noite"] .form-section label, body[data-theme="noite"] .recebimento-panel label, body[data-theme="noite"] .config-section label, body[data-theme="noite"] .input-group label, body[data-theme="noite"] .field label { color:#e4eaf5!important; }
+body[data-theme="noite"] .table-header, body[data-theme="noite"] th, body[data-theme="noite"] .recebimento-table th, body[data-theme="noite"] tfoot td, body[data-theme="noite"] .daily-summary-header { color:#e4eaf5!important; background:#202c40!important; border-color:#354258!important; }
+body[data-theme="noite"] td, body[data-theme="noite"] .recebimento-table td, body[data-theme="noite"] tbody tr, body[data-theme="noite"] .recebimento-table { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; }
+body[data-theme="noite"] tbody tr:hover, body[data-theme="noite"] .recebimento-table tbody tr:hover { background:#253149!important; }
+body[data-theme="noite"] input:not([type="checkbox"]):not([type="radio"]), body[data-theme="noite"] select, body[data-theme="noite"] textarea, body[data-theme="noite"] .input-group input, body[data-theme="noite"] .input-group select, body[data-theme="noite"] .field input, body[data-theme="noite"] .field select, body[data-theme="noite"] .field textarea, body[data-theme="noite"] .recebimento-toolbar input { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; }
+body[data-theme="noite"] input::placeholder, body[data-theme="noite"] textarea::placeholder { color:#aab8d0!important; }
+body[data-theme="noite"] input:focus, body[data-theme="noite"] select:focus, body[data-theme="noite"] textarea:focus { border-color:#728cff!important; box-shadow:0 0 0 3px rgba(0,0,0,.28)!important; }
+body[data-theme="noite"] button.btn-add, body[data-theme="noite"] button.btn-primary, body[data-theme="noite"] button.btn-success, body[data-theme="noite"] button.btn-import, body[data-theme="noite"] #saida-mt-root .btn-primary, body[data-theme="noite"] #saida-mt-root .btn-success { color:#fff!important; background:linear-gradient(135deg,#728cff,#4c66dc)!important; border-color:#4c66dc!important; }
+body[data-theme="noite"] button.btn-secondary, body[data-theme="noite"] button.btn-cancel, body[data-theme="noite"] button.btn-excel, body[data-theme="noite"] button.btn-pdf, body[data-theme="noite"] #saida-mt-root .btn-secondary { border-color:#354258!important; }
+body[data-theme="noite"] .consulta-banner, body[data-theme="noite"] .recebimento-preview, body[data-theme="noite"] .demo-ribbon { color:#4c66dc!important; background:#253149!important; border-color:#354258!important; }
+body[data-theme="noite"] #saida-mt-root { color:#e4eaf5!important; background:#101827!important; }
+body[data-theme="noite"] #saida-mt-root .tabs { background:#101a2c!important; }
+body[data-theme="noite"] #saida-mt-root .tab { color:#fff!important; background:#253b61!important; border-color:transparent!important; }
+body[data-theme="noite"] #saida-mt-root .tab:hover, body[data-theme="noite"] #saida-mt-root .tab.active { color:#fff!important; background:#4c66dc!important; }
+body[data-theme="noite"] #saida-mt-root main { color:#e4eaf5!important; background:transparent!important; }
+body[data-theme="noite"] #saida-mt-root .panel, body[data-theme="noite"] #saida-mt-root #saida-cart, body[data-theme="noite"] #saida-mt-root .cargo-dialog { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; box-shadow:0 6px 22px rgba(0,0,0,.28)!important; }
+body[data-theme="noite"] #saida-mt-root .panel h2, body[data-theme="noite"] #saida-mt-root #saida-cart h2, body[data-theme="noite"] #saida-mt-root .cargo-dialog h2 { color:#4c66dc!important; }
+body[data-theme="noite"] #saida-mt-root .hint { color:#aab8d0!important; }
+body[data-theme="noite"] #saida-mt-root th, body[data-theme="noite"] #saida-mt-root .group-row td { color:#e4eaf5!important; background:#202c40!important; border-color:#354258!important; }
+body[data-theme="noite"] #saida-mt-root td { color:#e4eaf5!important; border-color:#354258!important; }
+body[data-theme="noite"] #saida-mt-root .cliente-sugestoes, body[data-theme="noite"] #saida-mt-root .cliente-sugestao { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; }
+body[data-theme="noite"] .senha-modal-card, body[data-theme="noite"] .senha-modal .senha-modal-card { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; }
+body[data-theme="noite"] .autocomplete-items, body[data-theme="noite"] .autocomplete-items .autocomplete-option { color:#e4eaf5!important; background:#1b2638!important; border-color:#354258!important; }
+body[data-theme="verde-nobre"] { --ui-page:#f4f3df; --ui-surface:#fffef0; --ui-surface-2:#f5f3d4; --ui-text:#214534; --ui-muted:#58715e; --ui-border:#d4d2a4; --ui-primary:#087653; --ui-primary-deep:#00583c; --ui-nav:#174d39; --ui-nav-2:#0a6749; --ui-active:#0b8058; --ui-soft:#edebbf; --ui-shadow:rgba(0,66,45,.14); color:#214534!important; background:#f4f3df!important; }
+body[data-theme="verde-nobre"] #app-container, body[data-theme="verde-nobre"] #app-container .recebimento-page { color:#214534!important; background:transparent!important; }
+body[data-theme="verde-nobre"] .header, body[data-theme="verde-nobre"] .tabs-app>.header, body[data-theme="verde-nobre"] #saida-mt-root>header { background:linear-gradient(115deg,#174d39,#0a6749)!important; color:#fff!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] .header h1, body[data-theme="verde-nobre"] .header p, body[data-theme="verde-nobre"] .tabs-app>.header .header-brand h1, body[data-theme="verde-nobre"] .tabs-app>.header .header-brand p, body[data-theme="verde-nobre"] .tabs-app>.header>div:last-child p, body[data-theme="verde-nobre"] .tabs-app .theme-picker-label, body[data-theme="verde-nobre"] #saida-mt-root>header h1, body[data-theme="verde-nobre"] #saida-mt-root>header p { color:#fff!important; }
+body[data-theme="verde-nobre"] .tabs-app { background:linear-gradient(180deg,#174d39,#0a6749)!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] .tabs-app .tabs-row .tab-app { background:transparent!important; color:#ffffff!important; border-color:transparent!important; box-shadow:none!important; }
+body[data-theme="verde-nobre"] .tabs-app .tabs-row .tab-app:hover { background:#0a6749!important; color:#fff!important; }
+body[data-theme="verde-nobre"] .tabs-app .tabs-row .tab-app[aria-selected="true"] { background:linear-gradient(100deg,#0b8058,#00583c)!important; color:#fff!important; border-color:rgba(255,255,255,.2)!important; }
+body[data-theme="verde-nobre"] .official-mobile-bar, body[data-theme="verde-nobre"] .official-mobile-bar span { color:#00583c!important; }
+body[data-theme="verde-nobre"] #official-menu-btn, body[data-theme="verde-nobre"] .official-theme-toggle { color:#00583c!important; border-color:#d4d2a4!important; background:#fffef0!important; }
+body[data-theme="verde-nobre"] .theme-picker { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] .card, body[data-theme="verde-nobre"] .form-section, body[data-theme="verde-nobre"] .table-section, body[data-theme="verde-nobre"] .daily-summary, body[data-theme="verde-nobre"] .bobinas-form, body[data-theme="verde-nobre"] .bobinas-section, body[data-theme="verde-nobre"] .recebimento-panel, body[data-theme="verde-nobre"] .recebimento-kpi, body[data-theme="verde-nobre"] .config-section, body[data-theme="verde-nobre"] .padroes-section, body[data-theme="verde-nobre"] .add-pattern-box, body[data-theme="verde-nobre"] .manage-box, body[data-theme="verde-nobre"] .search-box, body[data-theme="verde-nobre"] .resumo-busca-producao { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; box-shadow:0 4px 14px rgba(0,66,45,.14)!important; }
+body[data-theme="verde-nobre"] .card h3, body[data-theme="verde-nobre"] .card p, body[data-theme="verde-nobre"] .table-header h3, body[data-theme="verde-nobre"] .daily-summary-header h3, body[data-theme="verde-nobre"] .config-section h2, body[data-theme="verde-nobre"] .bobinas-section h3, body[data-theme="verde-nobre"] .recebimento-toolbar h2, body[data-theme="verde-nobre"] .recebimento-kpi strong { color:#00583c!important; }
+body[data-theme="verde-nobre"] .card h3, body[data-theme="verde-nobre"] .form-section label, body[data-theme="verde-nobre"] .recebimento-panel label, body[data-theme="verde-nobre"] .config-section label, body[data-theme="verde-nobre"] .input-group label, body[data-theme="verde-nobre"] .field label { color:#214534!important; }
+body[data-theme="verde-nobre"] .table-header, body[data-theme="verde-nobre"] th, body[data-theme="verde-nobre"] .recebimento-table th, body[data-theme="verde-nobre"] tfoot td, body[data-theme="verde-nobre"] .daily-summary-header { color:#214534!important; background:#f5f3d4!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] td, body[data-theme="verde-nobre"] .recebimento-table td, body[data-theme="verde-nobre"] tbody tr, body[data-theme="verde-nobre"] .recebimento-table { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] tbody tr:hover, body[data-theme="verde-nobre"] .recebimento-table tbody tr:hover { background:#edebbf!important; }
+body[data-theme="verde-nobre"] input:not([type="checkbox"]):not([type="radio"]), body[data-theme="verde-nobre"] select, body[data-theme="verde-nobre"] textarea, body[data-theme="verde-nobre"] .input-group input, body[data-theme="verde-nobre"] .input-group select, body[data-theme="verde-nobre"] .field input, body[data-theme="verde-nobre"] .field select, body[data-theme="verde-nobre"] .field textarea, body[data-theme="verde-nobre"] .recebimento-toolbar input { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] input::placeholder, body[data-theme="verde-nobre"] textarea::placeholder { color:#58715e!important; }
+body[data-theme="verde-nobre"] input:focus, body[data-theme="verde-nobre"] select:focus, body[data-theme="verde-nobre"] textarea:focus { border-color:#087653!important; box-shadow:0 0 0 3px rgba(0,66,45,.14)!important; }
+body[data-theme="verde-nobre"] button.btn-add, body[data-theme="verde-nobre"] button.btn-primary, body[data-theme="verde-nobre"] button.btn-success, body[data-theme="verde-nobre"] button.btn-import, body[data-theme="verde-nobre"] #saida-mt-root .btn-primary, body[data-theme="verde-nobre"] #saida-mt-root .btn-success { color:#fff!important; background:linear-gradient(135deg,#087653,#00583c)!important; border-color:#00583c!important; }
+body[data-theme="verde-nobre"] button.btn-secondary, body[data-theme="verde-nobre"] button.btn-cancel, body[data-theme="verde-nobre"] button.btn-excel, body[data-theme="verde-nobre"] button.btn-pdf, body[data-theme="verde-nobre"] #saida-mt-root .btn-secondary { border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] .consulta-banner, body[data-theme="verde-nobre"] .recebimento-preview, body[data-theme="verde-nobre"] .demo-ribbon { color:#00583c!important; background:#edebbf!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] #saida-mt-root { color:#214534!important; background:#f4f3df!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .tabs { background:#174d39!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .tab { color:#fff!important; background:#0a6749!important; border-color:transparent!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .tab:hover, body[data-theme="verde-nobre"] #saida-mt-root .tab.active { color:#fff!important; background:#0b8058!important; }
+body[data-theme="verde-nobre"] #saida-mt-root main { color:#214534!important; background:transparent!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .panel, body[data-theme="verde-nobre"] #saida-mt-root #saida-cart, body[data-theme="verde-nobre"] #saida-mt-root .cargo-dialog { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; box-shadow:0 6px 22px rgba(0,66,45,.14)!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .panel h2, body[data-theme="verde-nobre"] #saida-mt-root #saida-cart h2, body[data-theme="verde-nobre"] #saida-mt-root .cargo-dialog h2 { color:#00583c!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .hint { color:#58715e!important; }
+body[data-theme="verde-nobre"] #saida-mt-root th, body[data-theme="verde-nobre"] #saida-mt-root .group-row td { color:#214534!important; background:#f5f3d4!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] #saida-mt-root td { color:#214534!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] #saida-mt-root .cliente-sugestoes, body[data-theme="verde-nobre"] #saida-mt-root .cliente-sugestao { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] .senha-modal-card, body[data-theme="verde-nobre"] .senha-modal .senha-modal-card { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; }
+body[data-theme="verde-nobre"] .autocomplete-items, body[data-theme="verde-nobre"] .autocomplete-items .autocomplete-option { color:#214534!important; background:#fffef0!important; border-color:#d4d2a4!important; }
+body[data-theme="aurora-lux"] { --ui-page:#f0f1ff; --ui-surface:#ffffff; --ui-surface-2:#f2f3ff; --ui-text:#202443; --ui-muted:#62698c; --ui-border:#d9def5; --ui-primary:#6655df; --ui-primary-deep:#4d3dbd; --ui-nav:#202348; --ui-nav-2:#35336f; --ui-active:#7768ee; --ui-soft:#e8fbf8; --ui-shadow:rgba(45,54,118,.14); color:#202443!important; background:#f0f1ff!important; }
+body[data-theme="aurora-lux"] #app-container, body[data-theme="aurora-lux"] #app-container .recebimento-page { color:#202443!important; background:transparent!important; }
+body[data-theme="aurora-lux"] .header, body[data-theme="aurora-lux"] .tabs-app>.header, body[data-theme="aurora-lux"] #saida-mt-root>header { background:linear-gradient(115deg,#202348,#35336f)!important; color:#fff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] .header h1, body[data-theme="aurora-lux"] .header p, body[data-theme="aurora-lux"] .tabs-app>.header .header-brand h1, body[data-theme="aurora-lux"] .tabs-app>.header .header-brand p, body[data-theme="aurora-lux"] .tabs-app>.header>div:last-child p, body[data-theme="aurora-lux"] .tabs-app .theme-picker-label, body[data-theme="aurora-lux"] #saida-mt-root>header h1, body[data-theme="aurora-lux"] #saida-mt-root>header p { color:#fff!important; }
+body[data-theme="aurora-lux"] .tabs-app { background:linear-gradient(180deg,#202348,#35336f)!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] .tabs-app .tabs-row .tab-app { background:transparent!important; color:#ffffff!important; border-color:transparent!important; box-shadow:none!important; }
+body[data-theme="aurora-lux"] .tabs-app .tabs-row .tab-app:hover { background:#35336f!important; color:#fff!important; }
+body[data-theme="aurora-lux"] .tabs-app .tabs-row .tab-app[aria-selected="true"] { background:linear-gradient(100deg,#7768ee,#4d3dbd)!important; color:#fff!important; border-color:rgba(255,255,255,.2)!important; }
+body[data-theme="aurora-lux"] .official-mobile-bar, body[data-theme="aurora-lux"] .official-mobile-bar span { color:#4d3dbd!important; }
+body[data-theme="aurora-lux"] #official-menu-btn, body[data-theme="aurora-lux"] .official-theme-toggle { color:#4d3dbd!important; border-color:#d9def5!important; background:#ffffff!important; }
+body[data-theme="aurora-lux"] .theme-picker { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] .card, body[data-theme="aurora-lux"] .form-section, body[data-theme="aurora-lux"] .table-section, body[data-theme="aurora-lux"] .daily-summary, body[data-theme="aurora-lux"] .bobinas-form, body[data-theme="aurora-lux"] .bobinas-section, body[data-theme="aurora-lux"] .recebimento-panel, body[data-theme="aurora-lux"] .recebimento-kpi, body[data-theme="aurora-lux"] .config-section, body[data-theme="aurora-lux"] .padroes-section, body[data-theme="aurora-lux"] .add-pattern-box, body[data-theme="aurora-lux"] .manage-box, body[data-theme="aurora-lux"] .search-box, body[data-theme="aurora-lux"] .resumo-busca-producao { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; box-shadow:0 4px 14px rgba(45,54,118,.14)!important; }
+body[data-theme="aurora-lux"] .card h3, body[data-theme="aurora-lux"] .card p, body[data-theme="aurora-lux"] .table-header h3, body[data-theme="aurora-lux"] .daily-summary-header h3, body[data-theme="aurora-lux"] .config-section h2, body[data-theme="aurora-lux"] .bobinas-section h3, body[data-theme="aurora-lux"] .recebimento-toolbar h2, body[data-theme="aurora-lux"] .recebimento-kpi strong { color:#4d3dbd!important; }
+body[data-theme="aurora-lux"] .card h3, body[data-theme="aurora-lux"] .form-section label, body[data-theme="aurora-lux"] .recebimento-panel label, body[data-theme="aurora-lux"] .config-section label, body[data-theme="aurora-lux"] .input-group label, body[data-theme="aurora-lux"] .field label { color:#202443!important; }
+body[data-theme="aurora-lux"] .table-header, body[data-theme="aurora-lux"] th, body[data-theme="aurora-lux"] .recebimento-table th, body[data-theme="aurora-lux"] tfoot td, body[data-theme="aurora-lux"] .daily-summary-header { color:#202443!important; background:#f2f3ff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] td, body[data-theme="aurora-lux"] .recebimento-table td, body[data-theme="aurora-lux"] tbody tr, body[data-theme="aurora-lux"] .recebimento-table { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] tbody tr:hover, body[data-theme="aurora-lux"] .recebimento-table tbody tr:hover { background:#e8fbf8!important; }
+body[data-theme="aurora-lux"] input:not([type="checkbox"]):not([type="radio"]), body[data-theme="aurora-lux"] select, body[data-theme="aurora-lux"] textarea, body[data-theme="aurora-lux"] .input-group input, body[data-theme="aurora-lux"] .input-group select, body[data-theme="aurora-lux"] .field input, body[data-theme="aurora-lux"] .field select, body[data-theme="aurora-lux"] .field textarea, body[data-theme="aurora-lux"] .recebimento-toolbar input { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] input::placeholder, body[data-theme="aurora-lux"] textarea::placeholder { color:#62698c!important; }
+body[data-theme="aurora-lux"] input:focus, body[data-theme="aurora-lux"] select:focus, body[data-theme="aurora-lux"] textarea:focus { border-color:#6655df!important; box-shadow:0 0 0 3px rgba(45,54,118,.14)!important; }
+body[data-theme="aurora-lux"] button.btn-add, body[data-theme="aurora-lux"] button.btn-primary, body[data-theme="aurora-lux"] button.btn-success, body[data-theme="aurora-lux"] button.btn-import, body[data-theme="aurora-lux"] #saida-mt-root .btn-primary, body[data-theme="aurora-lux"] #saida-mt-root .btn-success { color:#fff!important; background:linear-gradient(135deg,#6655df,#4d3dbd)!important; border-color:#4d3dbd!important; }
+body[data-theme="aurora-lux"] button.btn-secondary, body[data-theme="aurora-lux"] button.btn-cancel, body[data-theme="aurora-lux"] button.btn-excel, body[data-theme="aurora-lux"] button.btn-pdf, body[data-theme="aurora-lux"] #saida-mt-root .btn-secondary { border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] .consulta-banner, body[data-theme="aurora-lux"] .recebimento-preview, body[data-theme="aurora-lux"] .demo-ribbon { color:#4d3dbd!important; background:#e8fbf8!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] #saida-mt-root { color:#202443!important; background:#f0f1ff!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .tabs { background:#202348!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .tab { color:#fff!important; background:#35336f!important; border-color:transparent!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .tab:hover, body[data-theme="aurora-lux"] #saida-mt-root .tab.active { color:#fff!important; background:#7768ee!important; }
+body[data-theme="aurora-lux"] #saida-mt-root main { color:#202443!important; background:transparent!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .panel, body[data-theme="aurora-lux"] #saida-mt-root #saida-cart, body[data-theme="aurora-lux"] #saida-mt-root .cargo-dialog { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; box-shadow:0 6px 22px rgba(45,54,118,.14)!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .panel h2, body[data-theme="aurora-lux"] #saida-mt-root #saida-cart h2, body[data-theme="aurora-lux"] #saida-mt-root .cargo-dialog h2 { color:#4d3dbd!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .hint { color:#62698c!important; }
+body[data-theme="aurora-lux"] #saida-mt-root th, body[data-theme="aurora-lux"] #saida-mt-root .group-row td { color:#202443!important; background:#f2f3ff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] #saida-mt-root td { color:#202443!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] #saida-mt-root .cliente-sugestoes, body[data-theme="aurora-lux"] #saida-mt-root .cliente-sugestao { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] .senha-modal-card, body[data-theme="aurora-lux"] .senha-modal .senha-modal-card { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; }
+body[data-theme="aurora-lux"] .autocomplete-items, body[data-theme="aurora-lux"] .autocomplete-items .autocomplete-option { color:#202443!important; background:#ffffff!important; border-color:#d9def5!important; }
+body[data-theme="esmeralda-real"] { --ui-page:#eef6ef; --ui-surface:#ffffff; --ui-surface-2:#eff8f0; --ui-text:#203b31; --ui-muted:#5c7568; --ui-border:#d0e2d4; --ui-primary:#087a5b; --ui-primary-deep:#05573f; --ui-nav:#073f34; --ui-nav-2:#0a5542; --ui-active:#16936b; --ui-soft:#e3f3e5; --ui-shadow:rgba(25,91,60,.14); color:#203b31!important; background:#eef6ef!important; }
+body[data-theme="esmeralda-real"] #app-container, body[data-theme="esmeralda-real"] #app-container .recebimento-page { color:#203b31!important; background:transparent!important; }
+body[data-theme="esmeralda-real"] .header, body[data-theme="esmeralda-real"] .tabs-app>.header, body[data-theme="esmeralda-real"] #saida-mt-root>header { background:linear-gradient(115deg,#073f34,#0a5542)!important; color:#fff!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] .header h1, body[data-theme="esmeralda-real"] .header p, body[data-theme="esmeralda-real"] .tabs-app>.header .header-brand h1, body[data-theme="esmeralda-real"] .tabs-app>.header .header-brand p, body[data-theme="esmeralda-real"] .tabs-app>.header>div:last-child p, body[data-theme="esmeralda-real"] .tabs-app .theme-picker-label, body[data-theme="esmeralda-real"] #saida-mt-root>header h1, body[data-theme="esmeralda-real"] #saida-mt-root>header p { color:#fff!important; }
+body[data-theme="esmeralda-real"] .tabs-app { background:linear-gradient(180deg,#073f34,#0a5542)!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] .tabs-app .tabs-row .tab-app { background:transparent!important; color:#ffffff!important; border-color:transparent!important; box-shadow:none!important; }
+body[data-theme="esmeralda-real"] .tabs-app .tabs-row .tab-app:hover { background:#0a5542!important; color:#fff!important; }
+body[data-theme="esmeralda-real"] .tabs-app .tabs-row .tab-app[aria-selected="true"] { background:linear-gradient(100deg,#16936b,#05573f)!important; color:#fff!important; border-color:rgba(255,255,255,.2)!important; }
+body[data-theme="esmeralda-real"] .official-mobile-bar, body[data-theme="esmeralda-real"] .official-mobile-bar span { color:#05573f!important; }
+body[data-theme="esmeralda-real"] #official-menu-btn, body[data-theme="esmeralda-real"] .official-theme-toggle { color:#05573f!important; border-color:#d0e2d4!important; background:#ffffff!important; }
+body[data-theme="esmeralda-real"] .theme-picker { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] .card, body[data-theme="esmeralda-real"] .form-section, body[data-theme="esmeralda-real"] .table-section, body[data-theme="esmeralda-real"] .daily-summary, body[data-theme="esmeralda-real"] .bobinas-form, body[data-theme="esmeralda-real"] .bobinas-section, body[data-theme="esmeralda-real"] .recebimento-panel, body[data-theme="esmeralda-real"] .recebimento-kpi, body[data-theme="esmeralda-real"] .config-section, body[data-theme="esmeralda-real"] .padroes-section, body[data-theme="esmeralda-real"] .add-pattern-box, body[data-theme="esmeralda-real"] .manage-box, body[data-theme="esmeralda-real"] .search-box, body[data-theme="esmeralda-real"] .resumo-busca-producao { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; box-shadow:0 4px 14px rgba(25,91,60,.14)!important; }
+body[data-theme="esmeralda-real"] .card h3, body[data-theme="esmeralda-real"] .card p, body[data-theme="esmeralda-real"] .table-header h3, body[data-theme="esmeralda-real"] .daily-summary-header h3, body[data-theme="esmeralda-real"] .config-section h2, body[data-theme="esmeralda-real"] .bobinas-section h3, body[data-theme="esmeralda-real"] .recebimento-toolbar h2, body[data-theme="esmeralda-real"] .recebimento-kpi strong { color:#05573f!important; }
+body[data-theme="esmeralda-real"] .card h3, body[data-theme="esmeralda-real"] .form-section label, body[data-theme="esmeralda-real"] .recebimento-panel label, body[data-theme="esmeralda-real"] .config-section label, body[data-theme="esmeralda-real"] .input-group label, body[data-theme="esmeralda-real"] .field label { color:#203b31!important; }
+body[data-theme="esmeralda-real"] .table-header, body[data-theme="esmeralda-real"] th, body[data-theme="esmeralda-real"] .recebimento-table th, body[data-theme="esmeralda-real"] tfoot td, body[data-theme="esmeralda-real"] .daily-summary-header { color:#203b31!important; background:#eff8f0!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] td, body[data-theme="esmeralda-real"] .recebimento-table td, body[data-theme="esmeralda-real"] tbody tr, body[data-theme="esmeralda-real"] .recebimento-table { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] tbody tr:hover, body[data-theme="esmeralda-real"] .recebimento-table tbody tr:hover { background:#e3f3e5!important; }
+body[data-theme="esmeralda-real"] input:not([type="checkbox"]):not([type="radio"]), body[data-theme="esmeralda-real"] select, body[data-theme="esmeralda-real"] textarea, body[data-theme="esmeralda-real"] .input-group input, body[data-theme="esmeralda-real"] .input-group select, body[data-theme="esmeralda-real"] .field input, body[data-theme="esmeralda-real"] .field select, body[data-theme="esmeralda-real"] .field textarea, body[data-theme="esmeralda-real"] .recebimento-toolbar input { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] input::placeholder, body[data-theme="esmeralda-real"] textarea::placeholder { color:#5c7568!important; }
+body[data-theme="esmeralda-real"] input:focus, body[data-theme="esmeralda-real"] select:focus, body[data-theme="esmeralda-real"] textarea:focus { border-color:#087a5b!important; box-shadow:0 0 0 3px rgba(25,91,60,.14)!important; }
+body[data-theme="esmeralda-real"] button.btn-add, body[data-theme="esmeralda-real"] button.btn-primary, body[data-theme="esmeralda-real"] button.btn-success, body[data-theme="esmeralda-real"] button.btn-import, body[data-theme="esmeralda-real"] #saida-mt-root .btn-primary, body[data-theme="esmeralda-real"] #saida-mt-root .btn-success { color:#fff!important; background:linear-gradient(135deg,#087a5b,#05573f)!important; border-color:#05573f!important; }
+body[data-theme="esmeralda-real"] button.btn-secondary, body[data-theme="esmeralda-real"] button.btn-cancel, body[data-theme="esmeralda-real"] button.btn-excel, body[data-theme="esmeralda-real"] button.btn-pdf, body[data-theme="esmeralda-real"] #saida-mt-root .btn-secondary { border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] .consulta-banner, body[data-theme="esmeralda-real"] .recebimento-preview, body[data-theme="esmeralda-real"] .demo-ribbon { color:#05573f!important; background:#e3f3e5!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root { color:#203b31!important; background:#eef6ef!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .tabs { background:#073f34!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .tab { color:#fff!important; background:#0a5542!important; border-color:transparent!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .tab:hover, body[data-theme="esmeralda-real"] #saida-mt-root .tab.active { color:#fff!important; background:#16936b!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root main { color:#203b31!important; background:transparent!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .panel, body[data-theme="esmeralda-real"] #saida-mt-root #saida-cart, body[data-theme="esmeralda-real"] #saida-mt-root .cargo-dialog { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; box-shadow:0 6px 22px rgba(25,91,60,.14)!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .panel h2, body[data-theme="esmeralda-real"] #saida-mt-root #saida-cart h2, body[data-theme="esmeralda-real"] #saida-mt-root .cargo-dialog h2 { color:#05573f!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .hint { color:#5c7568!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root th, body[data-theme="esmeralda-real"] #saida-mt-root .group-row td { color:#203b31!important; background:#eff8f0!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root td { color:#203b31!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] #saida-mt-root .cliente-sugestoes, body[data-theme="esmeralda-real"] #saida-mt-root .cliente-sugestao { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] .senha-modal-card, body[data-theme="esmeralda-real"] .senha-modal .senha-modal-card { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; }
+body[data-theme="esmeralda-real"] .autocomplete-items, body[data-theme="esmeralda-real"] .autocomplete-items .autocomplete-option { color:#203b31!important; background:#ffffff!important; border-color:#d0e2d4!important; }
+body[data-theme="saida-mt"] { --ui-page:#f1f5f9; --ui-surface:#ffffff; --ui-surface-2:#eaf0f7; --ui-text:#1e293b; --ui-muted:#64748b; --ui-border:#cbd5e1; --ui-primary:#2563eb; --ui-primary-deep:#1d4ed8; --ui-nav:#1e3a5f; --ui-nav-2:#2d4f7c; --ui-active:#2563eb; --ui-soft:#eaf0f7; --ui-shadow:rgba(30,58,95,.13); color:#1e293b!important; background:#f1f5f9!important; }
+body[data-theme="saida-mt"] #app-container, body[data-theme="saida-mt"] #app-container .recebimento-page { color:#1e293b!important; background:transparent!important; }
+body[data-theme="saida-mt"] .header, body[data-theme="saida-mt"] .tabs-app>.header, body[data-theme="saida-mt"] #saida-mt-root>header { background:linear-gradient(115deg,#1e3a5f,#2d4f7c)!important; color:#fff!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] .header h1, body[data-theme="saida-mt"] .header p, body[data-theme="saida-mt"] .tabs-app>.header .header-brand h1, body[data-theme="saida-mt"] .tabs-app>.header .header-brand p, body[data-theme="saida-mt"] .tabs-app>.header>div:last-child p, body[data-theme="saida-mt"] .tabs-app .theme-picker-label, body[data-theme="saida-mt"] #saida-mt-root>header h1, body[data-theme="saida-mt"] #saida-mt-root>header p { color:#fff!important; }
+body[data-theme="saida-mt"] .tabs-app { background:linear-gradient(180deg,#1e3a5f,#2d4f7c)!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] .tabs-app .tabs-row .tab-app { background:transparent!important; color:#ffffff!important; border-color:transparent!important; box-shadow:none!important; }
+body[data-theme="saida-mt"] .tabs-app .tabs-row .tab-app:hover { background:#2d4f7c!important; color:#fff!important; }
+body[data-theme="saida-mt"] .tabs-app .tabs-row .tab-app[aria-selected="true"] { background:linear-gradient(100deg,#2563eb,#1d4ed8)!important; color:#fff!important; border-color:rgba(255,255,255,.2)!important; }
+body[data-theme="saida-mt"] .official-mobile-bar, body[data-theme="saida-mt"] .official-mobile-bar span { color:#1d4ed8!important; }
+body[data-theme="saida-mt"] #official-menu-btn, body[data-theme="saida-mt"] .official-theme-toggle { color:#1d4ed8!important; border-color:#cbd5e1!important; background:#ffffff!important; }
+body[data-theme="saida-mt"] .theme-picker { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] .card, body[data-theme="saida-mt"] .form-section, body[data-theme="saida-mt"] .table-section, body[data-theme="saida-mt"] .daily-summary, body[data-theme="saida-mt"] .bobinas-form, body[data-theme="saida-mt"] .bobinas-section, body[data-theme="saida-mt"] .recebimento-panel, body[data-theme="saida-mt"] .recebimento-kpi, body[data-theme="saida-mt"] .config-section, body[data-theme="saida-mt"] .padroes-section, body[data-theme="saida-mt"] .add-pattern-box, body[data-theme="saida-mt"] .manage-box, body[data-theme="saida-mt"] .search-box, body[data-theme="saida-mt"] .resumo-busca-producao { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; box-shadow:0 4px 14px rgba(30,58,95,.13)!important; }
+body[data-theme="saida-mt"] .card h3, body[data-theme="saida-mt"] .card p, body[data-theme="saida-mt"] .table-header h3, body[data-theme="saida-mt"] .daily-summary-header h3, body[data-theme="saida-mt"] .config-section h2, body[data-theme="saida-mt"] .bobinas-section h3, body[data-theme="saida-mt"] .recebimento-toolbar h2, body[data-theme="saida-mt"] .recebimento-kpi strong { color:#1d4ed8!important; }
+body[data-theme="saida-mt"] .card h3, body[data-theme="saida-mt"] .form-section label, body[data-theme="saida-mt"] .recebimento-panel label, body[data-theme="saida-mt"] .config-section label, body[data-theme="saida-mt"] .input-group label, body[data-theme="saida-mt"] .field label { color:#1e293b!important; }
+body[data-theme="saida-mt"] .table-header, body[data-theme="saida-mt"] th, body[data-theme="saida-mt"] .recebimento-table th, body[data-theme="saida-mt"] tfoot td, body[data-theme="saida-mt"] .daily-summary-header { color:#1e293b!important; background:#eaf0f7!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] td, body[data-theme="saida-mt"] .recebimento-table td, body[data-theme="saida-mt"] tbody tr, body[data-theme="saida-mt"] .recebimento-table { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] tbody tr:hover, body[data-theme="saida-mt"] .recebimento-table tbody tr:hover { background:#eaf0f7!important; }
+body[data-theme="saida-mt"] input:not([type="checkbox"]):not([type="radio"]), body[data-theme="saida-mt"] select, body[data-theme="saida-mt"] textarea, body[data-theme="saida-mt"] .input-group input, body[data-theme="saida-mt"] .input-group select, body[data-theme="saida-mt"] .field input, body[data-theme="saida-mt"] .field select, body[data-theme="saida-mt"] .field textarea, body[data-theme="saida-mt"] .recebimento-toolbar input { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] input::placeholder, body[data-theme="saida-mt"] textarea::placeholder { color:#64748b!important; }
+body[data-theme="saida-mt"] input:focus, body[data-theme="saida-mt"] select:focus, body[data-theme="saida-mt"] textarea:focus { border-color:#2563eb!important; box-shadow:0 0 0 3px rgba(30,58,95,.13)!important; }
+body[data-theme="saida-mt"] button.btn-add, body[data-theme="saida-mt"] button.btn-primary, body[data-theme="saida-mt"] button.btn-success, body[data-theme="saida-mt"] button.btn-import, body[data-theme="saida-mt"] #saida-mt-root .btn-primary, body[data-theme="saida-mt"] #saida-mt-root .btn-success { color:#fff!important; background:linear-gradient(135deg,#2563eb,#1d4ed8)!important; border-color:#1d4ed8!important; }
+body[data-theme="saida-mt"] button.btn-secondary, body[data-theme="saida-mt"] button.btn-cancel, body[data-theme="saida-mt"] button.btn-excel, body[data-theme="saida-mt"] button.btn-pdf, body[data-theme="saida-mt"] #saida-mt-root .btn-secondary { border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] .consulta-banner, body[data-theme="saida-mt"] .recebimento-preview, body[data-theme="saida-mt"] .demo-ribbon { color:#1d4ed8!important; background:#eaf0f7!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] #saida-mt-root { color:#1e293b!important; background:#f1f5f9!important; }
+body[data-theme="saida-mt"] #saida-mt-root .tabs { background:#1e3a5f!important; }
+body[data-theme="saida-mt"] #saida-mt-root .tab { color:#fff!important; background:#2d4f7c!important; border-color:transparent!important; }
+body[data-theme="saida-mt"] #saida-mt-root .tab:hover, body[data-theme="saida-mt"] #saida-mt-root .tab.active { color:#fff!important; background:#2563eb!important; }
+body[data-theme="saida-mt"] #saida-mt-root main { color:#1e293b!important; background:transparent!important; }
+body[data-theme="saida-mt"] #saida-mt-root .panel, body[data-theme="saida-mt"] #saida-mt-root #saida-cart, body[data-theme="saida-mt"] #saida-mt-root .cargo-dialog { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; box-shadow:0 6px 22px rgba(30,58,95,.13)!important; }
+body[data-theme="saida-mt"] #saida-mt-root .panel h2, body[data-theme="saida-mt"] #saida-mt-root #saida-cart h2, body[data-theme="saida-mt"] #saida-mt-root .cargo-dialog h2 { color:#1d4ed8!important; }
+body[data-theme="saida-mt"] #saida-mt-root .hint { color:#64748b!important; }
+body[data-theme="saida-mt"] #saida-mt-root th, body[data-theme="saida-mt"] #saida-mt-root .group-row td { color:#1e293b!important; background:#eaf0f7!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] #saida-mt-root td { color:#1e293b!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] #saida-mt-root .cliente-sugestoes, body[data-theme="saida-mt"] #saida-mt-root .cliente-sugestao { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] .senha-modal-card, body[data-theme="saida-mt"] .senha-modal .senha-modal-card { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; }
+body[data-theme="saida-mt"] .autocomplete-items, body[data-theme="saida-mt"] .autocomplete-items .autocomplete-option { color:#1e293b!important; background:#ffffff!important; border-color:#cbd5e1!important; }
+
+/* Seleção do escopo do relatório de produção */
+.relatorio-escolha-modal{position:fixed;inset:0;z-index:2200;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.68)}
+.relatorio-escolha-modal[hidden]{display:none}
+.relatorio-escolha-card{width:min(100%,460px);padding:24px;border:1px solid var(--border,#d1d5db);border-radius:18px;background:var(--surface,#fff);color:var(--text,#1f2937);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.relatorio-escolha-card h2{margin:0 0 8px}.relatorio-escolha-card p{margin:0 0 18px;color:var(--muted,#64748b)}
+.relatorio-radio{display:flex;align-items:center;gap:10px;margin:12px 0;font-weight:600}.relatorio-radio input{width:18px;height:18px;accent-color:var(--primary,#087a5b)}
+.relatorio-escolha-card .field{margin-top:16px}.relatorio-escolha-acoes{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap}
+.relatorio-escolha-acoes button{padding:10px 16px;border-radius:10px;cursor:pointer}
 
 
-/* Padronização global dos botões de ação em todas as áreas, preservando cores e funções. */
-#app-container button:not(.tab-app):not(.tab):not(#official-menu-btn):not(.official-theme-toggle):not(.password-toggle):not(.btn-icon):not(.btn-icon-square):not(.btn-refresh-month):not(.chip):not(.chip-edit):not(.chip-delete):not(.btn-action):not(.bobina-delete),
-#saida-mt-root button:not(.tab):not(.del){
-  box-sizing:border-box;
-  min-height:42px;
-  padding:10px 15px;
-  border-radius:8px;
-  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-  font-size:14px;
-  font-weight:700;
-  line-height:1.2;
-  letter-spacing:0;
-  vertical-align:middle;
-  transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease,filter .16s ease;
+.relatorio-escolha-card{max-height:calc(100vh - 36px);overflow-y:auto;background:var(--ui-surface,#fff)!important;color:var(--ui-text,#203b31)!important;border-color:var(--ui-border,#d0e2d4)!important}.relatorio-escolha-card .field{margin:0 0 14px}.relatorio-escolha-card .field[hidden]{display:none!important}.relatorio-escolha-card .field label{display:block;font-size:.88rem;font-weight:600;margin:0 0 6px}.relatorio-escolha-card .field input,.relatorio-escolha-card .field select{width:100%;min-height:42px;box-sizing:border-box;padding:10px 12px;border-radius:9px;border:1px solid var(--ui-border,#d0e2d4);background:var(--ui-surface,#fff);color:var(--ui-text,#203b31)}
+
+/* Interface unificada no padrão visual da Saída MT: Produção, Bobinas e recebimentos. */
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page){
+  --page-bg:var(--ui-page,#eef6ef);--panel-bg:var(--ui-surface,#fff);--panel-soft:var(--ui-surface-2,#eff8f0);
+  --panel-text:var(--ui-text,#203b31);--panel-muted:var(--ui-muted,#5c7568);--panel-border:var(--ui-border,#d0e2d4);
+  --panel-primary:var(--ui-primary,#087a5b);--panel-primary-deep:var(--ui-primary-deep,#05573f);
+  color:var(--panel-text)!important;
 }
-#app-container .export-menu-options button{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:40px;padding:9px 11px;border-radius:6px;text-align:left}
-#app-container .btn-action{min-height:32px;padding:6px 10px;border-radius:6px;font:700 12px/1.15 'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-#app-container .bobina-delete{min-height:34px;padding:6px 10px;border-radius:6px;font:700 12px/1.15 'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-#app-container .btn-icon-square{width:46px;min-width:46px;height:46px;min-height:46px;padding:0!important;border-radius:8px!important;display:inline-flex;align-items:center;justify-content:center}
-#app-container .btn-refresh-month{width:36px;height:36px;min-height:36px;padding:0;border-radius:8px}
-#app-container .btn-icon{width:36px;min-width:36px;height:42px;min-height:42px;padding:0;border-radius:7px}
-#app-container .btn-cancel:not([hidden]){align-items:center;justify-content:center}
-#app-container button:focus-visible,#saida-mt-root button:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 42%,transparent);outline-offset:2px}
-#app-container button:disabled,#saida-mt-root button:disabled{cursor:not-allowed;opacity:.58;transform:none;filter:none}
-#app-container .production-report-actions>.btn,#app-container .production-report-dialog-actions>.btn{min-height:42px;border-radius:8px;font-size:14px;font-weight:700}
-#app-container .production-report-dialog-actions>.btn{padding:10px 18px}
-#saida-mt-root .btn{min-height:42px;padding:10px 15px;border-radius:8px;font:700 14px/1.2 'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-#saida-mt-root .linha-acoes .btn{min-height:32px;padding:6px 10px;border-radius:6px;font-size:12px}
-#saida-mt-root .actions .btn{min-height:42px}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section,.recebimento-panel,.recebimento-kpi,.resumo-busca-producao){
+  box-sizing:border-box;color:var(--panel-text)!important;background:var(--panel-bg)!important;border:1px solid var(--panel-border)!important;
+  border-radius:14px!important;box-shadow:0 4px 14px var(--ui-shadow,rgba(25,91,60,.14))!important;
+}
+:is(#producao-page,#bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section){padding:20px!important}
+:is(#receb-barras-page,#receb-bobinas-page) :is(.recebimento-panel,.recebimento-kpi){padding:20px!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(h2,h3,.table-header h3,.daily-summary-header h3,.recebimento-toolbar h2,.bobinas-section h3){color:var(--panel-primary-deep)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.card p,.hint,.recebimento-kpi small){color:var(--panel-muted)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(label,.field label,.input-group label){color:var(--panel-text)!important;font-weight:600}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){
+  box-sizing:border-box;min-height:42px;padding:10px 12px!important;border:1px solid var(--panel-border)!important;border-radius:9px!important;
+  background:var(--panel-bg)!important;color:var(--panel-text)!important;box-shadow:none!important;transition:border-color .15s,box-shadow .15s
+}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea):focus{outline:none!important;border-color:var(--panel-primary)!important;box-shadow:0 0 0 3px var(--ui-shadow,rgba(25,91,60,.14))!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.table-responsive,.table-section,.bobinas-section,.recebimento-table-wrap){overflow-x:auto}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(table,.recebimento-table){border-collapse:collapse;border-radius:10px;overflow:hidden}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(th,.table-header,.daily-summary-header,.recebimento-table th){background:var(--panel-soft)!important;color:var(--panel-text)!important;border-color:var(--panel-border)!important;font-weight:700}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(td,.recebimento-table td){color:var(--panel-text)!important;border-color:var(--panel-border)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(tbody tr:hover,.recebimento-table tbody tr:hover){background:var(--panel-soft)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-add,.btn-import,.btn-excel,.btn-pdf,.btn-primary,.btn-success,.btn-secondary,.btn-cancel,.btn-clear,.btn-refresh-month,.actions button,.bobinas-actions button,.toolbar-group button,.config-actions button){
+  min-height:40px;padding:9px 15px!important;border-radius:9px!important;border:1px solid transparent!important;font-weight:700!important;line-height:1.2;box-shadow:0 2px 5px rgba(15,23,42,.10)!important;transition:transform .15s,filter .15s,box-shadow .15s!important
+}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-add,.btn-import,.btn-primary,.btn-success){background:linear-gradient(135deg,var(--panel-primary),var(--panel-primary-deep))!important;color:#fff!important;border-color:var(--panel-primary-deep)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-excel,.btn-pdf){background:linear-gradient(135deg,var(--panel-primary),var(--panel-primary-deep))!important;color:#fff!important;border-color:var(--panel-primary-deep)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-secondary,.btn-cancel,.btn-refresh-month){background:var(--panel-soft)!important;color:var(--panel-primary-deep)!important;border-color:var(--panel-border)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-clear,.btn-danger){background:linear-gradient(135deg,#ef4444,#b91c1c)!important;color:#fff!important;border-color:#b91c1c!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.04)}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) button:focus-visible{outline:3px solid var(--panel-primary)!important;outline-offset:2px}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.actions,.bobinas-actions,.toolbar-group){gap:10px}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.dashboard,.bobinas-dashboard,.recebimento-kpis){gap:14px}
+:is(#receb-barras-page,#receb-bobinas-page) .recebimento-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+:is(#receb-barras-page,#receb-bobinas-page) .recebimento-preview{border-radius:10px;border:1px solid var(--panel-border);background:var(--panel-soft);color:var(--panel-text)}
 @media(max-width:700px){
- #app-container .actions>.btn,#app-container .production-report-actions>.btn{min-height:44px}
- #app-container .recebimento-toolbar .toolbar-group>button{min-height:40px}
- #saida-mt-root .actions .btn{min-height:44px}
+  :is(#producao-page,#bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section),:is(#receb-barras-page,#receb-bobinas-page) .recebimento-panel{padding:15px!important}
+  :is(#receb-barras-page,#receb-bobinas-page) .toolbar-group{display:flex;flex-wrap:wrap;gap:8px}
+  :is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.actions,.bobinas-actions) button{flex:1 1 auto}
 }
-
-
-/* Cores de todos os botões ligadas ao tema global selecionado. */
-body[data-theme] #app-container .btn-add,
-body[data-theme] #app-container .btn-primary,
-body[data-theme] #app-container .production-report-actions .btn-success,
-body[data-theme] #app-container .production-report-dialog-actions .btn-success,
-body[data-theme] #app-container .export-menu-toggle,
-body[data-theme] #saida-mt-root .btn-primary{
-  background:var(--primary)!important;color:#fff!important;border-color:var(--primary)!important;
-  box-shadow:0 3px 0 color-mix(in srgb,var(--primary) 75%,#000)!important;
-}
-body[data-theme] #app-container .btn-add:hover,
-body[data-theme] #app-container .btn-primary:hover,
-body[data-theme] #app-container .production-report-actions .btn-success:hover,
-body[data-theme] #app-container .production-report-dialog-actions .btn-success:hover,
-body[data-theme] #app-container .export-menu-toggle:hover,
-body[data-theme] #saida-mt-root .btn-primary:hover{background:var(--primary-hover,var(--primary))!important;filter:brightness(1.04)}
-body[data-theme] #app-container .btn-import{background:var(--info)!important;color:#fff!important;border-color:var(--info)!important}
-body[data-theme] #app-container .btn-excel,
-body[data-theme] #app-container .btn-success:not(.production-report-actions .btn-success):not(.production-report-dialog-actions .btn-success),
-body[data-theme] #saida-mt-root .btn-success{background:var(--success)!important;color:#fff!important;border-color:var(--success)!important}
-body[data-theme] #app-container .btn-excel:hover,
-body[data-theme] #app-container .btn-success:hover,
-body[data-theme] #saida-mt-root .btn-success:hover{filter:brightness(.93)}
-body[data-theme] #app-container .btn-secondary,
-body[data-theme] #app-container .btn-pdf,
-body[data-theme] #app-container .btn-cancel,
-body[data-theme] #app-container .production-report-actions .btn-secondary,
-body[data-theme] #app-container .production-report-dialog-actions .btn-secondary,
-body[data-theme] #saida-mt-root .btn-secondary{background:var(--bg-color)!important;color:var(--text-main)!important;border:1px solid var(--border)!important;box-shadow:0 2px 5px rgba(15,23,42,.08)!important}
-body[data-theme] #app-container .btn-secondary:hover,
-body[data-theme] #app-container .btn-pdf:hover,
-body[data-theme] #app-container .btn-cancel:hover,
-body[data-theme] #app-container .production-report-actions .btn-secondary:hover,
-body[data-theme] #app-container .production-report-dialog-actions .btn-secondary:hover,
-body[data-theme] #saida-mt-root .btn-secondary:hover{filter:brightness(.96)}
-body[data-theme] #app-container .btn-clear,
-body[data-theme] #app-container .btn-danger,
-body[data-theme] #app-container .btn-delete,
-body[data-theme] #app-container .bobina-delete,
-body[data-theme] #saida-mt-root .btn-danger,
-body[data-theme] #saida-mt-root .del{background:color-mix(in srgb,var(--danger) 12%,var(--bg-color))!important;color:var(--danger)!important;border:1px solid color-mix(in srgb,var(--danger) 40%,var(--border))!important}
-body[data-theme] #app-container .btn-clear:hover,
-body[data-theme] #app-container .btn-danger:hover,
-body[data-theme] #app-container .btn-delete:hover,
-body[data-theme] #app-container .bobina-delete:hover,
-body[data-theme] #saida-mt-root .btn-danger:hover,
-body[data-theme] #saida-mt-root .del:hover{background:color-mix(in srgb,var(--danger) 20%,var(--bg-color))!important}
-body[data-theme] #app-container .btn-action.btn-edit-row{background:color-mix(in srgb,var(--warning) 18%,var(--bg-color))!important;color:var(--warning)!important;border:1px solid color-mix(in srgb,var(--warning) 38%,var(--border))!important}
-body[data-theme] #app-container .btn-action.btn-delete{background:color-mix(in srgb,var(--danger) 12%,var(--bg-color))!important;color:var(--danger)!important;border:1px solid color-mix(in srgb,var(--danger) 40%,var(--border))!important}
-body[data-theme] #app-container .btn-refresh-month,
-body[data-theme] #app-container .btn-icon{background:var(--bg-color)!important;color:var(--primary)!important;border-color:var(--border)!important}
-body[data-theme] #saida-mt-root .btn-success:not(:disabled){box-shadow:0 3px 0 color-mix(in srgb,var(--success) 75%,#000)!important}
-body[data-theme="noite"] #app-container .btn-secondary,
-body[data-theme="noite"] #app-container .btn-pdf,
-body[data-theme="noite"] #app-container .btn-cancel,
-body[data-theme="noite"] #app-container .production-report-actions .btn-secondary,
-body[data-theme="noite"] #app-container .production-report-dialog-actions .btn-secondary,
-body[data-theme="noite"] #saida-mt-root .btn-secondary{background:#243149!important;color:#e4eaf5!important;border-color:#45536c!important}
-body[data-theme="noite"] #app-container .btn-clear,
-body[data-theme="noite"] #app-container .btn-danger,
-body[data-theme="noite"] #app-container .btn-delete,
-body[data-theme="noite"] #app-container .bobina-delete,
-body[data-theme="noite"] #saida-mt-root .btn-danger,
-body[data-theme="noite"] #saida-mt-root .del{background:#342833!important;color:#fb9bab!important;border-color:#8a4c5b!important}
-body[data-theme="noite"] #app-container .btn-action.btn-edit-row{background:#3a3427!important;color:#fbbf24!important;border-color:#78633b!important}
-body[data-theme="noite"] #app-container .btn-action.btn-delete{background:#342833!important;color:#fb9bab!important;border-color:#8a4c5b!important}
-
-
-body[data-theme] .auth-screen .btn-add{background:var(--primary)!important;color:#fff!important;border-color:var(--primary)!important}
-body[data-theme] .auth-screen .btn-add:hover{background:var(--primary-hover,var(--primary))!important}
-body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-color:#34435b}
 
 </style>
 </head>
@@ -1439,12 +1638,10 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
 </section>
 
 <div class="container" id="app-container">
-    <div class="official-mobile-bar"><button type="button" id="official-menu-btn" aria-label="Abrir menu">☰</button><span id="official-current-tab">Produção</span></div>
+    <div class="official-mobile-bar"><button type="button" id="official-menu-btn" aria-label="Abrir menu">☰</button><span>Controle de Produção</span></div>
     <div id="official-sidebar-overlay" aria-hidden="true"></div>
-    
-
     <!-- Painel de Resumo -->
-    <div class="consulta-banner" id="consulta-banner">Esta conta pode lançar produção como ANGELO ou DERNEVAL; não pode editar, apagar, importar ou exportar.</div>
+    <div class="consulta-banner" id="consulta-banner">👁️ Esta conta pode lançar produção como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.</div>
 
     <div class="tabs-app" role="tablist" aria-label="Seções do controle">
         <div class="header">
@@ -1459,13 +1656,10 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
             <p><strong>Data de Hoje:</strong> <span id="data-hoje"></span></p>
             <p id="firebase-status" aria-live="polite">Conectando ao Firebase...</p>
             <p id="user-email"></p>
-            <details class="official-theme-control"><summary class="official-theme-toggle" aria-label="Abrir seletor de tema" title="Escolher tema"><svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 1.1-3.2 1.6 1.6 0 0 1 1-2.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8Z"/><path d="M7.5 10h.01M10 6.8h.01M15 7.3h.01M17.2 11h.01" stroke-width="2.8"/></svg></summary>
+            <details class="official-theme-control"><summary class="official-theme-toggle" aria-label="Abrir seletor de tema" title="Escolher tema">🎨</summary>
             <select id="theme-picker" class="theme-picker" aria-label="Escolher tema">
-                <option value="azul">Azul vibrante</option>
-                <option value="noite">Grafite noturno</option>
-                <option value="verde-nobre">Verde Nobre 3D</option>
-                <option value="aurora-lux">Aurora Lux</option>
-                <option value="esmeralda-real">Esmeralda Real</option>
+                <option value="aurora-lux">🌌 Aurora Lux</option>
+                <option value="esmeralda-real">💚 Esmeralda Real</option>
             </select></details>
             <button class="btn-logout" onclick="sair()">Sair</button>
         </div>
@@ -1482,7 +1676,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
             <button type="button" class="tab-app recebimentos-tab" id="tab-receb-bobinas" role="tab" aria-selected="false" aria-controls="receb-bobinas-page" onclick="selecionarAba('receb-bobinas')" hidden>Receb. bobinas</button>
         </div>
         <div class="tabs-row tabs-row-config">
-            <button type="button" class="tab-app tab-config-icon" id="tab-configuracoes" role="tab" aria-label="Configurações" title="Configurações" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden><svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.3a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4Z"/><path d="m19.4 13.5 1.2.9-1.2 2.1-1.5-.6a7.7 7.7 0 0 1-1.7 1l-.2 1.6h-2.5l-.4-1.5a7.5 7.5 0 0 1-2 0l-.8 1.3-2.2-1.2.5-1.5a7.5 7.5 0 0 1-1.1-1.7l-1.6-.2v-2.5l1.5-.4a7.5 7.5 0 0 1 0-2l-1.3-.8 1.2-2.2 1.5.5a7.5 7.5 0 0 1 1.7-1.1l.2-1.6h2.5l.4 1.5a7.5 7.5 0 0 1 2 0l.8-1.3 2.2 1.2-.5 1.5a7.5 7.5 0 0 1 1.1 1.7l1.6.2v2.5l-1.5.4"/></svg></button>
+            <button type="button" class="tab-app tab-config-icon" id="tab-configuracoes" role="tab" aria-label="Configurações" title="Configurações" aria-selected="false" aria-controls="config-page" onclick="selecionarAba('configuracoes')" hidden>⚙</button>
         </div>
     </div>
 
@@ -1565,8 +1759,8 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
                     <select id="in-responsavel" required>
                         <option value="">Selecione...</option>
                         <option value="FERNANDO">FERNANDO</option>
-                        <option value="ANGELO" selected>ANGELO</option>
-                        <option value="DERNEVAL">DERNEVAL</option>
+                        <option value="ÂNGELO" selected>ÂNGELO</option>
+                        <option value="GENIVAL">GENIVAL</option>
                     </select>
                     <span id="responsavel-fixo-ajuda" class="solo-admin" style="align-self:center;font-size:12px;color:#64748b">Gerencie a lista em Configurações</span>
                 </div>
@@ -1582,7 +1776,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
     <div class="table-section">
         <!-- Cabeçalho da Tabela com a Lupa de Busca -->
         <div class="table-header">
-            <h3><span id="titulo-producao-mes">Produção do mês</span> <button class="btn-refresh-month solo-admin" type="button" onclick="atualizarTotaisProducao()" title="Conferir e atualizar os totais" aria-label="Conferir e atualizar os totais"><svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9a7 7 0 0 1 12-2L20 12M4 12l2.5 5a7 7 0 0 0 12-2"/></svg></button></h3>
+            <h3><span id="titulo-producao-mes">Produção do mês</span> <button class="btn-refresh-month solo-admin" type="button" onclick="atualizarTotaisProducao()" title="Conferir e atualizar os totais" aria-label="Conferir e atualizar os totais">⟳</button></h3>
             
             <div class="mes-filtro">
                 <label for="filtro-mes">Mês:</label>
@@ -1590,7 +1784,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
             </div>
             <!-- LUPA -->
             <div class="search-box" id="search-box" onclick="expandirBusca()" role="search">
-                <span class="search-icon" aria-hidden="true"><svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></span>
+                <span class="search-icon" aria-hidden="true">🔍</span>
                 <input type="text" id="busca-responsavel" aria-label="Buscar em todos os dados da produção" placeholder="Buscar produto, embalagem ou operador..." oninput="filtrarPorResponsavel()" onblur="recolherBusca()">
             </div>
             
@@ -1620,28 +1814,13 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
     </div>
 
     <!-- Botões de Exportação e Importação -->
-    <div class="actions production-report-actions">
-        <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display:none" onchange="importarExcel(event)">
-        <button class="btn btn-success export-access" type="button" onclick="abrirModalRelatorioProducao()">Gerar relatório</button>
-        <button class="btn btn-secondary solo-admin" type="button" onclick="limparTudo()">Limpar tudo</button>
-    </div>
-    <div class="production-report-modal" id="production-report-modal" hidden>
-      <div class="production-report-backdrop" data-close-production-report></div>
-      <form class="production-report-dialog" id="production-report-form" role="dialog" aria-modal="true" aria-labelledby="production-report-title">
-        <h2 id="production-report-title">Gerar relatório</h2>
-        <p class="hint">Escolha o formato do relatório. O mês e a pesquisa selecionados na tela serão usados.</p>
-        <label class="required" for="production-report-format">Formato</label>
-        <select id="production-report-format" required>
-          <option value="">Selecione...</option>
-          <option value="pdf">Salvar em PDF</option>
-          <option value="excel">Exportar Excel</option>
-          <option value="import" id="production-report-import-option">Importar Excel</option>
-        </select>
-        <div class="production-report-dialog-actions">
-          <button class="btn btn-secondary" type="button" data-close-production-report>Cancelar</button>
-          <button class="btn btn-success" type="submit">Gerar relatório</button>
-        </div>
-      </form>
+    <div class="actions">
+        <button class="btn-clear btn-icon-square solo-admin" type="button" onclick="limparTudo()" title="Limpar toda a produção" aria-label="Limpar toda a produção">🗑️</button>
+        
+        <!-- NOVO BOTÃO DE IMPORTAR -->
+        <input class="solo-admin" type="file" id="file-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importarExcel(event)">
+        <button class="btn-import solo-admin" type="button" onclick="document.getElementById('file-input').click()"><span class="excel-icon" aria-hidden="true">📂</span> Importar Excel</button>
+        <button class="btn-excel export-access" type="button" onclick="abrirExportacaoSecao('producao')" title="Gerar relatório em Excel ou PDF"><span class="excel-icon" aria-hidden="true">▦</span> Gerar relatório</button>
     </div>
     </div><!-- /producao-page -->
 
@@ -1654,7 +1833,6 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
     <button class="btn btn-secondary header-conferente no-print saida-admin-only" type="button" onclick="saidaUi_abrirModalCarga(true)">Conferente</button>
   </div>
 </header>
-<p id="saida-firebase-status" class="hint" role="status" aria-live="polite">Aguardando autorização do Firebase…</p>
 <div class="cargo-modal" id="saida-carga-modal" hidden role="dialog" aria-modal="true" aria-labelledby="saida-cargo-title">
   <form class="cargo-dialog" id="saida-carga-form">
     <h2 id="saida-cargo-title">Dados da carga</h2>
@@ -1839,7 +2017,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
                 <tbody id="corpo-tabela-bobinas"></tbody>
             </table></div>
             <div class="bobinas-actions">
-                <button class="btn btn-success export-access" type="button" onclick="abrirModalRelatorioProducao('bobinas')">Gerar relatório</button>
+                <button class="btn-excel export-access" type="button" onclick="abrirExportacaoSecao('bobinas')">Gerar relatório</button>
             </div>
         </div>
     </section>
@@ -1856,7 +2034,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
         <h2>Receber barras de 12 metros</h2>
         <div class="recebimento-grid">
           <div><label for="rb-data">Data do recebimento</label><input type="date" id="rb-data" required></div>
-          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist></div>
+          <div><label for="rb-fornecedor">Fornecedor</label><input id="rb-fornecedor" list="rb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rb-receb-fornecedores"></datalist><button class="btn-add" type="button" onclick="salvarFornecedorRecebimento('barras')" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rb-bitola">Bitola</label><select id="rb-bitola"><option value="">Selecione...</option><option>4,2 mm</option><option>5,0 mm</option><option>6,3 mm</option><option>10 mm</option><option>Outra</option></select></div>
           <div id="rb-outra-bitola-wrap" hidden><label for="rb-outra-bitola">Outra bitola</label><input id="rb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
           <div class="sem-etiqueta-option"><label><input type="checkbox" id="rb-sem-etiqueta"> Material sem etiqueta</label></div><div><label for="rb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
@@ -1868,7 +2046,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
         <div class="recebimento-status" id="rb-status" aria-live="polite"></div>
       </div>
       <div class="recebimento-panel">
-        <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn btn-success export-access" type="button" onclick="abrirModalRelatorioProducao('receb-barras')">Gerar relatório</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
+        <div class="recebimento-toolbar"><h2>Histórico de barras recebidas</h2><div class="toolbar-group"><div><label for="rb-inicio">De</label><input type="date" id="rb-inicio"></div><div><label for="rb-fim">Até</label><input type="date" id="rb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('barras')">Todos</button><button class="btn-excel export-access" type="button" onclick="abrirExportacaoSecao('barras')">Gerar relatório</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('barras')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rb-linhas"></tbody><tfoot id="rb-totais"></tfoot></table></div>
       </div>
     </section>
@@ -1883,7 +2061,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
         <h2>Receber bobinas</h2>
         <div class="recebimento-grid">
           <div><label for="rbb-data">Data do recebimento</label><input type="date" id="rbb-data" required></div>
-          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist></div>
+          <div><label for="rbb-fornecedor">Fornecedor</label><input id="rbb-fornecedor" list="rbb-receb-fornecedores" maxlength="100" placeholder="Nome do fornecedor" required><datalist id="rbb-receb-fornecedores"></datalist><button class="btn-add" type="button" onclick="salvarFornecedorRecebimento('bobinas')" style="margin-top:5px">Salvar fornecedor</button></div>
           <div><label for="rbb-bitola">Bitola</label><select id="rbb-bitola"><option value="">Selecione...</option><option>3,8 mm</option><option>4,2 mm</option><option>5,0 mm</option><option>6,0 mm</option><option>Outra</option></select></div>
           <div id="rbb-outra-bitola-wrap" hidden><label for="rbb-outra-bitola">Outra bitola</label><input id="rbb-outra-bitola" maxlength="30" placeholder="Ex.: 8,0 mm"></div>
           <div class="sem-etiqueta-option"><label><input type="checkbox" id="rbb-sem-etiqueta"> Material sem etiqueta</label></div><div><label for="rbb-peso-etiqueta">Peso total nas etiquetas (kg)</label><input id="rbb-peso-etiqueta" inputmode="decimal" placeholder="Ex.: 1.250,500" required></div>
@@ -1895,10 +2073,28 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
         <div class="recebimento-status" id="rbb-status" aria-live="polite"></div>
       </div>
       <div class="recebimento-panel">
-        <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn btn-success export-access" type="button" onclick="abrirModalRelatorioProducao('receb-bobinas')">Gerar relatório</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
+        <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-excel export-access" type="button" onclick="abrirExportacaoSecao('recebimentosBobinas')">Gerar relatório</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rbb-linhas"></tbody><tfoot id="rbb-totais"></tfoot></table></div>
       </div>
     </section>
+
+    <div class="relatorio-escolha-modal" id="relatorio-escolha-modal" hidden role="dialog" aria-modal="true" aria-labelledby="relatorio-escolha-titulo">
+      <form class="relatorio-escolha-card" id="relatorio-escolha-form">
+        <h2 id="relatorio-escolha-titulo">Gerar relatório</h2>
+        <p id="relatorio-escolha-ajuda">Escolha o formato e o período.</p>
+        <div class="field"><label for="relatorio-formato-select">Formato</label><select id="relatorio-formato-select" required><option value="excel">Excel</option><option value="pdf">PDF</option></select></div>
+        <div class="row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field"><label for="relatorio-data-inicio">De</label><input type="date" id="relatorio-data-inicio"></div>
+          <div class="field"><label for="relatorio-data-fim">Até</label><input type="date" id="relatorio-data-fim"></div>
+        </div>
+        <div id="relatorio-producao-opcoes" hidden>
+          <label class="relatorio-radio"><input type="radio" name="relatorio-tipo" value="completo" checked> Relatório completo</label>
+          <label class="relatorio-radio"><input type="radio" name="relatorio-tipo" value="responsavel"> Relatório por responsável</label>
+          <div class="field" id="relatorio-responsavel-wrap" hidden><label for="relatorio-responsavel-nome">Digite o nome do responsável</label><input type="text" id="relatorio-responsavel-nome" list="relatorio-responsavel-sugestoes" placeholder="Comece a digitar o nome..." autocomplete="off"><datalist id="relatorio-responsavel-sugestoes"></datalist><small class="hint">Os nomes sugeridos correspondem aos responsáveis com registros no período selecionado.</small></div>
+        </div>
+        <div class="relatorio-escolha-acoes"><button class="btn-secondary" type="button" id="relatorio-escolha-cancelar">Cancelar</button><button class="btn-excel" type="submit">Gerar relatório</button></div>
+      </form>
+    </div>
 
     <section id="config-page" role="tabpanel" aria-labelledby="tab-configuracoes" hidden>
         <div class="config-section">
@@ -1916,7 +2112,7 @@ body[data-theme="noite"] .auth-screen{background:#1b2638;color:#e4eaf5;border-co
                 <button class="btn-add" id="config-btn-ativo" type="button" onclick="configDefinirResponsavelAtivo()">Trocar responsável ativo</button>
             </div>
             <p class="auth-message" id="config-message" aria-live="polite"></p>
-            <div class="config-actions"><div class="export-menu export-access"><button class="export-menu-toggle" type="button" aria-expanded="false" onclick="alternarMenuExportacao(this)"><svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l4 4v14H3V3h2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/></svg> Gerar relatório ▾</button><div class="export-menu-options" hidden><button type="button" onclick="executarExportacao('configuracoes','pdf')"><svg class="icon-line" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M8 16h2a1.5 1.5 0 0 0 0-3H8v5m5-5v5h1.5a2.5 2.5 0 0 0 0-5H13m5 5v-5h3m-3 2.5h2.5"/></svg> Salvar em PDF</button></div></div></div>
+            <div class="config-actions"><button class="btn-pdf export-access" type="button" onclick="imprimirAbaAtual()">Imprimir / PDF</button></div>
         </div>
     </section>
     <div id="senha-confirmacao-modal" class="senha-modal" hidden aria-hidden="true">
@@ -1949,7 +2145,7 @@ let saidaMtPermissaoEdicao = false;
 let saidaMtPermissaoConsulta = false;
 function exigirPermissaoSaida(){if(!saidaMtPermissaoEdicao){alert('Somente o administrador pode lançar ou alterar dados da Saída MT.');return false;}return true;}
 function definirItensFirebase(registros){itens=Array.isArray(registros)?registros.filter(x=>x&&typeof x==='object'):[];renderCart();}
-function atualizarStatusSaida(texto, erro=false){const el=document.getElementById('saida-firebase-status');if(el){el.textContent=texto;el.style.color=erro?'#b91c1c':'#334155';}}
+function atualizarStatusSaida(texto, erro=false){}
 window.saidaMTConfigurar=function({admin=false,consulta=false}={}){saidaMtPermissaoEdicao=Boolean(admin);saidaMtPermissaoConsulta=Boolean(consulta);const root=document.getElementById('saida-mt-root');if(root){root.classList.toggle('saida-somente-leitura',!admin);root.classList.toggle('saida-sem-acesso',!admin&&!consulta);} };
 window.saidaMTDefinirItens=definirItensFirebase;
 window.saidaMTDefinirAuxiliares=function({clientes={},modelos=[],ferro=''}={}){clientesSaidaFirebase=clientes&&typeof clientes==='object'&&!Array.isArray(clientes)?clientes:{};modelosSaidaFirebase=Array.isArray(modelos)?modelos.filter(x=>typeof x==='string'):[];ferroSaidaFirebase=String(ferro||'');if(document.getElementById('saida-carga-cliente').value)atualizarListaClientes(document.getElementById('saida-carga-cliente').value);if(document.getElementById('saida-estribo-modelo').value)atualizarSugestoesModelos(document.getElementById('saida-estribo-modelo').value);if(saidaMtPermissaoEdicao && document.getElementById('saida-estribo-ferro')){const sel=document.getElementById('saida-estribo-ferro');if([...sel.options].some(o=>o.value===ferroSaidaFirebase))sel.value=ferroSaidaFirebase;}};
@@ -2745,10 +2941,8 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
 
 <script>
     // Configuração pública do Firebase Web: NÃO é controle de acesso.
-    // Antes de usar, proteja no Console do Firebase as rotas /producao, /estribosPadroes,
-    // /operadores, /operadoresAtivos, /configuracao, /bobinas, /recebimentos e /saidaMateriais
-    // (incluindo itens, cargaAtual e auxiliares) com regras que apliquem as permissões dos usuários.
-    // As permissões da interface neste HTML NÃO substituem regras de segurança no Realtime Database.
+    // Proteja /producao, /estribosPadroes, /operadores, /bobinas e /configuracao com regras do Realtime Database.
+    // Regras do Firebase precisam ser configuradas no Console e não podem ser impostas por este HTML.
     const firebaseConfig = {
         apiKey: "AIzaSyACyY0nvZHyVFottlG7iM2pJ912bO8-_5E",
         authDomain: "controle---estoque.firebaseapp.com",
@@ -2764,15 +2958,15 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
 
     // Preferência de tema fica salva localmente neste navegador.
     const seletorTema = document.getElementById('theme-picker');
-    const temasPermitidos = ['azul', 'noite', 'verde-nobre', 'aurora-lux', 'esmeralda-real'];
+    const temasPermitidos = ['aurora-lux', 'esmeralda-real'];
     function aplicarTema(nomeTema) {
-        const tema = temasPermitidos.includes(nomeTema) ? nomeTema : 'azul';
+        const tema = temasPermitidos.includes(nomeTema) ? nomeTema : 'esmeralda-real';
         document.body.dataset.theme = tema;
         seletorTema.value = tema;
         try { localStorage.setItem('tema_producao', tema); } catch (_) {}
     }
-    let temaSalvo = 'azul';
-    try { temaSalvo = localStorage.getItem('tema_producao') || 'azul'; } catch (_) {}
+    let temaSalvo = 'esmeralda-real';
+    try { temaSalvo = localStorage.getItem('tema_producao') || 'esmeralda-real'; } catch (_) {}
     aplicarTema(temaSalvo);
     const officialThemeControl=document.querySelector('.official-theme-control');
     seletorTema.addEventListener('change', () => { aplicarTema(seletorTema.value); if(officialThemeControl) officialThemeControl.open=false; });
@@ -2807,7 +3001,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     const EMAIL_ADMIN = 'fernandolisboa.br@gmail.com';
     const EMAIL_EXPORTADOR = 'arames@confere.com';
     const EMAIL_PRODUCAO = 'arames@brasil.com';
-    const OPERADORES_PRODUCAO = ['ANGELO', 'DERNEVAL'];
+    const OPERADORES_PRODUCAO = ['ÂNGELO', 'GENIVAL'];
     let usuarioEhAdmin = false;
     let usuarioPodeExportar = false;
     let usuarioPodeLancarProducao = false;
@@ -2832,7 +3026,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         saidaMtItensRef=saidaMtCargaRef=saidaMtAuxRef=saidaMtItensListener=saidaMtCargaListener=saidaMtAuxListener=null;
         window.saidaMTGuardarItens=null;window.saidaMTSalvarCarga=null;window.saidaMTGuardarClientes=window.saidaMTGuardarModelos=window.saidaMTGuardarFerro=null;
         if(window.saidaMTDefinirItens)window.saidaMTDefinirItens([]);if(window.saidaMTDefinirAuxiliares)window.saidaMTDefinirAuxiliares({});
-        const status=document.getElementById('saida-firebase-status');if(status)status.textContent='Aguardando autorização do Firebase…';
+        
     };
     function iniciarSincronizacaoSaidaMT(esAdmin){
         window.saidaMTDetach();
@@ -2844,9 +3038,9 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
             const raw=snapshot.val()||{};
             const list=Array.isArray(raw)?raw:Object.entries(raw).map(([key,item])=>item&&typeof item==='object'?{...item,_firebaseKey:key}:null).filter(Boolean);
             window.saidaMTDefinirItens(list);
-            const status=document.getElementById('saida-firebase-status');if(status)status.textContent='Sincronizado com Firebase. A versão compartilhada aparece nos aparelhos autorizados.';
+            
         };
-        saidaMtItensRef.on('value',saidaMtItensListener,error=>{console.error('Saída MT leitura Firebase',error);const status=document.getElementById('saida-firebase-status');if(status){status.textContent='Sem acesso aos dados Saída MT. Confira as regras do Firebase.';status.style.color='#b91c1c';}});
+        saidaMtItensRef.on('value',saidaMtItensListener,error=>{console.error('Saída MT leitura Firebase',error);});
         saidaMtCargaListener=snapshot=>{if(snapshot.exists()&&window.saidaMTDefinirCarga)window.saidaMTDefinirCarga(snapshot.val());};
         saidaMtCargaRef.on('value',saidaMtCargaListener,error=>console.warn('Saída MT carga Firebase',error));
         saidaMtAuxListener=snapshot=>{const raw=snapshot.val()||{};window.saidaMTDefinirAuxiliares({clientes:raw.clientes||{},modelos:raw.modelos||[],ferro:raw.ferro||''});};
@@ -2857,7 +3051,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
                 (Array.isArray(items)?items:[]).forEach(item=>{let key=item._firebaseKey;if(!key)key=saidaMtItensRef.push().key;const copy={...item};delete copy._firebaseKey;next[key]=copy;item._firebaseKey=key;});
                 return saidaMtItensRef.set(next);
             };
-            window.saidaMTSalvarCarga=dados=>{clearTimeout(saidaMtSalvarCargaTimer);saidaMtSalvarCargaTimer=setTimeout(()=>saidaMtCargaRef&&saidaMtCargaRef.set(dados).catch(e=>{console.error(e);const status=document.getElementById('saida-firebase-status');if(status){status.textContent='Não foi possível sincronizar os dados da carga.';status.style.color='#b91c1c';}}),350);};
+            window.saidaMTSalvarCarga=dados=>{clearTimeout(saidaMtSalvarCargaTimer);saidaMtSalvarCargaTimer=setTimeout(()=>saidaMtCargaRef&&saidaMtCargaRef.set(dados).catch(e=>{console.error(e);}),350);};
             window.saidaMTGuardarClientes=data=>saidaMtAuxRef.child('clientes').set(data);
             window.saidaMTGuardarModelos=data=>saidaMtAuxRef.child('modelos').set(data);
             window.saidaMTGuardarFerro=value=>saidaMtAuxRef.child('ferro').set(value);
@@ -2895,7 +3089,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('auth-message').innerText = mensagens[error.code] || 'Não foi possível concluir. Confira a configuração de Authentication no Firebase.';
     }
 
-    const standardOperatorNames = ['FERNANDO', 'ANGELO', 'DERNEVAL'];
+    const standardOperatorNames = ['FERNANDO', 'ÂNGELO', 'GENIVAL'];
 
     function lerListaLocal(chave) {
         try {
@@ -3088,11 +3282,11 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         firebaseEdicaoLiberada = false;
         atualizarBloqueioEdicao();
         const nomeResponsavelLogin = usuarioEhAdmin ? 'FERNANDO' : '';
-        const textoPapel = usuarioEhAdmin ? ' • Administrador' : email === EMAIL_EXPORTADOR ? ' • Consulta e exportação' : ' • Produção (Ângelo/Derneval)';
+        const textoPapel = usuarioEhAdmin ? ' • Administrador' : email === EMAIL_EXPORTADOR ? ' • Consulta e exportação' : ' • Produção (Ângelo/Genival)';
         document.getElementById('user-email').innerText = (user.email || '') + textoPapel + (nomeResponsavelLogin ? ' • Produção: ' + nomeResponsavelLogin : '');
         document.getElementById('consulta-banner').textContent = email === EMAIL_EXPORTADOR
-            ? 'Consulta e exportação: esta conta pode visualizar e exportar PDF/Excel, mas não alterar os dados.'
-            : 'Produção: esta conta pode lançar como ANGELO ou DERNEVAL; não pode editar, apagar, importar ou exportar.';
+            ? '👁️ Consulta e exportação: esta conta pode visualizar e exportar PDF/Excel, mas não alterar os dados.'
+            : '👷 Produção: esta conta pode lançar como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.';
         document.querySelectorAll('.export-access').forEach(el => el.hidden = !usuarioPodeExportar);
         document.querySelectorAll('.admin-receb-edit').forEach(el => el.hidden = !usuarioEhAdminFernando());
         atualizarAcessoConfiguracoes();
@@ -3847,13 +4041,9 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     function sincronizarResponsavelAtivo(nome) {
         const select=document.getElementById('in-responsavel');
         if (!Array.from(select.options).some(o=>o.value===nome)) { const o=document.createElement('option'); o.value=nome; o.textContent=nome; select.appendChild(o); }
-        const registroEmEdicao=editandoFirebaseKey?producao.find(item=>item._firebaseKey===editandoFirebaseKey):null;
-        const permiteTrocarNoRegistro=Boolean(registroEmEdicao&&podeEditarResponsavelDoRegistro(registroEmEdicao));
-        if(!permiteTrocarNoRegistro)select.value=nome;
-        select.disabled=!permiteTrocarNoRegistro;
-        select.title=permiteTrocarNoRegistro
-            ? 'Lançamento de hoje: o administrador pode alterar o responsável.'
-            : `Responsável ativo: ${nome}. Alteração do responsável em lançamentos antigos não é permitida.`;
+        select.value=nome;
+        select.disabled=true;
+        select.title=`Responsável ativo: ${nome}. Alteração disponível nas Configurações da conta administradora.`;
         document.getElementById('user-email').innerText=`${(usuarioAtualFirebase && usuarioAtualFirebase.email) || EMAIL_ADMIN} • Administrador • ${nome}`;
         atualizarSeletoresConfiguracoes();
     }
@@ -3880,9 +4070,6 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('tab-configuracoes').setAttribute('aria-selected', String(configAtiva));
         document.getElementById('tab-receb-barras').setAttribute('aria-selected', String(rb));
         document.getElementById('tab-receb-bobinas').setAttribute('aria-selected', String(rbb));
-        const nomeAba=document.querySelector('.tabs-app .tab-app[aria-selected="true"]');
-        const rotuloAba=document.getElementById('official-current-tab');
-        if(rotuloAba&&nomeAba)rotuloAba.textContent=nomeAba.textContent.trim();
         if (configAtiva) { atualizarSeletoresConfiguracoes(); document.getElementById('config-novo-responsavel').focus(); }
     }
 
@@ -3924,27 +4111,14 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         const observacao = document.getElementById(`${prefix}-observacao`).value.trim();
         const partesData = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data);
         const dataOk = !!partesData && (() => { const d = new Date(Date.UTC(Number(partesData[1]), Number(partesData[2]) - 1, Number(partesData[3]))); return d.getUTCFullYear() === Number(partesData[1]) && d.getUTCMonth() === Number(partesData[2]) - 1 && d.getUTCDate() === Number(partesData[3]); })();
-        const fornecedorConhecido = fornecedoresRecebimento.some(nome => nome.toLocaleUpperCase('pt-BR') === fornecedor.toLocaleUpperCase('pt-BR')); // fornecedor novo é cadastrado ao registrar o recebimento
-        if (!dataOk || !fornecedor || fornecedor.length > 100 || !bitola || bitola.length > 30 || (!semEtiqueta && (!formatoPesoValido(textoEtiqueta) || !Number.isFinite(etiqueta) || etiqueta <= 0 || etiqueta > 1000000000)) || !formatoPesoValido(textoBalanca) || !Number.isFinite(balanca) || balanca <= 0 || balanca > 1000000000 || observacao.length > 200) {
-            alert('Confira a data, o fornecedor, a bitola, os pesos válidos e a observação (máximo 200 caracteres).'); return;
+        const fornecedorConhecido = fornecedoresRecebimento.some(nome => nome.toLocaleUpperCase('pt-BR') === fornecedor.toLocaleUpperCase('pt-BR'));
+        if (!dataOk || !fornecedor || fornecedor.length > 100 || !fornecedorConhecido || !bitola || bitola.length > 30 || (!semEtiqueta && (!formatoPesoValido(textoEtiqueta) || !Number.isFinite(etiqueta) || etiqueta <= 0 || etiqueta > 1000000000)) || !formatoPesoValido(textoBalanca) || !Number.isFinite(balanca) || balanca <= 0 || balanca > 1000000000 || observacao.length > 200) {
+            alert('Confira a data, o fornecedor cadastrado, a bitola, os pesos válidos e a observação (máximo 200 caracteres).'); return;
         }
         if (!recebimentosRef) { alert('Aguarde a conexão com o Firebase.'); return; }
         const registro = { criado: Date.now(), data, fornecedor, bitola, pesoEtiqueta: etiqueta, semEtiqueta, pesoBalanca: balanca, observacao };
         try {
             await recebimentosRef.child(`${tipo}/items`).push(registro);
-            const fornecedorJaSalvo=fornecedoresRecebimento.some(nome=>nome.toLocaleUpperCase('pt-BR')===fornecedor.toLocaleUpperCase('pt-BR'));
-            if(!fornecedorJaSalvo&&recebimentosFornecedoresRef){
-                try{
-                    await recebimentosFornecedoresRef.push({nome:fornecedor});
-                    fornecedoresRecebimento=[...fornecedoresRecebimento,fornecedor].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-                    atualizarFornecedoresRecebimento();
-                }catch(erroFornecedor){
-                    console.error('Recebimento salvo, mas não foi possível cadastrar o fornecedor automaticamente.',erroFornecedor);
-                    document.getElementById(`${prefix}-status`).textContent='Recebimento salvo, mas o fornecedor não foi adicionado à lista. Tente novamente ao registrar outro recebimento.';
-                    renderRecebimentos(tipo);
-                    return;
-                }
-            }
             ['data','fornecedor','peso-etiqueta','peso-balanca','observacao','outra-bitola'].forEach(k => { const el=document.getElementById(`${prefix}-${k}`); if(el) el.value=''; });
             document.getElementById(`${prefix}-data`).value=dataHojeISO();
             document.getElementById(`${prefix}-bitola`).value='';
@@ -3960,6 +4134,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     async function excluirRecebimento(tipo,id){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Excluir este recebimento?'))return;try{await recebimentosRef.child(`${tipo}/items/${id}`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     async function apagarHistoricoRecebimento(tipo){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Apagar todos os recebimentos desta aba?'))return;try{await recebimentosRef.child(`${tipo}/items`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     function limparFiltrosRecebimento(tipo){const p=tipo==='barras'?'rb':'rbb';document.getElementById(`${p}-inicio`).value='';document.getElementById(`${p}-fim`).value='';renderRecebimentos(tipo)}
+
     function exportarRecebimentosPDF(tipo) {
         if (!usuarioPodeExportar) { alert('Esta conta não pode exportar.'); return; }
         if (!['barras', 'bobinas'].includes(tipo)) { alert('Tipo de relatório inválido.'); return; }
@@ -4163,57 +4338,6 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         catch (error) { mostrarErroFirebase(error); }
     }
 
-    let areaRelatorioSelecionada='producao';
-    function abrirModalRelatorioProducao(area='producao'){
-        if(!usuarioPodeExportar){alert('Esta conta não tem permissão para gerar relatórios.');return}
-        if(!['producao','bobinas','receb-barras','receb-bobinas'].includes(area))return;
-        areaRelatorioSelecionada=area;
-        const modal=document.getElementById('production-report-modal');
-        const select=document.getElementById('production-report-format');
-        const importar=document.getElementById('production-report-import-option');
-        const titulos={producao:'Produção de estribos',bobinas:'Bobinas','receb-barras':'Recebimento de barras 12 m','receb-bobinas':'Recebimento de bobinas'};
-        document.getElementById('production-report-title').textContent=`Gerar relatório — ${titulos[area]}`;
-        if(importar)importar.hidden=area!=='producao'||!usuarioEhAdmin;
-        if(importar)importar.disabled=area!=='producao'||!usuarioEhAdmin;
-        document.getElementById('production-report-modal').querySelector('.production-report-dialog .hint').textContent=area.startsWith('receb-')?'O relatório usará o período selecionado nesta aba.':'O relatório usará os filtros selecionados nesta aba.';
-        if(!select.querySelector('option[value="excel"]'))select.insertAdjacentHTML('beforeend','<option value="excel">Exportar Excel</option>');
-        select.value='';modal.hidden=false;select.focus();
-    }
-    function fecharModalRelatorioProducao(){const modal=document.getElementById('production-report-modal');if(modal)modal.hidden=true}
-    document.querySelectorAll('[data-close-production-report]').forEach(el=>el.addEventListener('click',fecharModalRelatorioProducao));
-    document.addEventListener('keydown',event=>{if(event.key==='Escape')fecharModalRelatorioProducao()});
-    document.getElementById('production-report-form').addEventListener('submit',event=>{
-        event.preventDefault();
-        const formato=document.getElementById('production-report-format').value;
-        if(!formato){document.getElementById('production-report-format').focus();return}
-        fecharModalRelatorioProducao();
-        if(formato==='import'){if(areaRelatorioSelecionada==='producao'&&usuarioEhAdmin)document.getElementById('file-input').click();else alert('A importação está disponível apenas na Produção de estribos para o administrador.');return}
-        executarExportacao(areaRelatorioSelecionada,formato);
-    });
-
-    function alternarMenuExportacao(botao) {
-        const menu=botao&&botao.parentElement&&botao.parentElement.querySelector('.export-menu-options');
-        if(!menu)return;
-        const abrir=menu.hidden;
-        document.querySelectorAll('.export-menu-options').forEach(el=>{el.hidden=true;const b=el.parentElement.querySelector('.export-menu-toggle');if(b)b.setAttribute('aria-expanded','false')});
-        menu.hidden=!abrir;botao.setAttribute('aria-expanded',String(abrir));
-    }
-    document.addEventListener('click',event=>{if(!event.target.closest('.export-menu'))document.querySelectorAll('.export-menu-options').forEach(el=>{el.hidden=true;const b=el.parentElement.querySelector('.export-menu-toggle');if(b)b.setAttribute('aria-expanded','false')})});
-    document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.export-menu-options').forEach(el=>{el.hidden=true;const b=el.parentElement.querySelector('.export-menu-toggle');if(b)b.setAttribute('aria-expanded','false')})});
-    function baixarRelatorioPDF(tipo){
-        if(!usuarioPodeExportar){alert('Esta conta não tem permissão para exportar.');return}
-        if(tipo==='producao'&&!firebaseProducaoPronto){alert('Aguarde o carregamento dos registros antes de gerar o PDF.');return}
-        if(tipo==='bobinas'&&!bobinasRef){alert('Aguarde o carregamento dos registros de bobinas antes de gerar o PDF.');return}
-        try{const arquivo=gerarArquivoRelatorio(tipo,'pdf');const url=URL.createObjectURL(arquivo.blob);const a=document.createElement('a');a.href=url;a.download=arquivo.filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)}catch(error){alert(error.message||'Não foi possível gerar o PDF.')}
-    }
-    function executarExportacao(aba,formato){
-        document.querySelectorAll('.export-menu-options').forEach(el=>{el.hidden=true;const b=el.parentElement.querySelector('.export-menu-toggle');if(b)b.setAttribute('aria-expanded','false')});
-        if(aba==='producao'){if(formato==='pdf')baixarRelatorioPDF('producao');else if(formato==='excel')exportarExcel();return}
-        if(aba==='bobinas'){if(formato==='pdf')baixarRelatorioPDF('bobinas');else if(formato==='excel')exportarBobinasExcel();return}
-        if(aba==='receb-barras'||aba==='receb-bobinas'){const tipo=aba==='receb-barras'?'barras':'bobinas';if(formato==='pdf')exportarRecebimentosPDF(tipo);else if(formato==='excel')exportarRecebimentos(tipo);return}
-        if(aba==='configuracoes')imprimirAbaAtual();
-    }
-
     function imprimirAbaAtual() {
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para imprimir ou exportar.'); return; }
         const abas=[['producao','producao-page','Relatório de produção'],['bobinas','bobinas-page','Cadastro de bobinas'],['receb-barras','receb-barras-page','Recebimento de barras de 12 m'],['receb-bobinas','receb-bobinas-page','Recebimento de bobinas'],['configuracoes','config-page','Configurações de responsáveis']];
@@ -4367,10 +4491,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         const qtdEmb = Number(document.getElementById('in-qtd-emb').value);
         const totalEmb = Number(document.getElementById('in-total-emb').value);
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
-        const podeAlterarResponsavelAtual = Boolean(registroEmEdicao && podeEditarResponsavelDoRegistro(registroEmEdicao));
-        const responsavel = registroEmEdicao
-            ? (podeAlterarResponsavelAtual ? document.getElementById('in-responsavel').value : registroEmEdicao.responsavel)
-            : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
+        const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
         if (!usuarioEhAdmin && !nomesOperadoresAtivos().includes(String(responsavel||'').toLocaleUpperCase('pt-BR'))) { alert('Selecione um responsável que esteja ativo na lista administrada.'); return; }
         if (!usuarioEhAdmin && registroEmEdicao) { alert('A conta de produção só pode criar lançamentos novos; edição é exclusiva do administrador.'); return; }
 
@@ -4603,10 +4724,6 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('kpi-embalagens').innerText = somaEmbGeral.toLocaleString('pt-BR');
     }
 
-    function podeEditarResponsavelDoRegistro(item) {
-        return Boolean(usuarioEhAdminFernando() && item && item.dataFormatada === formatarData(dataHojeISO()));
-    }
-
     function editarItem(key) {
         if (!firebaseEdicaoLiberada || !usuarioEhAdmin) return;
         const index = producao.findIndex(item => item._firebaseKey === key);
@@ -4620,16 +4737,10 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('in-embalagem').value = item.embalagem;
         document.getElementById('in-qtd-emb').value = item.qtdEmb;
         document.getElementById('in-total-emb').value = item.totalEmb;
-        const campoResponsavel = document.getElementById('in-responsavel');
-        campoResponsavel.value = item.responsavel;
-        const podeAlterarResponsavel = podeEditarResponsavelDoRegistro(item);
-        campoResponsavel.disabled = !podeAlterarResponsavel;
-        campoResponsavel.title = podeAlterarResponsavel
-            ? 'Neste lançamento de hoje, o administrador pode alterar o responsável.'
-            : 'O responsável só pode ser alterado pelo administrador em lançamentos do dia atual.';
+        document.getElementById('in-responsavel').value = item.responsavel;
 
         const btnAdd = document.getElementById('btn-add');
-        btnAdd.innerText = "Salvar Alteração";
+        btnAdd.innerText = "💾 Salvar Alteração";
         btnAdd.style.backgroundColor = "var(--warning)";
         
         document.getElementById('btn-cancel').style.display = "block";
@@ -4642,9 +4753,6 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         editandoFirebaseKey = null;
         editandoAssinaturaOriginal = null;
         limparFormulario();
-        const campoResponsavel=document.getElementById('in-responsavel');
-        campoResponsavel.disabled=true;
-        campoResponsavel.title=`Responsável ativo: ${responsavelAtivoFirebase||'—'}. Alteração disponível nas Configurações da conta administradora.`;
         
         const btnAdd = document.getElementById('btn-add');
         btnAdd.innerText = "+ Adicionar";
@@ -4851,11 +4959,11 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
                 }
 
                 if (duplicados > 0 && registrosParaAdicionar.length > 0) {
-                    alert(`Importação concluída: ${gravados} novo(s) registro(s) gravado(s).\n\n${duplicados} registro(s) igual(is) já existiam e foram ignorados. Os dados anteriores foram mantidos.`);
+                    alert(`Importação concluída: ${gravados} novo(s) registro(s) gravado(s).\n\n⚠️ ${duplicados} registro(s) igual(is) já existiam e foram ignorados. Os dados anteriores foram mantidos.`);
                 } else if (duplicados > 0) {
-                    alert(`Os ${duplicados} registro(s) do arquivo já existiam. Nenhum foi adicionado e seus dados foram mantidos.`);
+                    alert(`⚠️ Os ${duplicados} registro(s) do arquivo já existiam. Nenhum foi adicionado e seus dados foram mantidos.`);
                 } else {
-                    alert(`Importação concluída: ${gravados} novo(s) registro(s) gravado(s), sem substituir os atuais.`);
+                    alert(`✅ Importação concluída: ${gravados} novo(s) registro(s) gravado(s), sem substituir os atuais.`);
                 }
             } else {
                 alert('Nenhum registro válido encontrado.' + (invalidos ? ` ${invalidos} linha(s) foram rejeitadas por dados inválidos.` : ''));
@@ -4903,14 +5011,27 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         if (!usuarioPodeExportar) { alert('Esta conta não tem permissão para exportar.'); return; }
         if (!window.XLSX) { alert('A biblioteca de planilhas não carregou. Confira sua conexão e tente novamente.'); return; }
         if (!firebaseProducaoPronto) { alert('Aguarde o carregamento dos registros antes de exportar.'); return; }
-        if (producao.length === 0) {
-            alert("Não há dados para exportar!");
-            return;
-        }
+        const disponiveis = producao.filter(item => registroCorrespondeBusca(item) && registroNoMes(item, filtroMesAtual));
+        if (!disponiveis.length) { alert('Não há registros para o mês e os filtros selecionados.'); return; }
+        const select = document.getElementById('relatorio-responsavel-select');
+        const nomes = [...new Set(disponiveis.map(item => String(item.responsavel || 'Sem nome').trim() || 'Sem nome'))]
+            .sort((a,b) => a.localeCompare(b, 'pt-BR', {sensitivity:'base'}));
+        select.innerHTML = nomes.map(nome => `<option value="${escaparHtml(nome)}">${escaparHtml(nome)}</option>`).join('');
+        document.getElementById('relatorio-escolha-modal').hidden = false;
+        atualizarOpcaoResponsavelRelatorio();
+    }
 
+    function atualizarOpcaoResponsavelRelatorio() {
+        const porResponsavel = document.querySelector('input[name="relatorio-tipo"]:checked')?.value === 'responsavel';
+        document.getElementById('relatorio-responsavel-wrap').hidden = !porResponsavel;
+        document.getElementById('relatorio-responsavel-nome').required = porResponsavel;
+    }
+
+    function executarExportacaoExcel(tipoRelatorio, responsavelEscolhido) {
         const dadosExibicao = producao
             .map((item, indice) => ({ ...item, _indiceOriginal: indice }))
-            .filter(item => registroCorrespondeBusca(item) && registroNoMes(item, filtroMesAtual));
+            .filter(item => registroCorrespondeBusca(item) && registroNoMes(item, filtroMesAtual) &&
+                (tipoRelatorio !== 'responsavel' || (String(item.responsavel || 'Sem nome').trim() || 'Sem nome') === responsavelEscolhido));
 
         // No Excel, liste os lançamentos em ordem cronológica: dia mais antigo primeiro.
         // A tela continua usando a ordenação decrescente (mais novo primeiro).
@@ -4971,8 +5092,86 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
 
         const dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
         const sufixo = filtroAtual ? `_${filtroAtual.replace(/[^a-zA-Z0-9_-]/g, '_')}` : '';
-        XLSX.writeFile(workbook, `Producao_Estribos_${dataHoje}${sufixo}.xlsx`);
+        const sufixoResponsavel = tipoRelatorio === 'responsavel' ? `_Responsavel_${responsavelEscolhido.replace(/[^a-zA-Z0-9_-]/g, '_')}` : '_Completo';
+        XLSX.writeFile(workbook, `Producao_Estribos_${dataHoje}${sufixo}${sufixoResponsavel}.xlsx`);
     }
+
+    let relatorioSecaoAtual = 'producao';
+    const nomeSecaoRelatorio = {producao:'Relatório de produção de estribos',bobinas:'Relatório de bobinas',barras:'Recebimento de barras de 12 m',recebimentosBobinas:'Recebimento de bobinas'};
+    function dataParaISO(valor){const s=String(valor||'').trim();if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;const m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(s);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:'';}
+    function periodoDataInicial(mes){return mes?`${mes}-01`:'';}
+    function periodoDataFinal(mes){if(!mes)return '';const [y,m]=mes.split('-').map(Number);return `${y}-${String(m).padStart(2,'0')}-${String(new Date(y,m,0).getDate()).padStart(2,'0')}`;}
+    function abrirExportacaoSecao(tipo){
+      if(!usuarioPodeExportar){alert('Esta conta não tem permissão para exportar.');return;}
+      if(!['producao','bobinas','barras','recebimentosBobinas'].includes(tipo)){alert('Tipo de relatório inválido.');return;}
+      if(tipo==='producao'&&!firebaseProducaoPronto){alert('Aguarde o carregamento da produção antes de gerar o relatório.');return;}
+      if(tipo==='bobinas'&&!bobinasRef){alert('Aguarde o carregamento das bobinas antes de gerar o relatório.');return;}
+      relatorioSecaoAtual=tipo;
+      const titulo=document.getElementById('relatorio-escolha-titulo');
+      const ajuda=document.getElementById('relatorio-escolha-ajuda');
+      titulo.textContent=nomeSecaoRelatorio[tipo];
+      ajuda.textContent='Escolha Excel ou PDF e informe o período. Deixe as datas vazias para incluir todo o histórico.';
+      const inicio=document.getElementById('relatorio-data-inicio'),fim=document.getElementById('relatorio-data-fim');
+      const mes=tipo==='producao'?filtroMesAtual:tipo==='bobinas'?filtroMesBobinas:'';
+      inicio.value=mes?periodoDataInicial(mes):(tipo==='barras'?document.getElementById('rb-inicio').value:tipo==='recebimentosBobinas'?document.getElementById('rbb-inicio').value:'');
+      fim.value=mes?periodoDataFinal(mes):(tipo==='barras'?document.getElementById('rb-fim').value:tipo==='recebimentosBobinas'?document.getElementById('rbb-fim').value:'');
+      document.getElementById('relatorio-producao-opcoes').hidden=tipo!=='producao';
+      document.getElementById('relatorio-formato-select').value='excel';
+      document.querySelector('input[name="relatorio-tipo"][value="completo"]').checked=true;
+      if(tipo==='producao'){document.getElementById('relatorio-responsavel-nome').value='';preencherResponsaveisRelatorio();}
+      atualizarOpcaoResponsavelRelatorio();
+      document.getElementById('relatorio-escolha-modal').hidden=false;
+    }
+    function normalizarResponsavelRelatorio(nome){return String(nome||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().toLocaleUpperCase('pt-BR');}
+    function obterNomesResponsaveisRelatorio(){const inicio=document.getElementById('relatorio-data-inicio').value,fim=document.getElementById('relatorio-data-fim').value;const disponiveis=producao.filter(x=>dataDentroPeriodo(dataParaISO(x.dataFormatada),inicio,fim)&&registroCorrespondeBusca(x));return [...new Set(disponiveis.map(x=>String(x.responsavel||'Sem nome').trim()||'Sem nome'))].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));}
+    function preencherResponsaveisRelatorio(){const nomes=obterNomesResponsaveisRelatorio();document.getElementById('relatorio-responsavel-sugestoes').innerHTML=nomes.map(n=>`<option value="${escaparHtml(n)}"></option>`).join('');}
+    function resolverResponsavelRelatorio(digitado){const chave=normalizarResponsavelRelatorio(digitado);return obterNomesResponsaveisRelatorio().find(n=>normalizarResponsavelRelatorio(n)===chave)||'';}
+    document.getElementById('relatorio-data-inicio').addEventListener('change',()=>{if(relatorioSecaoAtual==='producao')preencherResponsaveisRelatorio();});
+    document.getElementById('relatorio-data-fim').addEventListener('change',()=>{if(relatorioSecaoAtual==='producao')preencherResponsaveisRelatorio();});
+    function dataDentroPeriodo(data,inicio,fim){return !!data&&(!inicio||data>=inicio)&&(!fim||data<=fim);}
+    function obterDadosExportacao(tipo,inicio,fim,escopo,nomeResponsavel){
+      if(tipo==='producao')return producao.map((x,i)=>({...x,_indiceOriginal:i})).filter(x=>dataDentroPeriodo(dataParaISO(x.dataFormatada),inicio,fim)&&registroCorrespondeBusca(x)&&(escopo!=='responsavel'||(String(x.responsavel||'Sem nome').trim()||'Sem nome')===nomeResponsavel)).sort((a,b)=>dataParaISO(a.dataFormatada).localeCompare(dataParaISO(b.dataFormatada))||a._indiceOriginal-b._indiceOriginal);
+      if(tipo==='bobinas')return bobinas.filter(x=>x&&x.bitola&&x.fornecedor&&dataDentroPeriodo(dataParaISO(x.dataFormatada),inicio,fim)).slice().sort((a,b)=>dataParaISO(a.dataFormatada).localeCompare(dataParaISO(b.dataFormatada)));
+      const recTipo=tipo==='barras'?'barras':'bobinas';
+      return recebimentos[recTipo].filter(x=>x&&dataDentroPeriodo(String(x.data||''),inicio,fim)).slice().sort((a,b)=>String(a.data).localeCompare(String(b.data))||Number(a.criado||0)-Number(b.criado||0));
+    }
+    function matrizRelatorio(tipo,registros){
+      if(tipo==='producao')return {headers:['Data','Estribo','Bitola','Embalagem','Qtd. embalagem','Total embalagens','Total peças','Responsável'],rows:registros.map(x=>[x.dataFormatada||'',x.produto||'',x.bitola||'',x.embalagem||'',Number(x.qtdEmb)||0,Number(x.totalEmb)||0,Number(x.totalPecas)||0,x.responsavel||'Sem nome']),totals:['TOTAL', '', '', '', '',registros.reduce((s,x)=>s+(Number(x.totalEmb)||0),0),registros.reduce((s,x)=>s+(Number(x.totalPecas)||0),0),'']};
+      if(tipo==='bobinas')return {headers:['Data','Categoria / bitola','Peso da bobina (kg)','Fornecedor'],rows:registros.map(x=>[x.dataFormatada||'',x.bitola||x.nome||'Registro antigo',Number(x.kg)||0,x.fornecedor||'']),totals:['TOTAL','',registros.reduce((s,x)=>s+(Number(x.kg)||0),0),'']};
+      const rows=registros.map(x=>{const d=x.semEtiqueta?null:(Number(x.pesoBalanca)||0)-(Number(x.pesoEtiqueta)||0),p=d!==null&&Number(x.pesoEtiqueta)?d/Number(x.pesoEtiqueta)*100:null;return [String(x.data||'').split('-').reverse().join('/'),x.fornecedor||'',x.bitola||'',x.semEtiqueta?'Sem etiqueta':Number(x.pesoEtiqueta)||0,Number(x.pesoBalanca)||0,d===null?'Não calculável':d,p===null?'Não calculável':p,x.observacao||''];});
+      const sem=registros.filter(x=>x.semEtiqueta);const etiqueta=registros.reduce((s,x)=>s+(!x.semEtiqueta?(Number(x.pesoEtiqueta)||0):0),0),balComp=registros.reduce((s,x)=>s+(!x.semEtiqueta?(Number(x.pesoBalanca)||0):0),0),balAll=registros.reduce((s,x)=>s+(Number(x.pesoBalanca)||0),0),dif=balComp-etiqueta,pct=etiqueta?100*dif/etiqueta:0;
+      return {headers:['Data','Fornecedor','Bitola','Etiqueta (kg)','Balança (kg)','Diferença (kg)','Variação (%)','Observação'],rows,totals:['TOTAL',`${registros.length} carga(s)`,`${sem.length} sem etiqueta`,etiqueta,balAll,dif,pct,'Diferença e variação: apenas cargas com etiqueta'],extraTotals:[['Balança com etiqueta (kg)',balComp],['Balança sem etiqueta (kg)',balAll-balComp]]};
+    }
+    function gerarRelatorioUniversal(tipo,formato,inicio,fim,escopo,nomeResponsavel){
+      const registros=obterDadosExportacao(tipo,inicio,fim,escopo,nomeResponsavel);
+      if(!registros.length)throw new Error('Não há registros no período selecionado.');
+      const model=matrizRelatorio(tipo,registros),titulo=nomeSecaoRelatorio[tipo],periodo=`${inicio?inicio.split('-').reverse().join('/'):'Início do histórico'} até ${fim?fim.split('-').reverse().join('/'):'fim do histórico'}`,gerado=new Date().toLocaleString('pt-BR');
+      const sub=tipo==='producao'?`${escopo==='responsavel'?`Responsável: ${nomeResponsavel}`:'Todos os responsáveis'}${filtroAtual?` | Busca: ${filtroAtual}`:''}`:'';
+      const nomeBase=`${tipo==='recebimentosBobinas'?'Recebimento_bobinas':tipo==='barras'?'Recebimento_barras':tipo==='producao'?'Producao_Estribos':'Bobinas'}_${inicio||'inicio'}_${fim||'hoje'}${sub&&escopo==='responsavel'?'_'+nomeResponsavel.replace(/[^a-zA-Z0-9_-]/g,'_'):''}`;
+      if(formato==='excel'){
+        if(!window.XLSX)throw new Error('A biblioteca de Excel não carregou. Confira a conexão.');
+        const aoa=[[titulo],['Período',periodo],['Gerado em',gerado],...(sub?[['Filtro',sub]]:[]),[],model.headers,...model.rows,model.totals,...(model.extraTotals||[])].map(row=>row.map(value=>typeof value==='string'?escaparCelulaExcel(value):value));
+        const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=model.headers.map((h,i)=>({wch:Math.min(32,Math.max(14,String(h).length+3,...model.rows.slice(0,50).map(r=>String(r[i]??'').length+2)))}));
+        const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,tipo==='producao'?'Produção':tipo==='bobinas'?'Bobinas':tipo==='barras'?'Barras 12m':'Bobinas receb.');XLSX.writeFile(wb,`${nomeBase}.xlsx`);return;
+      }
+      if(!window.jspdf||!window.jspdf.jsPDF)throw new Error('A biblioteca PDF não carregou. Confira a conexão.');
+      const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'}),w=pdf.internal.pageSize.getWidth(),h=pdf.internal.pageSize.getHeight(),margin=10,usable=w-margin*2;
+      const widths=model.headers.map(()=>usable/model.headers.length),fontSize=model.headers.length>6?7:8;
+      const writeHeader=()=>{pdf.setFont('helvetica','bold');pdf.setFontSize(15);pdf.text(titulo,margin,12);pdf.setFont('helvetica','normal');pdf.setFontSize(9);pdf.text(`Período: ${periodo}  |  Emitido: ${gerado}`,margin,18);if(sub)pdf.text(sub,margin,23);};
+      let y=sub?28:24;const lineHeight=fontSize*.48;writeHeader();
+      const drawRow=(row,bold=false,isHeader=false)=>{pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(fontSize);const wrapped=row.map((v,i)=>pdf.splitTextToSize(String(v??''),widths[i]-2));const lines=Math.max(1,...wrapped.map(a=>a.length));let offset=0;while(offset<lines){const minHeight=Math.max(7,lineHeight+3);if(y+minHeight>h-margin){pdf.addPage();writeHeader();y=sub?28:24;if(!isHeader)drawRow(model.headers,true,true);pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(fontSize);}const available=Math.max(1,Math.floor((h-margin-y-3)/lineHeight));const count=Math.min(lines-offset,available),rowH=Math.max(7,count*lineHeight+3);let x=margin;row.forEach((v,i)=>{pdf.rect(x,y,widths[i],rowH);const part=wrapped[i].slice(offset,offset+count);if(part.length)pdf.text(part,x+1,y+fontSize*.5+1,{maxWidth:widths[i]-2});x+=widths[i];});y+=rowH;offset+=count;}};
+      drawRow(model.headers,true,true);model.rows.forEach(r=>drawRow(r));drawRow(model.totals,true);(model.extraTotals||[]).forEach(r=>drawRow([...r,...Array(model.headers.length-r.length).fill('')],true));pdf.save(`${nomeBase}.pdf`);
+    }
+    function confirmarExportacaoSecao(event){event.preventDefault();if(!usuarioPodeExportar){alert('Esta conta não tem permissão para exportar.');return;}const inicio=document.getElementById('relatorio-data-inicio').value,fim=document.getElementById('relatorio-data-fim').value;if(inicio&&fim&&inicio>fim){alert('A data inicial não pode ser posterior à data final.');return;}const tipoRel=document.querySelector('input[name="relatorio-tipo"]:checked')?.value||'completo',digitado=document.getElementById('relatorio-responsavel-nome').value,nome=tipoRel==='responsavel'?resolverResponsavelRelatorio(digitado):'';if(relatorioSecaoAtual==='producao'&&tipoRel==='responsavel'&&!nome){alert(digitado.trim()?'Esse nome não corresponde a um responsável com registros no período. Escolha uma das sugestões.':'Digite ou selecione um responsável nas sugestões.');document.getElementById('relatorio-responsavel-nome').focus();return;}try{gerarRelatorioUniversal(relatorioSecaoAtual,document.getElementById('relatorio-formato-select').value,inicio,fim,tipoRel,nome);document.getElementById('relatorio-escolha-modal').hidden=true;}catch(e){alert(e.message||'Não foi possível gerar o relatório.');}}
+    document.querySelectorAll('input[name="relatorio-tipo"]').forEach(el=>el.addEventListener('change',atualizarOpcaoResponsavelRelatorio));
+    document.getElementById('relatorio-escolha-cancelar').addEventListener('click',()=>{document.getElementById('relatorio-escolha-modal').hidden=true;});
+    document.getElementById('relatorio-escolha-modal').addEventListener('click',e=>{if(e.target.id==='relatorio-escolha-modal')e.currentTarget.hidden=true;});
+    document.getElementById('relatorio-escolha-form').addEventListener('submit',confirmarExportacaoSecao);
+    window.abrirExportacaoSecao=abrirExportacaoSecao;
+    window.exportarBobinasExcel=()=>abrirExportacaoSecao('bobinas');
+    window.exportarRecebimentos=tipo=>abrirExportacaoSecao(tipo==='barras'?'barras':'recebimentosBobinas');
+    window.exportarExcel=()=>abrirExportacaoSecao('producao');
+
 
     // Inicializa a tela e conecta a sincronização em nuvem.
     renderizarTabela();
