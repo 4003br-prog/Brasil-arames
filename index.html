@@ -369,6 +369,7 @@
         .recebimento-page[hidden]{display:none!important}
         body[data-theme="noite"] .recebimento-panel,body[data-theme="noite"] .recebimento-kpi{background:#1b2638;color:#e4eaf5}
         @media(max-width:600px){.recebimento-panel{padding:14px}.recebimento-grid{grid-template-columns:1fr 1fr}.recebimento-kpis{grid-template-columns:repeat(2,1fr)}}
+        .rc-kpis{margin-bottom:14px}.rc-modo-field{border:0;padding:0;margin:8px 0 14px}.rc-modo-field legend{font-size:12px;font-weight:700;margin-bottom:6px}.rc-modos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:4px;border:1px solid var(--border);border-radius:9px;background:var(--surface-2,#f5f6fb)}.rc-modos label{display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 6px;border-radius:7px;font-size:12px;font-weight:650;cursor:pointer}.rc-modos label:has(input:checked){background:#fff;box-shadow:0 1px 5px rgba(45,54,118,.12);color:var(--primary)}.rc-modos input{accent-color:var(--primary)}.rc-preview{display:flex;align-items:center;justify-content:space-between;gap:12px}.rc-preview small{color:var(--muted);font-size:11px}.rc-preview strong{font-size:18px}
         .bobinas-dashboard { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:0 0 18px; }
         .bobinas-form, .bobinas-section { background:#fff; padding:20px; border-radius:16px; box-shadow:var(--shadow-soft),inset 0 1px 0 #fff; margin-bottom:18px; }
         .bobinas-section h3 { color:var(--primary); }
@@ -579,7 +580,7 @@
             body.printing-report .table-header { display:none!important; }
             body.printing-report .recebimento-toolbar { display:block!important; }
             body.printing-report .recebimento-toolbar h2 { display:none!important; }
-            body.printing-report #producao-page[hidden],body.printing-report #bobinas-page[hidden],body.printing-report #receb-barras-page[hidden],body.printing-report #receb-bobinas-page[hidden],body.printing-report
+            body.printing-report #producao-page[hidden],body.printing-report #bobinas-page[hidden],body.printing-report #receb-barras-page[hidden],body.printing-report #receb-bobinas-page[hidden],body.printing-report #receb-caixas-page[hidden],body.printing-report
             body.printing-report #production-form-section,body.printing-report #producao-page>.dashboard,body.printing-report #bobinas-page>.bobinas-dashboard,body.printing-report #bobinas-page>.bobinas-form { display:none!important; }
             
             body.printing-report .auth-message { display:none!important; }
@@ -1462,48 +1463,48 @@ body[data-theme="saida-mt"] .autocomplete-items, body[data-theme="saida-mt"] .au
 .relatorio-escolha-card{max-height:calc(100vh - 36px);overflow-y:auto;background:var(--ui-surface,#fff)!important;color:var(--ui-text,#203b31)!important;border-color:var(--ui-border,#d0e2d4)!important}.relatorio-escolha-card .field{margin:0 0 14px}.relatorio-escolha-card .field[hidden]{display:none!important}.relatorio-escolha-card .field label{display:block;font-size:.88rem;font-weight:600;margin:0 0 6px}.relatorio-escolha-card .field input,.relatorio-escolha-card .field select{width:100%;min-height:42px;box-sizing:border-box;padding:10px 12px;border-radius:9px;border:1px solid var(--ui-border,#d0e2d4);background:var(--ui-surface,#fff);color:var(--ui-text,#203b31)}
 
 /* Interface unificada no padrão visual da Saída MT: Produção, Bobinas e recebimentos. */
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page){
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page){
   --page-bg:var(--ui-page,#eef6ef);--panel-bg:var(--ui-surface,#fff);--panel-soft:var(--ui-surface-2,#eff8f0);
   --panel-text:var(--ui-text,#203b31);--panel-muted:var(--ui-muted,#5c7568);--panel-border:var(--ui-border,#d0e2d4);
   --panel-primary:var(--ui-primary,#087a5b);--panel-primary-deep:var(--ui-primary-deep,#05573f);
   color:var(--panel-text)!important;
 }
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section,.recebimento-panel,.recebimento-kpi,.resumo-busca-producao){
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section,.recebimento-panel,.recebimento-kpi,.resumo-busca-producao){
   box-sizing:border-box;color:var(--panel-text)!important;background:var(--panel-bg)!important;border:1px solid var(--panel-border)!important;
   border-radius:14px!important;box-shadow:0 4px 14px var(--ui-shadow,rgba(25,91,60,.14))!important;
 }
 :is(#producao-page,#bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section){padding:20px!important}
-:is(#receb-barras-page,#receb-bobinas-page) :is(.recebimento-panel,.recebimento-kpi){padding:20px!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(h2,h3,.table-header h3,.daily-summary-header h3,.recebimento-toolbar h2,.bobinas-section h3){color:var(--panel-primary-deep)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.card p,.hint,.recebimento-kpi small){color:var(--panel-muted)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(label,.field label,.input-group label){color:var(--panel-text)!important;font-weight:600}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){
+:is(#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.recebimento-panel,.recebimento-kpi){padding:20px!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(h2,h3,.table-header h3,.daily-summary-header h3,.recebimento-toolbar h2,.bobinas-section h3){color:var(--panel-primary-deep)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.card p,.hint,.recebimento-kpi small){color:var(--panel-muted)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(label,.field label,.input-group label){color:var(--panel-text)!important;font-weight:600}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea){
   box-sizing:border-box;min-height:42px;padding:10px 12px!important;border:1px solid var(--panel-border)!important;border-radius:9px!important;
   background:var(--panel-bg)!important;color:var(--panel-text)!important;box-shadow:none!important;transition:border-color .15s,box-shadow .15s
 }
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea):focus{outline:none!important;border-color:var(--panel-primary)!important;box-shadow:0 0 0 3px var(--ui-shadow,rgba(25,91,60,.14))!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.table-responsive,.table-section,.bobinas-section,.recebimento-table-wrap){overflow-x:auto}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(table,.recebimento-table){border-collapse:collapse;border-radius:10px;overflow:hidden}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(th,.table-header,.daily-summary-header,.recebimento-table th){background:var(--panel-soft)!important;color:var(--panel-text)!important;border-color:var(--panel-border)!important;font-weight:700}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(td,.recebimento-table td){color:var(--panel-text)!important;border-color:var(--panel-border)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(tbody tr:hover,.recebimento-table tbody tr:hover){background:var(--panel-soft)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-add,.btn-import,.btn-excel,.btn-pdf,.btn-primary,.btn-success,.btn-secondary,.btn-cancel,.btn-clear,.btn-refresh-month,.actions button,.bobinas-actions button,.toolbar-group button,.config-actions button){
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),select,textarea):focus{outline:none!important;border-color:var(--panel-primary)!important;box-shadow:0 0 0 3px var(--ui-shadow,rgba(25,91,60,.14))!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.table-responsive,.table-section,.bobinas-section,.recebimento-table-wrap){overflow-x:auto}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(table,.recebimento-table){border-collapse:collapse;border-radius:10px;overflow:hidden}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(th,.table-header,.daily-summary-header,.recebimento-table th){background:var(--panel-soft)!important;color:var(--panel-text)!important;border-color:var(--panel-border)!important;font-weight:700}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(td,.recebimento-table td){color:var(--panel-text)!important;border-color:var(--panel-border)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(tbody tr:hover,.recebimento-table tbody tr:hover){background:var(--panel-soft)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.btn-add,.btn-import,.btn-excel,.btn-pdf,.btn-primary,.btn-success,.btn-secondary,.btn-cancel,.btn-clear,.btn-refresh-month,.actions button,.bobinas-actions button,.toolbar-group button,.config-actions button){
   min-height:40px;padding:9px 15px!important;border-radius:9px!important;border:1px solid transparent!important;font-weight:700!important;line-height:1.2;box-shadow:0 2px 5px rgba(15,23,42,.10)!important;transition:transform .15s,filter .15s,box-shadow .15s!important
 }
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-add,.btn-import,.btn-primary,.btn-success){background:linear-gradient(135deg,var(--panel-primary),var(--panel-primary-deep))!important;color:#fff!important;border-color:var(--panel-primary-deep)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-excel,.btn-pdf){background:linear-gradient(135deg,var(--panel-primary),var(--panel-primary-deep))!important;color:#fff!important;border-color:var(--panel-primary-deep)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-secondary,.btn-cancel,.btn-refresh-month){background:var(--panel-soft)!important;color:var(--panel-primary-deep)!important;border-color:var(--panel-border)!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.btn-clear,.btn-danger){background:linear-gradient(135deg,#ef4444,#b91c1c)!important;color:#fff!important;border-color:#b91c1c!important}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.04)}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) button:focus-visible{outline:3px solid var(--panel-primary)!important;outline-offset:2px}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.actions,.bobinas-actions,.toolbar-group){gap:10px}
-:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.dashboard,.bobinas-dashboard,.recebimento-kpis){gap:14px}
-:is(#receb-barras-page,#receb-bobinas-page) .recebimento-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-:is(#receb-barras-page,#receb-bobinas-page) .recebimento-preview{border-radius:10px;border:1px solid var(--panel-border);background:var(--panel-soft);color:var(--panel-text)}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.btn-add,.btn-import,.btn-primary,.btn-success){background:linear-gradient(135deg,var(--panel-primary),var(--panel-primary-deep))!important;color:#fff!important;border-color:var(--panel-primary-deep)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.btn-excel,.btn-pdf){background:linear-gradient(135deg,var(--panel-primary),var(--panel-primary-deep))!important;color:#fff!important;border-color:var(--panel-primary-deep)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.btn-secondary,.btn-cancel,.btn-refresh-month){background:var(--panel-soft)!important;color:var(--panel-primary-deep)!important;border-color:var(--panel-border)!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.btn-clear,.btn-danger){background:linear-gradient(135deg,#ef4444,#b91c1c)!important;color:#fff!important;border-color:#b91c1c!important}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.04)}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) button:focus-visible{outline:3px solid var(--panel-primary)!important;outline-offset:2px}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.actions,.bobinas-actions,.toolbar-group){gap:10px}
+:is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.dashboard,.bobinas-dashboard,.recebimento-kpis){gap:14px}
+:is(#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) .recebimento-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+:is(#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) .recebimento-preview{border-radius:10px;border:1px solid var(--panel-border);background:var(--panel-soft);color:var(--panel-text)}
 @media(max-width:700px){
-  :is(#producao-page,#bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section),:is(#receb-barras-page,#receb-bobinas-page) .recebimento-panel{padding:15px!important}
-  :is(#receb-barras-page,#receb-bobinas-page) .toolbar-group{display:flex;flex-wrap:wrap;gap:8px}
-  :is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page) :is(.actions,.bobinas-actions) button{flex:1 1 auto}
+  :is(#producao-page,#bobinas-page) :is(.card,.daily-summary,.form-section,.table-section,.bobinas-form,.bobinas-section),:is(#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) .recebimento-panel{padding:15px!important}
+  :is(#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) .toolbar-group{display:flex;flex-wrap:wrap;gap:8px}
+  :is(#producao-page,#bobinas-page,#receb-barras-page,#receb-bobinas-page,#receb-caixas-page) :is(.actions,.bobinas-actions) button{flex:1 1 auto}
 }
 
 
@@ -1710,13 +1711,16 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
 #saida-mt-root>header{display:none!important}
 
 
+
+.production-notice{position:fixed;z-index:2500;top:18px;right:18px;width:min(390px,calc(100vw - 28px));display:flex;flex-direction:column;gap:8px;pointer-events:none}.production-notice[hidden]{display:none!important}.production-notice-card{pointer-events:auto;display:flex;align-items:flex-start;gap:12px;padding:14px 15px;border:1px solid #a9dec8;border-radius:13px;background:#f0fbf5;color:#163c30;box-shadow:0 12px 32px rgba(18,65,46,.2);animation:production-notice-in .2s ease-out}.production-notice-icon{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border-radius:9px;background:#d8f4e5;color:#087a5b;font-weight:900}.production-notice-copy{min-width:0;flex:1}.production-notice-copy strong{display:block;margin-bottom:3px;font-size:13px}.production-notice-copy span{display:block;font-size:12px;line-height:1.4;overflow-wrap:anywhere}.production-notice-close{flex:0 0 28px;width:28px;height:28px;border:0;border-radius:7px;background:transparent;color:#41685b;font-size:19px;line-height:1;cursor:pointer}.production-notice-close:hover{background:#dff3e8}@keyframes production-notice-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
 </style>
 </head>
 <body>
 
 <section class="auth-screen" id="auth-screen">
     <h2 id="login-program-name">Arames Brasil</h2>
-    <p>Entre com seu e-mail e senha autorizados. O responsável é selecionado no controle de produção.</p>
+
     <form id="auth-form">
         <label for="auth-email">E-mail</label>
         <input type="email" id="auth-email" autocomplete="username" required>
@@ -1733,7 +1737,7 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
     <div class="official-mobile-bar"><button type="button" id="official-menu-btn" aria-label="Abrir menu">☰</button><span id="mobile-program-name">Arames Brasil</span></div>
     <div id="official-sidebar-overlay" aria-hidden="true"></div>
     <!-- Painel de Resumo -->
-    <div class="consulta-banner" id="consulta-banner">👁️ Esta conta pode lançar produção como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.</div>
+    <div class="consulta-banner" id="consulta-banner">👁️ Esta conta pode lançar produção como ANGELO ou DERNERVAL; não pode editar, apagar, importar ou exportar.</div>
 
     <div class="tabs-app" role="tablist" aria-label="Seções do controle">
         <div class="header">
@@ -1758,6 +1762,9 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
             <button type="button" class="tab-app" id="tab-saida-mt" role="tab" aria-selected="false" aria-controls="saida-mt-page" onclick="selecionarAba('saida-mt')" hidden>SAÍDA MT</button>
         </div>
     </div>
+
+
+    <section id="aviso-novos-lancamentos" class="production-notice" aria-live="polite" aria-label="Avisos de novos lançamentos" hidden></section>
 
     <div id="producao-bobinas-subnav" class="producao-bobinas-subnav" role="tablist" aria-label="Produção e bobinas" hidden>
       <button type="button" class="producao-bobinas-subtab" id="tab-producao" role="tab" aria-selected="true" aria-controls="producao-page" onclick="selecionarAba('producao')">PRODUÇÃO/ESTRIBO</button>
@@ -1843,8 +1850,8 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
                     <select id="in-responsavel" required>
                         <option value="">Selecione...</option>
                         <option value="FERNANDO">FERNANDO</option>
-                        <option value="ÂNGELO" selected>ÂNGELO</option>
-                        <option value="GENIVAL">GENIVAL</option>
+                        <option value="ANGELO" selected>ANGELO</option>
+                        <option value="DERNERVAL">DERNERVAL</option>
                     </select>
                     <span id="responsavel-fixo-ajuda" class="solo-admin" style="align-self:center;font-size:12px;color:#64748b">Gerencie a lista em Configurações</span>
                 </div>
@@ -2096,6 +2103,7 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
       <div class="receber-mt-subnav" role="tablist" aria-label="Tipos de recebimento">
         <button type="button" class="receber-mt-subtab" id="tab-receber-barras-interno" role="tab" aria-selected="true" aria-controls="receb-barras-page" onclick="selecionarTipoRecebimentoMT('barras')">RECEB BARRAS 12M</button>
         <button type="button" class="receber-mt-subtab" id="tab-receber-bobinas-interno" role="tab" aria-selected="false" aria-controls="receb-bobinas-page" onclick="selecionarTipoRecebimentoMT('bobinas')">RECEB BOBINAS</button>
+        <button type="button" class="receber-mt-subtab admin-receb-edit" id="tab-receber-caixas-interno" role="tab" aria-selected="false" aria-controls="receb-caixas-page" onclick="selecionarTipoRecebimentoMT('caixas')">CAIXAS DE ARAME 20 KG</button>
       </div>
     <section id="receb-barras-page" class="recebimento-page" role="tabpanel" aria-labelledby="tab-receber-barras-interno" hidden>
       <div class="recebimento-kpis">
@@ -2149,6 +2157,30 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
       <div class="recebimento-panel">
         <div class="recebimento-toolbar"><h2>Histórico de bobinas recebidas</h2><div class="toolbar-group"><div><label for="rbb-inicio">De</label><input type="date" id="rbb-inicio"></div><div><label for="rbb-fim">Até</label><input type="date" id="rbb-fim"></div><button class="btn-secondary" type="button" onclick="limparFiltrosRecebimento('bobinas')">Todos</button><button class="btn-clear admin-receb-edit" type="button" onclick="apagarHistoricoRecebimento('bobinas')">Apagar histórico</button></div></div>
         <div class="recebimento-table-wrap"><table class="recebimento-table"><thead><tr><th>Data</th><th>Fornecedor</th><th>Bitola</th><th>Etiqueta kg</th><th>Balança kg (com etiqueta)</th><th>Diferença kg</th><th>Variação</th><th>Observação</th><th class="admin-receb-edit">Ação</th></tr></thead><tbody id="rbb-linhas"></tbody><tfoot id="rbb-totais"></tfoot></table></div>
+      </div>
+    </section>
+    <section id="receb-caixas-page" class="recebimento-page" role="tabpanel" aria-labelledby="tab-receber-caixas-interno" hidden>
+      <div class="recebimento-kpis rc-kpis">
+        <div class="recebimento-kpi"><small>Entradas registradas</small><strong id="rc-kpi-entradas">0</strong></div>
+        <div class="recebimento-kpi"><small>Caixas estimadas</small><strong id="rc-kpi-caixas">0</strong></div>
+        <div class="recebimento-kpi"><small>Peso recebido</small><strong id="rc-kpi-peso">0 kg</strong></div>
+        <div class="recebimento-kpi"><small>Tipos recebidos</small><strong id="rc-kpi-tipos">0</strong></div>
+      </div>
+      <div class="recebimento-panel admin-receb-edit">
+        <h2>Receber caixas de arame</h2>
+        <div class="recebimento-grid">
+          <div><label for="rc-data">Data do recebimento</label><input type="date" id="rc-data" required></div>
+          <div><label for="rc-fornecedor">Fornecedor</label><input id="rc-fornecedor" list="rc-receb-fornecedores" maxlength="100" placeholder="Digite o nome do fornecedor" autocomplete="off" required><datalist id="rc-receb-fornecedores"></datalist></div>
+          <div><label for="rc-tipo-arame">Tipo do arame na caixa</label><select id="rc-tipo-arame" required><option value="">Selecione...</option><option>Arame liso 18</option><option>Arame torcido 18</option><option>Arame liso 12</option></select></div>
+        </div>
+        <fieldset class="rc-modo-field"><legend>Como vai informar o recebimento?</legend><div class="rc-modos"><label><input type="radio" name="rc-modo" value="caixas" checked> Quantidade de caixas</label><label><input type="radio" name="rc-modo" value="peso"> Peso recebido</label></div></fieldset>
+        <div class="recebimento-grid">
+          <div id="rc-caixas-wrap"><label for="rc-caixas">Quantidade de caixas</label><input type="number" id="rc-caixas" min="1" max="10000" step="1" inputmode="numeric" placeholder="Ex.: 10"></div>
+          <div id="rc-peso-wrap" hidden><label for="rc-peso">Peso total recebido (kg)</label><input type="text" id="rc-peso" inputmode="decimal" maxlength="10" placeholder="Ex.: 200 ou 200,5"></div>
+        </div>
+        <div class="recebimento-preview rc-preview" aria-live="polite"><span><span id="rc-preview-label">Peso total</span><br><small id="rc-preview-detail">20 kg por caixa</small></span><strong id="rc-preview">0 kg</strong></div>
+        <button class="btn-add" id="rc-salvar" type="button" onclick="salvarRecebimentoCaixas()">Registrar recebimento</button>
+        <div class="recebimento-status" id="rc-status" role="status" aria-live="polite"></div>
       </div>
     </section>
     </section>
@@ -3041,10 +3073,11 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     let recebimentosRef = null;
     let recebimentosBarrasRef = null;
     let recebimentosBobinasRef = null;
+    let recebimentosCaixasRef = null;
     let recebimentosFornecedoresRef = null;
     let responsavelAtivoRef = null;
-    const recebimentos = { barras: [], bobinas: [] };
-    const recebimentosRelatorioProntos={barras:false,bobinas:false};
+    const recebimentos = { barras: [], bobinas: [], caixas: [] };
+    const recebimentosRelatorioProntos={barras:false,bobinas:false,caixas:false};
     let bobinasRelatorioProntas=false;
     let fornecedoresRecebimento = [];
     let bobinas = [];
@@ -3058,14 +3091,17 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     const CHAVE_OPERADORES_REMOVIDOS = 'nomes_responsaveis_removidos';
     let migracaoOperadoresEmAndamento = false;
     let seedOperadoresEmAndamento = false;
+    let migracaoNomesLegadosEmAndamento = false;
     const EMAIL_ADMIN = 'fernandolisboa.br@gmail.com';
     const EMAIL_EXPORTADOR = 'arames@confere.com';
     const EMAIL_PRODUCAO = 'arames@brasil.com';
-    const OPERADORES_PRODUCAO = ['ÂNGELO', 'GENIVAL'];
+    const OPERADORES_PRODUCAO = ['ANGELO', 'DERNERVAL'];
     let usuarioEhAdmin = false;
     let usuarioPodeExportar = false;
     let usuarioPodeLancarProducao = false;
     let usuarioAtualFirebase = null;
+    let idsProducaoConhecidos = new Set();
+    let primeiraLeituraProducaoRecebida = false;
     let acessoNegado = false;
     let firebaseProducaoPronto = false;
     let firebasePadroesPronto = false;
@@ -3149,7 +3185,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('auth-message').innerText = mensagens[error.code] || 'Não foi possível concluir. Confira a configuração de Authentication no Firebase.';
     }
 
-    const standardOperatorNames = ['FERNANDO', 'ÂNGELO', 'GENIVAL'];
+    const standardOperatorNames = ['FERNANDO', 'ANGELO', 'DERNERVAL'];
 
     function lerListaLocal(chave) {
         try {
@@ -3274,11 +3310,12 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
             if (fornecedoresBobinasRef) fornecedoresBobinasRef.off();
             if (recebimentosBarrasRef) recebimentosBarrasRef.off();
             if (recebimentosBobinasRef) recebimentosBobinasRef.off();
+            if (recebimentosCaixasRef) recebimentosCaixasRef.off();
             if (recebimentosFornecedoresRef) recebimentosFornecedoresRef.off();
-            producaoRef = padroesRef = operadoresRef = operadoresAtivosRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = recebimentosRef = recebimentosBarrasRef = recebimentosBobinasRef = recebimentosFornecedoresRef = responsavelAtivoRef = null;
-            recebimentos.barras = []; recebimentos.bobinas = []; recebimentosRelatorioProntos.barras=false; recebimentosRelatorioProntos.bobinas=false; bobinasRelatorioProntas=false; fornecedoresRecebimento = [];
+            producaoRef = padroesRef = operadoresRef = operadoresAtivosRef = configuracaoRef = bobinasRef = fornecedoresBobinasRef = recebimentosRef = recebimentosBarrasRef = recebimentosBobinasRef = recebimentosCaixasRef = recebimentosFornecedoresRef = responsavelAtivoRef = null;
+            recebimentos.barras = []; recebimentos.bobinas = []; recebimentos.caixas = []; recebimentosRelatorioProntos.barras=false; renderResumoRecebimentoCaixas(); recebimentosRelatorioProntos.bobinas=false; recebimentosRelatorioProntos.caixas=false; bobinasRelatorioProntas=false; fornecedoresRecebimento = [];
             document.querySelectorAll('.recebimentos-tab').forEach(el => el.hidden = true);
-            ['receber-mt-page','receb-barras-page','receb-bobinas-page'].forEach(id => document.getElementById(id).hidden = true);
+            ['receber-mt-page','receb-barras-page','receb-bobinas-page','receb-caixas-page'].forEach(id => document.getElementById(id).hidden = true);
             bobinas = [];
             fornecedoresBobinas = [];
             fornecedoresBobinasProntos = false;
@@ -3293,6 +3330,9 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
             firebaseEdicaoLiberada = false;
             usuarioUidAtual = null;
             usuarioAtualFirebase = null;
+            idsProducaoConhecidos = new Set();
+            primeiraLeituraProducaoRecebida = false;
+            const avisoLancamentos=document.getElementById('aviso-novos-lancamentos');if(avisoLancamentos){avisoLancamentos.replaceChildren();avisoLancamentos.hidden=true;}
             usuarioEhAdmin = false;
             usuarioPodeExportar = false;
             usuarioPodeLancarProducao = false;
@@ -3346,7 +3386,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('user-email').innerText = (user.email || '') + textoPapel + (nomeResponsavelLogin ? ' • Produção: ' + nomeResponsavelLogin : '');
         document.getElementById('consulta-banner').textContent = email === EMAIL_EXPORTADOR
             ? '👁️ Consulta e exportação: esta conta pode visualizar e exportar PDF/Excel, mas não alterar os dados.'
-            : '👷 Produção: esta conta pode lançar como ÂNGELO ou GENIVAL; não pode editar, apagar, importar ou exportar.';
+            : '👷 Produção: esta conta pode lançar como ANGELO ou DERNERVAL; não pode editar, apagar, importar ou exportar.';
         document.querySelectorAll('.export-access').forEach(el => el.hidden = !usuarioPodeExportar);
         document.querySelectorAll('.admin-receb-edit').forEach(el => el.hidden = !usuarioEhAdminFernando());
 
@@ -3417,9 +3457,12 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
             recebimentosBobinasRef = recebimentosRef.child('bobinas/items');
             recebimentosBarrasRef.on('value', snapshot => { recebimentos.barras = Object.entries(snapshot.val() || {}).filter(([,r]) => r && typeof r === 'object').map(([id,r]) => ({...r,id})); recebimentosRelatorioProntos.barras=true; renderRecebimentos('barras'); }, error => {recebimentosRelatorioProntos.barras=false;mostrarErroRecebimento('barras', error);});
             recebimentosBobinasRef.on('value', snapshot => { recebimentos.bobinas = Object.entries(snapshot.val() || {}).filter(([,r]) => r && typeof r === 'object').map(([id,r]) => ({...r,id})); recebimentosRelatorioProntos.bobinas=true; renderRecebimentos('bobinas'); }, error => {recebimentosRelatorioProntos.bobinas=false;mostrarErroRecebimento('bobinas', error);});
+            recebimentosCaixasRef=recebimentosRef.child('caixas/items');
+            recebimentosCaixasRef.on('value',snapshot=>{recebimentos.caixas=Object.entries(snapshot.val()||{}).filter(([,r])=>r&&typeof r==='object').map(([id,r])=>({...r,id}));recebimentosRelatorioProntos.caixas=true;renderResumoRecebimentoCaixas();},error=>{recebimentosRelatorioProntos.caixas=false;mostrarErroRecebimento('caixas',error)});
             recebimentosFornecedoresRef = recebimentosRef.child('fornecedores');
             recebimentosFornecedoresRef.on('value', snapshot => { const raw=snapshot.val()||{}; fornecedoresRecebimento=Object.values(raw).map(v=>String((v&&v.nome)||v||'').trim()).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR')); atualizarFornecedoresRecebimento(); }, error => console.warn('Falha ao carregar fornecedores de recebimento.', error));
             document.querySelectorAll('.recebimento-page input[type="date"]').forEach(el => { if (!el.value) el.value = dataHojeISO(); });
+            if(!document.getElementById('rc-data').value)document.getElementById('rc-data').value=dataHojeISO();
             ['rb','rbb'].forEach(prefix => { ['peso-etiqueta','peso-balanca'].forEach(f => document.getElementById(`${prefix}-${f}`).addEventListener('input', () => atualizarPreviaRecebimento(prefix))); document.getElementById(`${prefix}-sem-etiqueta`).addEventListener('change',()=>{const sem=document.getElementById(`${prefix}-sem-etiqueta`).checked;const campo=document.getElementById(`${prefix}-peso-etiqueta`);campo.disabled=sem;campo.required=!sem;if(sem)campo.value='';atualizarPreviaRecebimento(prefix)}); document.getElementById(`${prefix}-bitola`).addEventListener('change',()=>{const w=document.getElementById(`${prefix}-outra-bitola-wrap`);const input=document.getElementById(`${prefix}-outra-bitola`);const outra=document.getElementById(`${prefix}-bitola`).value==='Outra';w.hidden=!outra;input.required=outra;}); });
             ['rb','rbb'].forEach(prefix => { [`${prefix}-inicio`,`${prefix}-fim`].forEach(id=>document.getElementById(id).addEventListener('change',()=>renderRecebimentos(prefix==='rb'?'barras':'bobinas'))); });
         }
@@ -3440,6 +3483,23 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         });
         operadoresRef.on('value', async snapshot => {
             operadoresFirebaseSnapshot = snapshot.val() || {};
+            if(usuarioEhAdminFernando()&&operadoresAtivosRef){try{const activos=await operadoresAtivosRef.once('value');window.__operadoresAtivosParaMigrar=activos.val()||{};}catch(_){window.__operadoresAtivosParaMigrar={};}}
+            // Corrige a lista compartilhada sem reescrever nenhum lançamento histórico.
+            if(usuarioEhAdminFernando()&&!migracaoNomesLegadosEmAndamento){
+                const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');
+                const canon={'ANGELO':'ANGELO','GENIVAL':'DERNERVAL','DERNEVAL':'DERNERVAL'};
+                const updates={};let encontrou=false;
+                Object.entries(operadoresFirebaseSnapshot).forEach(([key,item])=>{
+                    const oldName=typeof item==='string'?item:String(item&& (item.nome||item.name||item.responsavel||item.operador)||'');
+                    const target=canon[norm(oldName)];
+                    if(target&&oldName!==target){updates[`operadores/${key}`]=typeof item==='string'?target:{...item,nome:target};encontrou=true;}
+                });
+                const ativosSnapshot=window.__operadoresAtivosParaMigrar||{};
+                Object.entries(ativosSnapshot).forEach(([key,value])=>{const target=canon[norm(key)];if(target&&key!==target){updates[`operadoresAtivos/${target}`]=Boolean(value);updates[`operadoresAtivos/${key}`]=null;encontrou=true;}});
+                const ativo=String(responsavelAtivoFirebase||'').trim();const novoAtivo=canon[norm(ativo)];
+                if(novoAtivo&&ativo!==novoAtivo&&configuracaoRef)updates['configuracao/responsavelAtivo']=novoAtivo;
+                if(encontrou){migracaoNomesLegadosEmAndamento=true;firebaseDb.ref().update(updates).then(()=>{migracaoNomesLegadosEmAndamento=false;}).catch(error=>{migracaoNomesLegadosEmAndamento=false;console.warn('Não foi possível corrigir automaticamente os nomes antigos dos responsáveis.',error)});return;}
+            }
             const temRegistrosOperador=Object.keys(operadoresFirebaseSnapshot).length>0;
             // Migração única para instalações antigas: os três nomes que já vinham no seletor passam a ser registros normais e editáveis.
             if (usuarioEhAdmin && !temRegistrosOperador && !seedOperadoresEmAndamento) {
@@ -3571,10 +3631,30 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         padroesRef.set({ initialized: true, items }).catch(mostrarErroFirebase);
     }
 
+    function adicionarAvisoNovoLancamento(item){
+        const host=document.getElementById('aviso-novos-lancamentos');if(!host||!usuarioEhAdminFernando())return;
+        const card=document.createElement('div');card.className='production-notice-card';
+        const icon=document.createElement('span');icon.className='production-notice-icon';icon.setAttribute('aria-hidden','true');icon.textContent='✓';
+        const copy=document.createElement('div');copy.className='production-notice-copy';
+        const title=document.createElement('strong');title.textContent='Novo lançamento de produção';
+        const details=document.createElement('span');const responsavel=String(item.responsavel||'').trim();const produto=String(item.produto||'Estribo');const pecas=Number(item.totalPecas)||0;const data=String(item.dataFormatada||'');details.textContent=`${responsavel} · ${produto} · ${pecas.toLocaleString('pt-BR')} peças${data?' · '+data:''}`;
+        const close=document.createElement('button');close.type='button';close.className='production-notice-close';close.setAttribute('aria-label','Fechar aviso');close.textContent='×';close.addEventListener('click',()=>{card.remove();if(!host.children.length)host.hidden=true;});
+        copy.append(title,details);card.append(icon,copy,close);host.appendChild(card);host.hidden=false;
+        while(host.children.length>4)host.firstElementChild.remove();
+        window.setTimeout(()=>{if(card.isConnected){card.remove();if(!host.children.length)host.hidden=true;}},15000);
+    }
+    function detectarNovosLancamentosDeOperadores(items){
+        const current=Object.entries(items||{}).filter(([,item])=>item&&typeof item==='object');
+        if(!primeiraLeituraProducaoRecebida){idsProducaoConhecidos=new Set(current.map(([id])=>id));primeiraLeituraProducaoRecebida=true;return;}
+        const autorizados=new Set(OPERADORES_PRODUCAO);
+        current.forEach(([id,item])=>{if(idsProducaoConhecidos.has(id))return;idsProducaoConhecidos.add(id);const responsavel=String(item.responsavel||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR');if(autorizados.has(responsavel))adicionarAvisoNovoLancamento(item);});
+    }
+
     function conectarFirebase() {
         producaoRef.on('value', snapshot => {
             const payload = snapshot.val() || {};
             const items = payload.items || {};
+            detectarNovosLancamentosDeOperadores(items);
             producao = Object.keys(items).map(key => ({ ...items[key], _firebaseKey: key }));
             producao.forEach(item => {
                 if (!item.responsavel || item.responsavel === 'IMPORTADO' || String(item.responsavel).trim() === '') item.responsavel = 'FERNANDO';
@@ -3985,13 +4065,15 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     let tipoRecebimentoMTAtual='barras';
     let tipoProducaoBobinasAtual='producao';
     function selecionarTipoRecebimentoMT(tipo){
-        if(!['barras','bobinas'].includes(tipo))return;
+        if(!['barras','bobinas','caixas'].includes(tipo))return;
         tipoRecebimentoMTAtual=tipo;
-        const barras=tipo==='barras';
+        const barras=tipo==='barras',bobinasTab=tipo==='bobinas',caixas=tipo==='caixas';
         document.getElementById('receb-barras-page').hidden=!barras;
-        document.getElementById('receb-bobinas-page').hidden=barras;
+        document.getElementById('receb-bobinas-page').hidden=!bobinasTab;
+        document.getElementById('receb-caixas-page').hidden=!caixas;
         document.getElementById('tab-receber-barras-interno').setAttribute('aria-selected',String(barras));
-        document.getElementById('tab-receber-bobinas-interno').setAttribute('aria-selected',String(!barras));
+        document.getElementById('tab-receber-bobinas-interno').setAttribute('aria-selected',String(bobinasTab));
+        document.getElementById('tab-receber-caixas-interno').setAttribute('aria-selected',String(caixas));
     }
     function selecionarAba(aba) {
         if(aba==='producao'||aba==='bobinas')tipoProducaoBobinasAtual=aba;
@@ -4025,8 +4107,8 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     function formatarPesoRecebimento(v,d=3){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:d});}
     function escaparRecebimento(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
     function atualizarPreviaRecebimento(prefix){const semEtiqueta=document.getElementById(`${prefix}-sem-etiqueta`).checked;const e=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-etiqueta`).value),b=numeroRecebimentoBR(document.getElementById(`${prefix}-peso-balanca`).value),d=b-e,p=e?100*d/e:NaN,ok=!semEtiqueta&&e>0&&b>0&&Number.isFinite(d);document.getElementById(`${prefix}-prev-diff`).textContent=semEtiqueta?'Não calculável':ok?`${d>0?'+':''}${formatarPesoRecebimento(d)} kg`:'—';document.getElementById(`${prefix}-prev-percent`).textContent=semEtiqueta?'Não calculável':ok?`${p>0?'+':''}${formatarPesoRecebimento(p,2)}%`:'—';document.getElementById(`${prefix}-prev-status`).textContent=semEtiqueta?(b>0?'Sem etiqueta: diferença e variação não calculáveis.':'Sem etiqueta: informe o peso da balança.'):(ok?(d>0?'Balança acima da etiqueta':d<0?'Balança abaixo da etiqueta':'Pesos iguais'):'Informe os dois pesos.');}
-    function atualizarFornecedoresRecebimento(){['rb-receb-fornecedores','rbb-receb-fornecedores'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.replaceChildren(...fornecedoresRecebimento.map(nome=>{const o=document.createElement('option');o.value=nome;return o}))});}
-    function mostrarErroRecebimento(tipo,error){const p=tipo==='barras'?'rb':'rbb';const el=document.getElementById(`${p}-status`);if(el)el.textContent='Falha de sincronização Firebase: '+(error&&error.message||'verifique as regras publicadas.');console.error('Erro recebimentos Firebase:',error)}
+    function atualizarFornecedoresRecebimento(){['rb-receb-fornecedores','rbb-receb-fornecedores','rc-receb-fornecedores'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.replaceChildren(...fornecedoresRecebimento.map(nome=>{const o=document.createElement('option');o.value=nome;return o}))});}
+    function mostrarErroRecebimento(tipo,error){const p=tipo==='barras'?'rb':tipo==='caixas'?'rc':'rbb';const el=document.getElementById(`${p}-status`);if(el)el.textContent='Falha de sincronização Firebase: '+(error&&error.message||'verifique as regras publicadas.');console.error('Erro recebimentos Firebase:',error)}
     async function salvarRecebimento(tipo) {
         if (!usuarioEhAdminFernando()) { alert('Somente o administrador pode registrar recebimentos.'); return; }
         if (!['barras', 'bobinas'].includes(tipo)) { alert('Tipo de recebimento inválido.'); return; }
@@ -4078,6 +4160,25 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
             atualizarPreviaRecebimento(prefix);
         } catch (error) { mostrarErroRecebimento(tipo, error); }
     }
+    function renderResumoRecebimentoCaixas(){const rows=recebimentos.caixas||[],totalCaixas=rows.reduce((sum,r)=>sum+(Number(r&&r.caixas)||0),0),totalKg=rows.reduce((sum,r)=>sum+(Number(r&&r.pesoKg)||0),0),tipos=new Set(rows.map(r=>String(r&&r.tipoArame||'').trim()).filter(Boolean));const entries=document.getElementById('rc-kpi-entradas'),boxes=document.getElementById('rc-kpi-caixas'),kg=document.getElementById('rc-kpi-peso'),types=document.getElementById('rc-kpi-tipos');if(entries)entries.textContent=rows.length.toLocaleString('pt-BR');if(boxes)boxes.textContent=totalCaixas.toLocaleString('pt-BR',{maximumFractionDigits:3});if(kg)kg.textContent=`${formatarPesoRecebimento(totalKg)} kg`;if(types)types.textContent=tipos.size.toLocaleString('pt-BR');}
+    let rcModoEntrada='caixas';
+    function atualizarPreviaRecebimentoCaixas(){const caixasWrap=document.getElementById('rc-caixas-wrap'),pesoWrap=document.getElementById('rc-peso-wrap'),qtd=document.getElementById('rc-caixas'),peso=document.getElementById('rc-peso'),porCaixas=rcModoEntrada==='caixas';caixasWrap.hidden=!porCaixas;pesoWrap.hidden=porCaixas;qtd.required=porCaixas;peso.required=!porCaixas;qtd.disabled=!porCaixas;peso.disabled=porCaixas;const preview=document.getElementById('rc-preview'),label=document.getElementById('rc-preview-label'),detail=document.getElementById('rc-preview-detail');if(porCaixas){const n=Number(qtd.value),valid=Number.isSafeInteger(n)&&n>0;preview.textContent=valid?`${formatarPesoRecebimento(n*20)} kg`:'0 kg';label.textContent='Peso total';detail.textContent=valid?`${n.toLocaleString('pt-BR')} caixa${n===1?'':'s'} × 20 kg`:'20 kg por caixa';return}const kg=numeroRecebimentoBR(peso.value);if(Number.isFinite(kg)&&kg>0){preview.textContent=`${(kg/20).toLocaleString('pt-BR',{maximumFractionDigits:3})} caixa${Math.abs(kg/20-1)<1e-9?'':'s'}`;label.textContent='Caixas estimadas';detail.textContent=`${formatarPesoRecebimento(kg)} kg ÷ 20 kg; peso real será salvo.`}else{preview.textContent='0 caixas';label.textContent='Caixas estimadas';detail.textContent='Informe o peso total'}}
+    document.querySelectorAll('input[name="rc-modo"]').forEach(el=>el.addEventListener('change',()=>{rcModoEntrada=el.value==='peso'?'peso':'caixas';atualizarPreviaRecebimentoCaixas()}));
+    document.getElementById('rc-caixas').addEventListener('input',atualizarPreviaRecebimentoCaixas);document.getElementById('rc-peso').addEventListener('input',atualizarPreviaRecebimentoCaixas);
+    async function salvarRecebimentoCaixas(){
+        if(!usuarioEhAdminFernando()){alert('Somente o administrador pode registrar recebimentos.');return;}
+        if(!recebimentosCaixasRef||!recebimentosFornecedoresRef){alert('Aguarde a conexão com Firebase.');return;}
+        const data=document.getElementById('rc-data').value,fornecedor=document.getElementById('rc-fornecedor').value.trim().replace(/\s+/g,' '),tipoArame=document.getElementById('rc-tipo-arame').value,qtdRaw=Number(document.getElementById('rc-caixas').value),kg=numeroRecebimentoBR(document.getElementById('rc-peso').value);
+        const modo=rcModoEntrada,validQtd=modo==='caixas'&&Number.isSafeInteger(qtdRaw)&&qtdRaw>=1&&qtdRaw<=10000,validPeso=modo==='peso'&&Number.isFinite(kg)&&kg>0&&kg<=200000;
+        const pesoReal=modo==='caixas'?qtdRaw*20:kg,caixasEstimadas=modo==='caixas'?qtdRaw:kg/20;
+        const partesData=/^(\d{4})-(\d{2})-(\d{2})$/.exec(data),dataValida=!!partesData&&(()=>{const d=new Date(Date.UTC(Number(partesData[1]),Number(partesData[2])-1,Number(partesData[3])));return d.getUTCFullYear()===Number(partesData[1])&&d.getUTCMonth()===Number(partesData[2])-1&&d.getUTCDate()===Number(partesData[3])})();if(!dataValida||!fornecedor||fornecedor.length>100||!tipoArame||(!validQtd&&!validPeso)){alert('Confira data, fornecedor, tipo do arame e quantidade ou peso recebido.');return;}
+        const existing=fornecedoresRecebimento.find(n=>n.trim().toLocaleUpperCase('pt-BR')===fornecedor.toLocaleUpperCase('pt-BR'));
+        const nomeFornecedor=existing||fornecedor;
+        const registro={criado:Date.now(),data,fornecedor:nomeFornecedor,tipoArame,material:'Caixas de arame 20 kg',caixas:caixasEstimadas,pesoKg:pesoReal,modoEntrada:modo};
+        const btn=document.getElementById('rc-salvar');if(btn.dataset.salvando==='1')return;btn.dataset.salvando='1';btn.disabled=true;
+        try{const updates={},key=recebimentosCaixasRef.push().key;updates[`recebimentos/caixas/items/${key}`]=registro;if(!existing){const fornecedorKey=recebimentosFornecedoresRef.push().key;updates[`recebimentos/fornecedores/${fornecedorKey}`]={nome:nomeFornecedor};}await firebaseDb.ref().update(updates);if(!existing){fornecedoresRecebimento.push(nomeFornecedor);fornecedoresRecebimento.sort((a,b)=>a.localeCompare(b,'pt-BR'));atualizarFornecedoresRecebimento();}recebimentos.caixas.push({...registro,id:key});recebimentosRelatorioProntos.caixas=true;renderResumoRecebimentoCaixas();document.getElementById('rc-fornecedor').value='';document.getElementById('rc-tipo-arame').value='';document.getElementById('rc-caixas').value='';document.getElementById('rc-peso').value='';document.getElementById('rc-data').value=dataHojeISO();document.querySelector('input[name="rc-modo"][value="caixas"]').checked=true;rcModoEntrada='caixas';atualizarPreviaRecebimentoCaixas();document.getElementById('rc-status').textContent='Recebimento salvo e sincronizado.';}catch(error){document.getElementById('rc-status').textContent='Falha de sincronização Firebase: '+(error&&error.message||'verifique as regras publicadas.');console.error('Erro recebimento de caixas:',error);}finally{delete btn.dataset.salvando;btn.disabled=!usuarioEhAdminFernando();}
+    }
+
     function renderRecebimentos(tipo){const prefix=tipo==='barras'?'rb':'rbb';const campoIni=document.getElementById(`${prefix}-inicio`),campoFim=document.getElementById(`${prefix}-fim`);const ini=campoIni?campoIni.value:'',fim=campoFim?campoFim.value:'';const rows=recebimentos[tipo].filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(String(r.data||''))&&(!ini||r.data>=ini)&&(!fim||r.data<=fim)).sort((a,b)=>String(b.data).localeCompare(String(a.data))||Number(b.criado)-Number(a.criado));const tbody=document.getElementById(`${prefix}-linhas`),tfoot=document.getElementById(`${prefix}-totais`);if(!tbody||!tfoot)return;tbody.replaceChildren();tfoot.replaceChildren();let etiqueta=0,balanca=0,balancaComparavel=0;rows.forEach(r=>{balanca+=Number(r.pesoBalanca)||0;if(!r.semEtiqueta&&Number(r.pesoEtiqueta)>0){etiqueta+=Number(r.pesoEtiqueta);balancaComparavel+=Number(r.pesoBalanca)||0;}const d=r.semEtiqueta?NaN:Number(r.pesoBalanca)-Number(r.pesoEtiqueta),p=!r.semEtiqueta&&Number(r.pesoEtiqueta)?100*d/Number(r.pesoEtiqueta):NaN;const tr=document.createElement('tr');tr.innerHTML=`<td>${escaparRecebimento(r.data.split('-').reverse().join('/'))}</td><td>${escaparRecebimento(r.fornecedor)}</td><td>${escaparRecebimento(r.bitola)}</td><td class="num">${r.semEtiqueta?'Sem etiqueta':formatarPesoRecebimento(r.pesoEtiqueta)}</td><td class="num">${formatarPesoRecebimento(r.pesoBalanca)}</td><td class="num recebimento-variance ${d>0?'positive':d<0?'negative':''}">${r.semEtiqueta?'—':`${d>0?'+':''}${formatarPesoRecebimento(d)}`}</td><td class="num">${r.semEtiqueta?'—':`${p>0?'+':''}${formatarPesoRecebimento(p,2)}%`}</td><td>${escaparRecebimento(r.observacao||'')}</td><td class="admin-receb-edit"><button class="btn-clear" type="button" onclick="excluirRecebimento('${tipo}','${escaparRecebimento(r.id)}')">Excluir</button></td>`;tbody.appendChild(tr)});const d=balancaComparavel-etiqueta,p=etiqueta?100*d/etiqueta:0;if(rows.length){const tr=document.createElement('tr');tr.innerHTML=`<td colspan="3">TOTAL</td><td class="num">${formatarPesoRecebimento(etiqueta)}</td><td class="num">${formatarPesoRecebimento(balancaComparavel)}</td><td class="num">${d>0?'+':''}${formatarPesoRecebimento(d)}</td><td class="num">${p>0?'+':''}${formatarPesoRecebimento(p,2)}%</td><td colspan="2"></td>`;tfoot.appendChild(tr)}document.getElementById(`${prefix}-cargas`).textContent=rows.length.toLocaleString('pt-BR');document.getElementById(`${prefix}-etiqueta`).textContent=`${formatarPesoRecebimento(etiqueta)} kg`;document.getElementById(`${prefix}-balanca`).textContent=`${formatarPesoRecebimento(balanca)} kg`;document.getElementById(`${prefix}-diferenca`).textContent=`${d>0?'+':''}${formatarPesoRecebimento(d)} kg`;document.querySelectorAll('.admin-receb-edit').forEach(el=>el.hidden=!usuarioEhAdminFernando());}
     async function excluirRecebimento(tipo,id){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Excluir este recebimento?'))return;try{await recebimentosRef.child(`${tipo}/items/${id}`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
     async function apagarHistoricoRecebimento(tipo){if(!usuarioEhAdminFernando()||!recebimentosRef)return;if(!confirm('Apagar todos os recebimentos desta aba?'))return;try{await recebimentosRef.child(`${tipo}/items`).remove()}catch(e){mostrarErroRecebimento(tipo,e)}}
@@ -4414,7 +4515,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         const totalEmb = Number(document.getElementById('in-total-emb').value);
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
         const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
-        if (!usuarioEhAdmin && (!OPERADORES_PRODUCAO.includes(String(responsavel||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')) || !nomesOperadoresAtivos().includes(String(responsavel||'').toLocaleUpperCase('pt-BR')))) { alert('A conta de produção só pode lançar como ÂNGELO ou GENIVAL, desde que estejam ativos na lista administrada.'); return; }
+        if (!usuarioEhAdmin && (!OPERADORES_PRODUCAO.includes(String(responsavel||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')) || !nomesOperadoresAtivos().includes(String(responsavel||'').toLocaleUpperCase('pt-BR')))) { alert('A conta de produção só pode lançar como ANGELO ou DERNERVAL, desde que estejam ativos na lista administrada.'); return; }
         if (!usuarioEhAdmin && registroEmEdicao) { alert('A conta de produção só pode criar lançamentos novos; edição é exclusiva do administrador.'); return; }
 
         const camposObrigatorios = ['in-data', 'in-produto', 'in-bitola', 'in-embalagem', 'in-qtd-emb', 'in-total-emb', 'in-responsavel'];
@@ -5030,7 +5131,7 @@ let relatorioSecaoAtual = 'producao';
       if(!['producao','bobinas','barras','recebimentosBobinas','entradas','saidaMateriais'].includes(tipo)){alert('Tipo de relatório inválido.');return;}
       if(tipo==='producao'&&!firebaseProducaoPronto){alert('Aguarde o carregamento da produção antes de gerar o relatório.');return;}
       if(tipo==='bobinas'&&!bobinasRef){alert('Aguarde o carregamento das bobinas antes de gerar o relatório.');return;}
-      if(tipo==='entradas'&&(!recebimentosRelatorioProntos.barras||!recebimentosRelatorioProntos.bobinas||!bobinasRelatorioProntas)){alert('Aguarde o carregamento dos recebimentos antes de gerar o documento de entradas.');return;}
+      if(tipo==='entradas'&&(!recebimentosRelatorioProntos.barras||!recebimentosRelatorioProntos.bobinas||!recebimentosRelatorioProntos.caixas||!bobinasRelatorioProntas)){alert('Aguarde o carregamento dos recebimentos antes de gerar o documento de entradas.');return;}
       if(tipo==='saidaMateriais'&&!window.saidaMTRelatorioPronto){alert('Aguarde o carregamento da Saída MT antes de gerar o documento.');return;}
       relatorioSecaoAtual=tipo;
       const titulo=document.getElementById('relatorio-escolha-titulo');
@@ -5063,6 +5164,7 @@ let relatorioSecaoAtual = 'producao';
         for(const [recTipo,etiqueta] of [['barras','Barras 12 m'],['bobinas','Bobinas']]){
           (recebimentos[recTipo]||[]).forEach(x=>{if(!x)return;const data=String(x.data||'');if((!inicio&&!fim)||dataDentroPeriodo(data,inicio,fim))registros.push({_origem:'recebimento',data,material:etiqueta,detalhe:x.bitola||'',quantidade:'',unidade:'',pesoEtiqueta:x.semEtiqueta?'Sem etiqueta':(Number(x.pesoEtiqueta)||0),pesoTotal:Number(x.pesoBalanca)||0,fornecedor:x.fornecedor||'',observacao:x.observacao||'',criado:Number(x.criado)||0});});
         }
+        (recebimentos.caixas||[]).forEach(x=>{if(!x)return;const data=String(x.data||'');if((!inicio&&!fim)||dataDentroPeriodo(data,inicio,fim))registros.push({_origem:'caixas-arame',data,material:'Caixas de arame 20 kg',detalhe:x.tipoArame||'',quantidade:Number(x.caixas)||0,unidade:'caixa(s)',pesoEtiqueta:'',pesoTotal:Number(x.pesoKg)||0,fornecedor:x.fornecedor||'',observacao:''});});
         (bobinas||[]).forEach(x=>{if(!x)return;const data=dataParaISO(x.dataFormatada);if((!inicio&&!fim)||dataDentroPeriodo(data,inicio,fim))registros.push({_origem:'bobina-cadastrada',data,material:'Bobinas (estoque)',detalhe:x.bitola||x.nome||'',pesoEtiqueta:'',pesoTotal:Number(x.kg)||0,fornecedor:x.fornecedor||'',observacao:'',criado:Number(x.criado)||0});});
         return registros.sort((a,b)=>String(a.data).localeCompare(String(b.data))||a.criado-b.criado);
       }
@@ -5075,10 +5177,10 @@ let relatorioSecaoAtual = 'producao';
     function matrizRelatorio(tipo,registros){
       if(tipo==='entradas'||tipo==='saidaMateriais'){
         const entradas=tipo==='entradas';
-        const headers=entradas?['Data','Material','Bitola / detalhe','Etiqueta (kg)','Balança (kg)','Fornecedor','Observação']:['Data','Material','Descrição','Quantidade','Unidade','Peso total (kg)','Cliente','Veículo','Responsável','Observação'];
-        const rows=entradas?registros.map(x=>[x.data?String(x.data).split('-').reverse().join('/'): '',x.material||'',x.detalhe||'',x.pesoEtiqueta??'',x.pesoTotal??'',x.fornecedor||'',x.observacao||'']):registros.map(x=>[x.data?String(x.data).split('-').reverse().join('/'): '',x.material||'',x.detalhe||'',x.quantidade??'',x.unidade||'',x.pesoTotal??'',x.cliente||'',x.veiculo||'',x.responsavel||'',x.observacao||'']);
-        const totalPeso=registros.reduce((sum,x)=>sum+(Number(x.pesoTotal)||0),0);
-        return {headers,rows,totals:entradas?['TOTAL','','','',totalPeso,'',`${registros.length} movimentação(ões)`]:['TOTAL','','','','',totalPeso,'','','',`${registros.length} movimentação(ões)`],widths:entradas?[18,27,33,29,29,50,91]:[17,20,43,14,12,20,40,25,30,56],fontSize:entradas?7:6};
+        const headers=entradas?['Data','Material','Bitola / detalhe','Quantidade','Unidade','Etiqueta (kg)','Peso recebido (kg)','Fornecedor','Observação']:['Data','Material','Descrição','Quantidade','Unidade','Peso total (kg)','Cliente','Veículo','Responsável','Observação'];
+        const rows=entradas?registros.map(x=>[x.data?String(x.data).split('-').reverse().join('/'): '',x.material||'',x.detalhe||'',x.quantidade??'',x.unidade||'',x.pesoEtiqueta??'',x.pesoTotal??'',x.fornecedor||'',x.observacao||'']):registros.map(x=>[x.data?String(x.data).split('-').reverse().join('/'): '',x.material||'',x.detalhe||'',x.quantidade??'',x.unidade||'',x.pesoTotal??'',x.cliente||'',x.veiculo||'',x.responsavel||'',x.observacao||'']);
+        const totalPeso=registros.reduce((sum,x)=>sum+(Number(x.pesoTotal)||0),0),totalCaixas=registros.filter(x=>x.unidade==='caixa(s)').reduce((sum,x)=>sum+(Number(x.quantidade)||0),0);
+        return {headers,rows,totals:entradas?['TOTAL','','',totalCaixas||'',totalCaixas?'caixa(s)':'','',totalPeso,'',`${registros.length} movimentação(ões)`]:['TOTAL','','','','',totalPeso,'','','',`${registros.length} movimentação(ões)`],widths:entradas?[15,24,28,16,17,24,25,38,70]:[17,20,43,14,12,20,40,25,30,56],fontSize:entradas?6.5:6};
       }
       if(tipo==='producao')return {headers:['Data','Estribo','Bitola','Embalagem','Qtd. embalagem','Total embalagens','Total peças','Responsável'],rows:registros.map(x=>[x.dataFormatada||'',x.produto||'',x.bitola||'',x.embalagem||'',Number(x.qtdEmb)||0,Number(x.totalEmb)||0,Number(x.totalPecas)||0,x.responsavel||'Sem nome']),totals:['TOTAL', '', '', '', '',registros.reduce((s,x)=>s+(Number(x.totalEmb)||0),0),registros.reduce((s,x)=>s+(Number(x.totalPecas)||0),0),'']};
       if(tipo==='bobinas')return {headers:['Data','Categoria / bitola','Peso da bobina (kg)','Fornecedor'],rows:registros.map(x=>[x.dataFormatada||'',x.bitola||x.nome||'Registro antigo',Number(x.kg)||0,x.fornecedor||'']),totals:['TOTAL','',registros.reduce((s,x)=>s+(Number(x.kg)||0),0),'']};
@@ -5108,7 +5210,7 @@ let relatorioSecaoAtual = 'producao';
       const drawRow=(row,bold=false,isHeader=false)=>{pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(fontSize);const wrapped=row.map((v,i)=>pdf.splitTextToSize(String(v??''),widths[i]-2));const lines=Math.max(1,...wrapped.map(a=>a.length));let offset=0;while(offset<lines){const minHeight=Math.max(7,lineHeight+3);if(y+minHeight>h-margin){pdf.addPage();writeHeader();y=sub?28:24;if(!isHeader)drawRow(model.headers,true,true);pdf.setFont('helvetica',bold?'bold':'normal');pdf.setFontSize(fontSize);}const available=Math.max(1,Math.floor((h-margin-y-3)/lineHeight));const count=Math.min(lines-offset,available),rowH=Math.max(7,count*lineHeight+3);let x=margin;row.forEach((v,i)=>{pdf.rect(x,y,widths[i],rowH);const part=wrapped[i].slice(offset,offset+count);if(part.length)pdf.text(part,x+1,y+fontSize*.5+1,{maxWidth:widths[i]-2});x+=widths[i];});y+=rowH;offset+=count;}};
       drawRow(model.headers,true,true);model.rows.forEach(r=>drawRow(r));drawRow(model.totals,true);(model.extraTotals||[]).forEach(r=>drawRow([...r,...Array(model.headers.length-r.length).fill('')],true));pdf.save(`${nomeBase}.pdf`);
     }
-    function confirmarExportacaoSecao(event){event.preventDefault();if(!usuarioPodeExportar){alert('Esta conta não tem permissão para exportar.');return;}if(relatorioSecaoAtual==='entradas'&&(!recebimentosRelatorioProntos.barras||!recebimentosRelatorioProntos.bobinas||!bobinasRelatorioProntas)){alert('Não é possível gerar o documento: aguarde a sincronização de todos os recebimentos.');return;}if(relatorioSecaoAtual==='saidaMateriais'&&!window.saidaMTRelatorioPronto){alert('Não é possível gerar o documento: aguarde a sincronização da Saída MT.');return;}const inicio=document.getElementById('relatorio-data-inicio').value,fim=document.getElementById('relatorio-data-fim').value;if(inicio&&fim&&inicio>fim){alert('A data inicial não pode ser posterior à data final.');return;}const tipoRel=document.querySelector('input[name="relatorio-tipo"]:checked')?.value||'completo',digitado=document.getElementById('relatorio-responsavel-nome').value,nome=tipoRel==='responsavel'?resolverResponsavelRelatorio(digitado):'';if(relatorioSecaoAtual==='producao'&&tipoRel==='responsavel'&&!nome){alert(digitado.trim()?'Esse nome não corresponde a um responsável com registros no período. Escolha uma das sugestões.':'Digite ou selecione um responsável nas sugestões.');document.getElementById('relatorio-responsavel-nome').focus();return;}try{gerarRelatorioUniversal(relatorioSecaoAtual,document.getElementById('relatorio-formato-select').value,inicio,fim,tipoRel,nome);document.getElementById('relatorio-escolha-modal').hidden=true;}catch(e){alert(e.message||'Não foi possível gerar o relatório.');}}
+    function confirmarExportacaoSecao(event){event.preventDefault();if(!usuarioPodeExportar){alert('Esta conta não tem permissão para exportar.');return;}if(relatorioSecaoAtual==='entradas'&&(!recebimentosRelatorioProntos.barras||!recebimentosRelatorioProntos.bobinas||!recebimentosRelatorioProntos.caixas||!bobinasRelatorioProntas)){alert('Não é possível gerar o documento: aguarde a sincronização de todos os recebimentos.');return;}if(relatorioSecaoAtual==='saidaMateriais'&&!window.saidaMTRelatorioPronto){alert('Não é possível gerar o documento: aguarde a sincronização da Saída MT.');return;}const inicio=document.getElementById('relatorio-data-inicio').value,fim=document.getElementById('relatorio-data-fim').value;if(inicio&&fim&&inicio>fim){alert('A data inicial não pode ser posterior à data final.');return;}const tipoRel=document.querySelector('input[name="relatorio-tipo"]:checked')?.value||'completo',digitado=document.getElementById('relatorio-responsavel-nome').value,nome=tipoRel==='responsavel'?resolverResponsavelRelatorio(digitado):'';if(relatorioSecaoAtual==='producao'&&tipoRel==='responsavel'&&!nome){alert(digitado.trim()?'Esse nome não corresponde a um responsável com registros no período. Escolha uma das sugestões.':'Digite ou selecione um responsável nas sugestões.');document.getElementById('relatorio-responsavel-nome').focus();return;}try{gerarRelatorioUniversal(relatorioSecaoAtual,document.getElementById('relatorio-formato-select').value,inicio,fim,tipoRel,nome);document.getElementById('relatorio-escolha-modal').hidden=true;}catch(e){alert(e.message||'Não foi possível gerar o relatório.');}}
     document.querySelectorAll('input[name="relatorio-tipo"]').forEach(el=>el.addEventListener('change',atualizarOpcaoResponsavelRelatorio));
     document.getElementById('relatorio-escolha-cancelar').addEventListener('click',()=>{document.getElementById('relatorio-escolha-modal').hidden=true;});
     document.getElementById('relatorio-escolha-modal').addEventListener('click',e=>{if(e.target.id==='relatorio-escolha-modal')e.currentTarget.hidden=true;});
