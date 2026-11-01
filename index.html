@@ -1853,7 +1853,7 @@ body[data-theme] #saida-mt-root .tab.active{background:#7668e8!important;color:#
                         <option value="ANGELO" selected>ANGELO</option>
                         <option value="DERNERVAL">DERNERVAL</option>
                     </select>
-                    <span id="responsavel-fixo-ajuda" class="solo-admin" style="align-self:center;font-size:12px;color:#64748b">Gerencie a lista em Configurações</span>
+                    <span id="responsavel-fixo-ajuda" class="solo-admin" style="align-self:center;font-size:12px;color:#64748b">Selecione o responsável deste lançamento.</span>
                 </div>
             </div>
             <button class="btn-add" id="btn-add" onclick="adicionarRegistro()">+ Adicionar</button>
@@ -4047,9 +4047,15 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
     function sincronizarResponsavelAtivo(nome) {
         const select=document.getElementById('in-responsavel');
         if (!Array.from(select.options).some(o=>o.value===nome)) { const o=document.createElement('option'); o.value=nome; o.textContent=nome; select.appendChild(o); }
-        select.value=nome;
-        select.disabled=true;
-        select.title=`Responsável ativo: ${nome}. Seleção sincronizada para novos lançamentos.`;
+        if(usuarioEhAdminFernando()){
+            if(!select.value||!Array.from(select.options).some(o=>o.value===select.value))select.value=nome;
+            select.disabled=!firebaseEdicaoLiberada;
+            select.title='Selecione o responsável para este lançamento. A escolha não altera o responsável ativo compartilhado.';
+        }else{
+            select.value=nome;
+            select.disabled=true;
+            select.title=`Responsável ativo: ${nome}. Seleção sincronizada para novos lançamentos.`;
+        }
         document.getElementById('user-email').innerText=`${(usuarioAtualFirebase && usuarioAtualFirebase.email) || EMAIL_ADMIN} • Administrador • ${nome}`;
     }
 
@@ -4514,7 +4520,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         const qtdEmb = Number(document.getElementById('in-qtd-emb').value);
         const totalEmb = Number(document.getElementById('in-total-emb').value);
         const registroEmEdicao = editandoFirebaseKey ? producao.find(item => item._firebaseKey === editandoFirebaseKey) : null;
-        const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : (usuarioEhAdmin ? responsavelAtivoFirebase : document.getElementById('in-responsavel').value);
+        const responsavel = registroEmEdicao ? registroEmEdicao.responsavel : document.getElementById('in-responsavel').value;
         if (!usuarioEhAdmin && (!OPERADORES_PRODUCAO.includes(String(responsavel||'').trim().replace(/\s+/g,' ').toLocaleUpperCase('pt-BR')) || !nomesOperadoresAtivos().includes(String(responsavel||'').toLocaleUpperCase('pt-BR')))) { alert('A conta de produção só pode lançar como ANGELO ou DERNERVAL, desde que estejam ativos na lista administrada.'); return; }
         if (!usuarioEhAdmin && registroEmEdicao) { alert('A conta de produção só pode criar lançamentos novos; edição é exclusiva do administrador.'); return; }
 
@@ -4824,7 +4830,7 @@ window.saidaMtAtivarPainel=function(){if(!saidaMtPrimeiraAbertura){saidaMtPrimei
         document.getElementById('in-total-emb').value = "";
         const responsavelLogin = String(responsavelAtivoFirebase || '').trim().toLocaleUpperCase('pt-BR');
         const seletorResponsavel = document.getElementById('in-responsavel');
-        if (responsavelLogin && seletorResponsavel) seletorResponsavel.value = responsavelLogin;
+        if (seletorResponsavel) { if(usuarioEhAdminFernando()){if(responsavelLogin&&Array.from(seletorResponsavel.options).some(o=>o.value===responsavelLogin))seletorResponsavel.value=responsavelLogin;} else if(responsavelLogin) seletorResponsavel.value=responsavelLogin; }
         document.getElementById('in-produto').focus();
     }
 
